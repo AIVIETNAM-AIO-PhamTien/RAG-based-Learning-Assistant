@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ app_name }}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="panel">
+        <div class="header">
+          <div>
+            <p class="eyebrow">RAG Assistant</p>
+            <h1>{{ app_name }}</h1>
+          </div>
+          <button id="indexButton" type="button">Build index</button>
+        </div>
+
+        <form id="askForm" class="ask-form">
+          <textarea id="question" rows="4" placeholder="Nhập câu hỏi về tài liệu đã thêm vào data/"></textarea>
+          <button type="submit">Hỏi tài liệu</button>
+        </form>
+
+        <div id="status" class="status"></div>
+        <article id="answer" class="answer"></article>
+        <section id="sources" class="sources"></section>
+      </section>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
