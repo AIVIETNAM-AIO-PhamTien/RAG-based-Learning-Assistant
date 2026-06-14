@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+
+  --color-background: oklch(0.115 0.01 265);
+  --color-foreground: oklch(0.93 0.008 270);
+  --color-muted: oklch(0.19 0.012 270);
+  --color-muted-foreground: oklch(0.64 0.012 272);
+  --color-border: oklch(0.27 0.014 274 / 0.78);
+  --color-card: oklch(0.16 0.012 269 / 0.96);
+  --color-accent: oklch(0.54 0.075 282);
+  --color-accent-foreground: oklch(0.95 0.008 286);
+  --color-secondary-accent: oklch(0.46 0.04 260);
+  --color-danger: oklch(0.58 0.12 24);
+}
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: linear-gradient(135deg, #080a11 0%, #0d0f18 55%, #080a10 100%);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
+
+button,
+textarea,
+input {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(100, 91, 134, 0.42);
+  color: white;
+}
+
+.aio-scrollbar {
+  scrollbar-color: rgba(94, 92, 112, 0.58) transparent;
+  scrollbar-width: thin;
+}
+
+.aio-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.aio-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.aio-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(94, 92, 112, 0.58);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}

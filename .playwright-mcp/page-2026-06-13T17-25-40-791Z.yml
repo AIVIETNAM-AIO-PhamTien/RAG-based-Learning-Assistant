@@ -1,0 +1,9 @@
+- main [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - paragraph [ref=e5]: AIO
+      - paragraph [ref=e6]: Phase 0
+    - generic [ref=e7]:
+      - paragraph [ref=e8]: Hello AIO
+      - heading "Educational RAG with citations, built one verified phase at a time." [level=1] [ref=e9]
+      - paragraph [ref=e10]: "This scaffold is intentionally quiet: FastAPI health checks, Postgres with pgvector, Redis, and a Next.js App Router shell ready for the Phase 1 citation workflow."
