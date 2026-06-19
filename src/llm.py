@@ -25,6 +25,29 @@ class LearningLLM:
             return self._answer_with_openai(question, sources)
         return self._fallback_answer(question, sources)
 
+    def summarize(self, sources: list[SourceChunk]) -> str:
+        return self._generate("summary.f.jinja2", sources, "Tóm tắt ngắn gọn bằng tiếng Việt")
+
+    def flashcards(self, sources: list[SourceChunk]) -> str:
+        return self._generate("flashcard.jinja2", sources, "Tạo flashcard Q/A bằng tiếng Việt")
+
+    def _generate(self, template_name: str, sources: list[SourceChunk], fallback_title: str) -> str:
+        text = "\n\n".join(source.text for source in sources)
+        if not text:
+            return "Chưa tìm thấy nội dung phù hợp trong tài liệu đã index."
+        if not self.settings.openai_api_key:
+            return f"{fallback_title}:\n" + "\n".join(f"- {source.text[:240]}" for source in sources)
+
+        from openai import OpenAI
+
+        prompt = self.env.get_template(template_name).render(text=text)
+        response = OpenAI(api_key=self.settings.openai_api_key).chat.completions.create(
+            model=self.settings.openai_model,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.2,
+        )
+        return response.choices[0].message.content or ""
+
     def _answer_with_openai(self, question: str, sources: list[SourceChunk]) -> str:
         from openai import OpenAI
 

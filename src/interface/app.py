@@ -5,8 +5,8 @@ from fastapi.templating import Jinja2Templates
 
 from src.config import get_settings
 from src.indexing import build_index
-from src.learning import answer_question, get_retriever
-from src.schemas import AskRequest, AskResponse, IndexResponse
+from src.learning import answer_question, generate_flashcards, get_retriever, summarize
+from src.schemas import AskRequest, AskResponse, FlashcardsResponse, IndexResponse, StudyRequest, SummaryResponse
 
 
 settings = get_settings()
@@ -41,3 +41,13 @@ def ask(payload: AskRequest):
         return answer_question(payload.question, top_k=payload.top_k)
     except FileNotFoundError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.post("/api/summary", response_model=SummaryResponse)
+def summary(payload: StudyRequest):
+    return summarize(payload.topic, top_k=payload.top_k)
+
+
+@app.post("/api/flashcards", response_model=FlashcardsResponse)
+def flashcards(payload: StudyRequest):
+    return generate_flashcards(payload.topic, top_k=payload.top_k)

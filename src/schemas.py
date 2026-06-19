@@ -19,6 +19,26 @@ class AskResponse(BaseModel):
     sources: list[SourceChunk]
 
 
+class StudyRequest(BaseModel):
+    topic: str = Field(default="Các ý chính của tài liệu", min_length=2)
+    top_k: int | None = Field(default=None, ge=1, le=10)
+
+
+class SummaryResponse(BaseModel):
+    summary: str
+    sources: list[SourceChunk]
+
+
+class Flashcard(BaseModel):
+    question: str
+    answer: str
+
+
+class FlashcardsResponse(BaseModel):
+    flashcards: list[Flashcard]
+    sources: list[SourceChunk]
+
+
 class IndexResponse(BaseModel):
     chunks: int
     documents: int
