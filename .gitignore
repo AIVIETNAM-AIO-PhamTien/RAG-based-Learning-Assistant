@@ -1,8 +1,45 @@
-.env
-.venv/
+# Personal/agent notes — never push to remote
+local/
+
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
+.venv/
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+.next/
+.turbo/
+*.log
+
+# Editors
+.vscode/
+.idea/
+.DS_Store
+
+# Uploaded PDFs in dev
+data/uploads/
+*.pdf
+!sample/*.pdf
+
+# Model caches
+.cache/
+.huggingface/
+.ollama/
+
+# Test artifacts
+coverage/
 .pytest_cache/
-store/qdrant/*.joblib
-store/qdrant/*.json
-data/*.tmp
+htmlcov/
+backend\.ruff_cache
+
+# tools
+.claude
+.specify
+.mcp.json
+CLAUDE.md
+.codegraph
