@@ -1,3 +1,4 @@
+from app.db.models import ChatMessage
 from app.schemas.chat import Citation
 
 SYSTEM_PROMPT = """You answer questions using only the provided document chunks.
@@ -13,9 +14,22 @@ def build_context(citations: list[Citation]) -> str:
     )
 
 
-def build_prompt(question: str, citations: list[Citation]) -> str:
+def build_recent_conversation(recent_messages: list[ChatMessage] | None) -> str:
+    if not recent_messages:
+        return ""
+
+    lines = [f"- {message.role}: {message.content}" for message in recent_messages]
+    return "Recent conversation:\n" + "\n".join(lines) + "\n\n"
+
+
+def build_prompt(
+    question: str,
+    citations: list[Citation],
+    recent_messages: list[ChatMessage] | None = None,
+) -> str:
     context = build_context(citations)
-    return f"""Context chunks:
+    recent_conversation = build_recent_conversation(recent_messages)
+    return f"""{recent_conversation}Context chunks:
 {context}
 
 Question: {question}

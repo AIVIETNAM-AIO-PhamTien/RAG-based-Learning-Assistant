@@ -31,7 +31,7 @@ export function ChatInput({ disabled, sendDisabled, onSend }: ChatInputProps) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="border-t border-border bg-background px-4 py-4">
+    <form onSubmit={onSubmit} className="shrink-0 border-t border-border bg-background px-4 py-4">
       <div className="mx-auto max-w-4xl rounded-[1.7rem] border border-border bg-card p-3 shadow-[0_8px_24px_rgba(0,0,0,0.18)] transition-colors focus-within:border-accent/55">
         <textarea
           aria-label="Chat message"
