@@ -1,0 +1,15 @@
+Hãy trả lời câu hỏi dựa trên ngữ cảnh dưới đây.
+
+Câu hỏi:
+{{ question }}
+
+Ngữ cảnh:
+{% for source in sources %}
+[{{ loop.index }}] {{ source.source }} - trang {{ source.page }}
+{{ source.text }}
+{% endfor %}
+
+Yêu cầu:
+- Trả lời bằng tiếng Việt.
+- Nếu tài liệu không đủ thông tin, nói rõ phần nào chưa chắc.
+- Trích nguồn theo dạng [tên file, trang].
