@@ -5,11 +5,13 @@ import { useEffect, useMemo, useState } from "react";
 import { ChatInput } from "@/components/chat/ChatInput";
 import { DocumentStatusList } from "@/components/chat/DocumentStatusList";
 import { DocumentUploader } from "@/components/chat/DocumentUploader";
+import { FlashcardsPanel } from "@/components/chat/FlashcardsPanel";
 import { MessageList } from "@/components/chat/MessageList";
-import { createSession, getSessionDocuments, streamChat, uploadDocument } from "@/lib/api";
-import type { ChatMessage, ChatSession, DocumentRead } from "@/lib/types";
+import { createSession, generateFlashcards, getFlashcards, getSessionDocuments, streamChat, updateFlashcardStatus, uploadDocument } from "@/lib/api";
+import type { ChatMessage, ChatSession, DocumentRead, Flashcard, FlashcardStats, FlashcardStatus } from "@/lib/types";
 
 const SESSION_STORAGE_KEY = "aio-chat-session";
+const EMPTY_FLASHCARD_STATS: FlashcardStats = { total: 0, not_reviewed: 0, learning: 0, known: 0 };
 
 function nextMessageId() {
   return globalThis.crypto?.randomUUID?.() ?? String(Date.now());
@@ -45,6 +47,9 @@ export default function Home() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
+  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
+  const [flashcardStats, setFlashcardStats] = useState<FlashcardStats>(EMPTY_FLASHCARD_STATS);
+  const [isGeneratingFlashcards, setIsGeneratingFlashcards] = useState(false);
 
   const hasReadyDocument = useMemo(
     () => documents.some((document) => document.status === "ready"),
@@ -62,6 +67,10 @@ export default function Home() {
           if (!isMounted) return;
           setSession(storedSession);
           setDocuments(storedDocuments);
+          const cards = await getFlashcards(storedSession.id);
+          if (!isMounted) return;
+          setFlashcards(cards.flashcards);
+          setFlashcardStats(cards.stats);
           return;
         } catch (caught: unknown) {
           if (!isMounted) return;
@@ -155,6 +164,33 @@ export default function Home() {
       );
     } finally {
       setIsStreaming(false);
+    }
+  }
+
+  async function onGenerateFlashcards(topic: string, count: 5 | 10 | 15) {
+    if (!session) return;
+    setIsGeneratingFlashcards(true);
+    setError(null);
+    try {
+      const result = await generateFlashcards(session.id, topic, count);
+      setFlashcards(result.flashcards);
+      setFlashcardStats(result.stats);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught));
+    } finally {
+      setIsGeneratingFlashcards(false);
+    }
+  }
+
+  async function onFlashcardStatusChange(flashcardId: string, status: FlashcardStatus) {
+    if (!session) return;
+    try {
+      await updateFlashcardStatus(session.id, flashcardId, status);
+      const refreshed = await getFlashcards(session.id);
+      setFlashcards(refreshed.flashcards);
+      setFlashcardStats(refreshed.stats);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught));
     }
   }
 
@@ -277,6 +313,7 @@ export default function Home() {
           </div>
 
           <aside className={`overflow-hidden border-l border-border bg-background transition-opacity duration-300 ${isFlashcardsOpen ? "opacity-100" : "pointer-events-none opacity-0"}`}>
+            {/* Replaced by the connected flashcards panel below.
             <div className="flex h-full w-[380px] flex-col p-5">
               <div className="flex items-center justify-between gap-3">
                 <div>
@@ -323,7 +360,16 @@ export default function Home() {
                   </button>
                 </div>
               </div>
-            </div>
+            </div> */}
+            <FlashcardsPanel
+              cards={flashcards}
+              stats={flashcardStats}
+              disabled={!session || !hasReadyDocument}
+              generating={isGeneratingFlashcards}
+              onClose={() => setIsFlashcardsOpen(false)}
+              onGenerate={onGenerateFlashcards}
+              onStatusChange={onFlashcardStatusChange}
+            />
           </aside>
         </section>
       </div>

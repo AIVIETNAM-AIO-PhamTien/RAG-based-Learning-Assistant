@@ -38,3 +38,24 @@ export type ChatStreamEvent =
   | { type: "citations"; citations: Citation[]; citation_coverage?: number }
   | { type: "done" }
   | { type: "error"; message: string };
+
+export type FlashcardStatus = "not_reviewed" | "learning" | "known";
+
+export type Flashcard = {
+  id: string;
+  question: string;
+  answer: string;
+  status: FlashcardStatus;
+  source_doc_name: string;
+  source_page: number;
+  created_at: string;
+};
+
+export type FlashcardStats = {
+  total: number;
+  not_reviewed: number;
+  learning: number;
+  known: number;
+};
+
+export type FlashcardsResponse = { flashcards: Flashcard[]; stats: FlashcardStats };

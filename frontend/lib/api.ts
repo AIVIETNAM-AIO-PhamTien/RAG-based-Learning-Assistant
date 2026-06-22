@@ -1,4 +1,10 @@
-import type { ChatSession, ChatStreamEvent, DocumentRead } from "./types";
+import type {
+  ChatSession,
+  ChatStreamEvent,
+  DocumentRead,
+  FlashcardsResponse,
+  FlashcardStatus,
+} from "./types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
@@ -32,6 +38,37 @@ export async function uploadDocument(sessionId: string, file: File): Promise<Doc
 export async function getSessionDocuments(sessionId: string): Promise<DocumentRead[]> {
   const response = await fetch(`${API_BASE_URL}/api/v1/sessions/${sessionId}/documents`);
   return parseResponse<DocumentRead[]>(response);
+}
+
+export async function getFlashcards(sessionId: string): Promise<FlashcardsResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/sessions/${sessionId}/flashcards`);
+  return parseResponse<FlashcardsResponse>(response);
+}
+
+export async function generateFlashcards(
+  sessionId: string,
+  topic: string,
+  count: 5 | 10 | 15,
+): Promise<FlashcardsResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/sessions/${sessionId}/flashcards/generate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ topic, count }),
+  });
+  return parseResponse<FlashcardsResponse>(response);
+}
+
+export async function updateFlashcardStatus(
+  sessionId: string,
+  flashcardId: string,
+  status: FlashcardStatus,
+) {
+  const response = await fetch(`${API_BASE_URL}/api/v1/sessions/${sessionId}/flashcards/${flashcardId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status }),
+  });
+  return parseResponse(response);
 }
 
 export async function streamChat(
