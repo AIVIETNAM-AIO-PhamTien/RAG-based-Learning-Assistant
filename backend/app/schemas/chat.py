@@ -14,6 +14,10 @@ class ChatSessionRead(BaseModel):
     created_at: datetime
 
 
+class ChatSessionUpdate(BaseModel):
+    title: str = Field(min_length=1, max_length=200)
+
+
 class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=8000)
 
@@ -26,3 +30,12 @@ class Citation(BaseModel):
     page: int
     text: str
     snippet: str
+
+
+class ChatMessageRead(BaseModel):
+    id: UUID
+    session_id: UUID
+    role: str
+    content: str
+    citations: list[Citation] | None = None
+    created_at: datetime

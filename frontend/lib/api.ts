@@ -1,4 +1,4 @@
-import type { ChatSession, ChatStreamEvent, DocumentRead } from "./types";
+import type { ChatMessage, ChatSession, ChatStreamEvent, DocumentRead } from "./types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
@@ -11,12 +11,36 @@ async function parseResponse<T>(response: Response): Promise<T> {
 }
 
 export async function createSession(): Promise<ChatSession> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/sessions`, {
+  const response = await fetch(`${API_BASE_URL}/api/v1/sessions/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title: "Baseline RAG" }),
+    body: JSON.stringify({}),
   });
   return parseResponse<ChatSession>(response);
+}
+
+export async function getSessions(): Promise<ChatSession[]> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/sessions/`);
+  return parseResponse<ChatSession[]>(response);
+}
+
+export async function renameSession(sessionId: string, title: string): Promise<ChatSession> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/sessions/${sessionId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title }),
+  });
+  return parseResponse<ChatSession>(response);
+}
+
+export async function deleteSession(sessionId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/sessions/${sessionId}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message || `Request failed with ${response.status}`);
+  }
 }
 
 export async function uploadDocument(sessionId: string, file: File): Promise<DocumentRead> {
@@ -32,6 +56,11 @@ export async function uploadDocument(sessionId: string, file: File): Promise<Doc
 export async function getSessionDocuments(sessionId: string): Promise<DocumentRead[]> {
   const response = await fetch(`${API_BASE_URL}/api/v1/sessions/${sessionId}/documents`);
   return parseResponse<DocumentRead[]>(response);
+}
+
+export async function getSessionMessages(sessionId: string): Promise<ChatMessage[]> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/sessions/${sessionId}/messages`);
+  return parseResponse<ChatMessage[]>(response);
 }
 
 export async function streamChat(

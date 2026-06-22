@@ -2,14 +2,30 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { ChatInput } from "@/components/chat/ChatInput";
+import { ChatComposer } from "@/components/chat/ChatComposer";
+import { ChatFlashcardsPanel } from "@/components/chat/ChatFlashcardsPanel";
+import { ChatSidebar } from "@/components/chat/ChatSidebar";
 import { DocumentStatusList } from "@/components/chat/DocumentStatusList";
 import { DocumentUploader } from "@/components/chat/DocumentUploader";
 import { MessageList } from "@/components/chat/MessageList";
-import { createSession, getSessionDocuments, streamChat, uploadDocument } from "@/lib/api";
+import {
+  createSession,
+  deleteSession,
+  getSessionDocuments,
+  getSessionMessages,
+  getSessions,
+  renameSession,
+  streamChat,
+  uploadDocument,
+} from "@/lib/api";
 import type { ChatMessage, ChatSession, DocumentRead } from "@/lib/types";
 
 const SESSION_STORAGE_KEY = "aio-chat-session";
+const SIDEBAR_COLLAPSED_STORAGE_KEY = "aio-sidebar-collapsed";
+const SIDEBAR_EXPANDED_WIDTH_CLASS = "lg:grid-cols-[280px_minmax(0,1fr)]";
+const SIDEBAR_COLLAPSED_WIDTH_CLASS = "lg:grid-cols-[64px_minmax(0,1fr)]";
+const COMPOSER_SIDEBAR_EXPANDED_OFFSET_CLASS = "lg:left-[280px] xl:left-[600px]";
+const COMPOSER_SIDEBAR_COLLAPSED_OFFSET_CLASS = "lg:left-[64px] xl:left-[384px]";
 
 function nextMessageId() {
   return globalThis.crypto?.randomUUID?.() ?? String(Date.now());
@@ -37,48 +53,109 @@ function storeSession(session: ChatSession): void {
   window.localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
 }
 
+function readStoredSidebarCollapsed(): boolean {
+  const rawValue = window.localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY);
+  if (!rawValue) return false;
+
+  try {
+    const parsed = JSON.parse(rawValue);
+    if (typeof parsed !== "boolean") return false;
+    return parsed;
+  } catch {
+    window.localStorage.removeItem(SIDEBAR_COLLAPSED_STORAGE_KEY);
+    return false;
+  }
+}
+
+function storeSidebarCollapsed(isCollapsed: boolean): void {
+  window.localStorage.setItem(SIDEBAR_COLLAPSED_STORAGE_KEY, JSON.stringify(isCollapsed));
+}
+
+const sidebarAccount = {
+  initials: "AI",
+  label: "AIO Workspace",
+  subtitle: "Local study session",
+};
+
 export default function Home() {
   const [session, setSession] = useState<ChatSession | null>(null);
+  const [sessionHistory, setSessionHistory] = useState<ChatSession[]>([]);
   const [documents, setDocuments] = useState<DocumentRead[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
+  const [isCreatingSession, setIsCreatingSession] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const hasReadyDocument = useMemo(
     () => documents.some((document) => document.status === "ready"),
     [documents],
   );
 
+  async function activateSession(nextSession: ChatSession) {
+    const [nextDocuments, nextMessages] = await Promise.all([
+      getSessionDocuments(nextSession.id),
+      getSessionMessages(nextSession.id),
+    ]);
+    storeSession(nextSession);
+    setSession(nextSession);
+    setDocuments(nextDocuments);
+    setMessages(nextMessages);
+    setError(null);
+  }
+
   useEffect(() => {
     let isMounted = true;
 
-    async function loadSession() {
-      const storedSession = readStoredSession();
-      if (storedSession) {
-        try {
-          const storedDocuments = await getSessionDocuments(storedSession.id);
-          if (!isMounted) return;
-          setSession(storedSession);
-          setDocuments(storedDocuments);
-          return;
-        } catch (caught: unknown) {
-          if (!isMounted) return;
-          setSession(storedSession);
-          setError(caught instanceof Error ? caught.message : String(caught));
-          return;
-        }
-      }
+    async function loadSessionHistory() {
+      const history = await getSessions();
+      if (!isMounted) return history;
+      setSessionHistory(history);
+      return history;
+    }
 
+    async function createAndActivateSession() {
+      setIsCreatingSession(true);
       try {
         const createdSession = await createSession();
         if (!isMounted) return;
         storeSession(createdSession);
         setSession(createdSession);
+        setDocuments([]);
+        setMessages([]);
+        setError(null);
+        await loadSessionHistory();
       } catch (caught: unknown) {
         if (isMounted) setError(caught instanceof Error ? caught.message : String(caught));
+      } finally {
+        if (isMounted) setIsCreatingSession(false);
       }
+    }
+
+    async function loadSession() {
+      const storedSession = readStoredSession();
+      setIsSidebarCollapsed(readStoredSidebarCollapsed());
+      const history = await loadSessionHistory();
+
+      if (storedSession) {
+        const matchedSession = history.find((item) => item.id === storedSession.id) ?? storedSession;
+        try {
+          await activateSession(matchedSession);
+          return;
+        } catch (caught: unknown) {
+          if (!isMounted) return;
+          storeSession(matchedSession);
+          setSession(matchedSession);
+          setDocuments([]);
+          setMessages([]);
+          setError(caught instanceof Error ? caught.message : String(caught));
+          return;
+        }
+      }
+
+      await createAndActivateSession();
     }
 
     void loadSession();
@@ -87,8 +164,94 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    storeSidebarCollapsed(isSidebarCollapsed);
+  }, [isSidebarCollapsed]);
+
   async function refreshDocuments(sessionId: string) {
     setDocuments(await getSessionDocuments(sessionId));
+  }
+
+  async function onNewSession() {
+    if (!session || isCreatingSession || isStreaming || isUploading) return;
+
+    setIsCreatingSession(true);
+    setError(null);
+    try {
+      const createdSession = await createSession();
+      storeSession(createdSession);
+      setSession(createdSession);
+      setDocuments([]);
+      setMessages([]);
+      setError(null);
+      setSessionHistory(await getSessions());
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught));
+    } finally {
+      setIsCreatingSession(false);
+    }
+  }
+
+  async function onSelectSession(sessionId: string) {
+    if (!session || isCreatingSession || isStreaming || isUploading || session.id === sessionId) return;
+
+    const nextSession = sessionHistory.find((item) => item.id === sessionId);
+    if (!nextSession) return;
+
+    setError(null);
+    try {
+      await activateSession(nextSession);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught));
+    }
+  }
+
+  async function onRenameSession(sessionId: string, title: string) {
+    if (!session || isCreatingSession || isStreaming || isUploading) return;
+
+    setError(null);
+    try {
+      const updatedSession = await renameSession(sessionId, title);
+      setSessionHistory((current) =>
+        current.map((item) => (item.id === updatedSession.id ? updatedSession : item)),
+      );
+      if (session.id === updatedSession.id) {
+        storeSession(updatedSession);
+        setSession(updatedSession);
+      }
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught));
+    }
+  }
+
+  async function onDeleteSession(sessionId: string) {
+    if (!session || isCreatingSession || isStreaming || isUploading) return;
+
+    setError(null);
+    try {
+      await deleteSession(sessionId);
+      const remainingSessions = sessionHistory.filter((item) => item.id !== sessionId);
+      setSessionHistory(remainingSessions);
+
+      if (session.id !== sessionId) {
+        return;
+      }
+
+      const nextSession = remainingSessions[0] ?? null;
+      if (nextSession) {
+        await activateSession(nextSession);
+        return;
+      }
+
+      const createdSession = await createSession();
+      storeSession(createdSession);
+      setSession(createdSession);
+      setDocuments([]);
+      setMessages([]);
+      setSessionHistory([createdSession]);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught));
+    }
   }
 
   async function onUpload(file: File) {
@@ -108,6 +271,8 @@ export default function Home() {
 
   async function onSend(content: string) {
     if (!session || isStreaming) return;
+    const activeSessionId = session.id;
+    const shouldRefreshSessionTitle = !session.title;
     setError(null);
     const assistantId = nextMessageId();
     setMessages((current) => [
@@ -118,7 +283,7 @@ export default function Home() {
     setIsStreaming(true);
 
     try {
-      await streamChat(session.id, content, (event) => {
+      await streamChat(activeSessionId, content, (event) => {
         if (event.type === "token") {
           setMessages((current) =>
             current.map((message) =>
@@ -146,6 +311,16 @@ export default function Home() {
           );
         }
       });
+
+      if (shouldRefreshSessionTitle) {
+        const updatedSessions = await getSessions();
+        setSessionHistory(updatedSessions);
+        const updatedSession = updatedSessions.find((item) => item.id === activeSessionId);
+        if (updatedSession) {
+          storeSession(updatedSession);
+          setSession(updatedSession);
+        }
+      }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : String(caught));
       setMessages((current) =>
@@ -158,66 +333,32 @@ export default function Home() {
     }
   }
 
+  const sessionIdLabel = session ? session.id.slice(0, 8) : "starting";
+  const isSessionActionDisabled = !session || isCreatingSession || isStreaming || isUploading;
+  const sidebarWidthClass = isSidebarCollapsed ? SIDEBAR_COLLAPSED_WIDTH_CLASS : SIDEBAR_EXPANDED_WIDTH_CLASS;
+  const composerSidebarOffsetClass = isSidebarCollapsed
+    ? COMPOSER_SIDEBAR_COLLAPSED_OFFSET_CLASS
+    : COMPOSER_SIDEBAR_EXPANDED_OFFSET_CLASS;
+
   return (
     <main className="min-h-screen text-foreground">
-      <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)]">
-        <aside className="hidden border-r border-border bg-background p-4 lg:flex lg:flex-col">
-          <div className="flex items-center gap-3 rounded-3xl border border-border bg-card p-3">
-            <div className="flex size-11 items-center justify-center rounded-2xl border border-border/70 bg-muted text-xl">
-              🎓
-            </div>
-            <div>
-              <p className="text-base font-semibold tracking-[-0.03em]">AIO</p>
-              <p className="text-xs text-muted-foreground">AI Tutor</p>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            disabled
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-muted px-4 py-3 text-sm font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-65"
-          >
-            <span>＋</span>
-            New Session
-          </button>
-
-          <section className="mt-7 min-h-0 flex-1">
-            <p className="px-1 font-mono text-[11px] tracking-[0.2em] text-muted-foreground uppercase">History</p>
-            <div className="mt-3 rounded-2xl border border-border/70 bg-muted/35 p-3">
-              <div className="rounded-xl bg-accent/12 p-3">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="truncate text-sm font-medium text-foreground">
-                    {session?.title ?? documents[0]?.name ?? "Current study session"}
-                  </p>
-                  <span className="text-xs text-accent">●</span>
-                </div>
-                <p className="mt-1 font-mono text-[11px] text-muted-foreground">
-                  {session ? session.id.slice(0, 8) : "starting"}
-                </p>
-              </div>
-              <p className="mt-3 px-1 text-xs leading-5 text-muted-foreground">
-                Saved history, rename, and delete controls need session APIs and are not wired in this UI-only pass.
-              </p>
-            </div>
-          </section>
-
-          <div className="mt-5 flex items-center justify-between rounded-2xl border border-border bg-card p-3">
-            <div className="flex min-w-0 items-center gap-3">
-              <div className="flex size-9 items-center justify-center rounded-full bg-muted text-xs text-muted-foreground">
-                TN
-              </div>
-              <div className="min-w-0">
-                <p className="truncate text-xs font-medium text-foreground">student@aio.local</p>
-                <p className="text-[11px] text-muted-foreground">Focus mode</p>
-              </div>
-            </div>
-            <span className="text-muted-foreground">↪</span>
-          </div>
-        </aside>
+      <div className={`grid min-h-screen grid-cols-1 transition-[grid-template-columns] duration-300 ${sidebarWidthClass}`}>
+        <ChatSidebar
+          sessions={sessionHistory}
+          activeSessionId={session?.id ?? null}
+          onSelectSession={onSelectSession}
+          onRenameSession={onRenameSession}
+          onDeleteSession={onDeleteSession}
+          onNewSession={onNewSession}
+          onToggleCollapse={() => setIsSidebarCollapsed((current) => !current)}
+          isCollapsed={isSidebarCollapsed}
+          newSessionDisabled={isSessionActionDisabled}
+          account={sidebarAccount}
+        />
 
         <section className={`grid min-h-screen min-w-0 transition-[grid-template-columns] duration-300 ${isFlashcardsOpen ? "xl:grid-cols-[minmax(0,1fr)_380px]" : "xl:grid-cols-[minmax(0,1fr)_0px]"}`}>
           <div className="flex min-h-screen min-w-0 flex-col bg-background">
-            <header className="flex min-h-16 items-center justify-between gap-4 border-b border-border bg-background px-5 md:px-7">
+            <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between gap-4 border-b border-border bg-background px-5 md:px-7">
               <div className="flex min-w-0 items-center gap-3">
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl border border-border/70 bg-muted text-lg text-accent">
                   ✦
@@ -229,7 +370,7 @@ export default function Home() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="hidden rounded-full border border-border/70 px-3 py-1.5 font-mono text-[11px] text-muted-foreground sm:inline-flex">
-                  {session ? session.id.slice(0, 8) : "starting"}
+                  {sessionIdLabel}
                 </span>
                 <button
                   type="button"
@@ -237,7 +378,22 @@ export default function Home() {
                   className="inline-flex items-center gap-2 rounded-full border border-accent/45 bg-accent/12 px-4 py-2 text-xs font-semibold text-accent transition hover:bg-accent/20"
                   aria-pressed={isFlashcardsOpen}
                 >
-                  📘 Flashcards ✨
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="size-4"
+                  >
+                    <path d="M4.75 5.75A2.75 2.75 0 0 1 7.5 3h11.75v15.25H7.5a2.75 2.75 0 0 0-2.75 2.75z" />
+                    <path d="M7.5 3A2.75 2.75 0 0 0 4.75 5.75v15.5" />
+                    <path d="M8.75 7.5h7" />
+                    <path d="M8.75 10.5h5.5" />
+                  </svg>
+                  Flashcards
                 </button>
               </div>
             </header>
@@ -253,7 +409,7 @@ export default function Home() {
 
             <div className="grid min-h-0 flex-1 grid-cols-1 xl:grid-cols-[320px_minmax(0,1fr)]">
               <aside className="border-b border-border/70 bg-background/30 p-4 xl:border-r xl:border-b-0">
-                <div className="space-y-5 xl:sticky xl:top-4">
+                <div className="space-y-5 xl:sticky xl:top-[5rem]">
                   <DocumentUploader disabled={!session || isUploading} onUpload={onUpload} />
                   <section className="space-y-3">
                     <div className="flex items-center justify-between">
@@ -269,63 +425,27 @@ export default function Home() {
                 </div>
               </aside>
 
-              <div className="min-h-0 overflow-y-auto aio-scrollbar">
-                <MessageList messages={messages} />
+              <div className={`flex min-h-0 min-w-0 flex-col pb-40 transition-[padding] duration-300 ${isFlashcardsOpen ? "xl:pb-44" : "xl:pb-52"}`}>
+                <div className="min-h-0 flex-1 overflow-y-auto aio-scrollbar">
+                  <MessageList messages={messages} />
+                </div>
               </div>
             </div>
-            <ChatInput disabled={!session} sendDisabled={!hasReadyDocument || isStreaming} onSend={onSend} />
           </div>
 
-          <aside className={`overflow-hidden border-l border-border bg-background transition-opacity duration-300 ${isFlashcardsOpen ? "opacity-100" : "pointer-events-none opacity-0"}`}>
-            <div className="flex h-full w-[380px] flex-col p-5">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-lg font-semibold tracking-[-0.03em]">Flashcards</h2>
-                    <span className="rounded-full border border-border/70 px-2 py-0.5 font-mono text-[11px] text-muted-foreground">0 cards</span>
-                  </div>
-                  <p className="mt-1 text-xs text-muted-foreground">Scoped to this session</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsFlashcardsOpen(false)}
-                  className="flex size-9 items-center justify-center rounded-full border border-border/70 text-muted-foreground transition hover:border-accent hover:text-accent"
-                  aria-label="Close flashcards panel"
-                >
-                  ×
-                </button>
-              </div>
-
-              <div className="mt-5 rounded-2xl border border-border bg-card p-4">
-                <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-                  <span>Known</span>
-                  <span>Still learning</span>
-                  <span>Not reviewed</span>
-                </div>
-                <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
-                  <div className="h-full w-0 rounded-full bg-accent" />
-                </div>
-              </div>
-
-              <div className="mt-5 flex flex-1 items-center justify-center rounded-[2rem] border border-dashed border-border bg-card p-6 text-center">
-                <div>
-                  <div className="mx-auto flex size-14 items-center justify-center rounded-2xl border border-border/70 bg-muted text-2xl text-accent">✨</div>
-                  <h3 className="mt-5 text-base font-semibold">No flashcards yet for this session</h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                    Flashcard generation needs a follow-up data/API implementation. This panel is ready for that workflow.
-                  </p>
-                  <button
-                    type="button"
-                    disabled
-                    className="mt-5 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground disabled:cursor-not-allowed disabled:opacity-45"
-                  >
-                    Generate flashcards
-                  </button>
-                </div>
-              </div>
-            </div>
-          </aside>
+          <ChatFlashcardsPanel
+            isOpen={isFlashcardsOpen}
+            onClose={() => setIsFlashcardsOpen(false)}
+          />
         </section>
+
+        <ChatComposer
+          disabled={!session}
+          sendDisabled={!hasReadyDocument || isStreaming}
+          isFlashcardsOpen={isFlashcardsOpen}
+          sidebarOffsetClass={composerSidebarOffsetClass}
+          onSend={onSend}
+        />
       </div>
     </main>
   );
