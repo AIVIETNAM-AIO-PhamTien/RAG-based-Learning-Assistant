@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     chunk_size: int = 1600
     chunk_overlap: int = 250
     retrieval_top_k: int = 5
+    rerank_enabled: bool = True
+    rerank_model_name: str = "BAAI/bge-reranker-base"
+    rerank_candidate_k: int = 20
 
 
 @lru_cache
