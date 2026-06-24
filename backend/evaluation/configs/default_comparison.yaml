@@ -1,0 +1,47 @@
+experiments:
+  - name: baseline_no_rerank
+    dataset_name: pdf_qa
+    chunk_size: 1600
+    chunk_overlap: 250
+    top_k: 5
+    rerank_enabled: false
+
+  - name: with_reranking
+    dataset_name: pdf_qa
+    chunk_size: 1600
+    chunk_overlap: 250
+    top_k: 5
+    rerank_enabled: true
+    rerank_candidate_k: 20
+
+  - name: small_chunks
+    dataset_name: pdf_qa
+    chunk_size: 800
+    chunk_overlap: 150
+    top_k: 5
+    rerank_enabled: true
+    rerank_candidate_k: 20
+
+  - name: large_chunks
+    dataset_name: pdf_qa
+    chunk_size: 2400
+    chunk_overlap: 400
+    top_k: 5
+    rerank_enabled: true
+    rerank_candidate_k: 20
+
+  - name: high_top_k
+    dataset_name: pdf_qa
+    chunk_size: 1600
+    chunk_overlap: 250
+    top_k: 10
+    rerank_enabled: true
+    rerank_candidate_k: 30
+
+  - name: low_top_k
+    dataset_name: pdf_qa
+    chunk_size: 1600
+    chunk_overlap: 250
+    top_k: 3
+    rerank_enabled: true
+    rerank_candidate_k: 20

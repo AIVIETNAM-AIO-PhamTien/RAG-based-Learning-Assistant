@@ -1,0 +1,96 @@
+from unittest.mock import MagicMock, patch
+
+import numpy as np
+import pytest
+
+from evaluation.pipeline import EvalPipeline, InMemoryRetriever
+from evaluation.rate_limiter import RateLimitExhausted
+from evaluation.schemas import ExperimentConfig
+
+
+class FakeEmbedder:
+    def embed_texts(self, texts):
+        vectors = []
+        for i, _ in enumerate(texts):
+            v = np.zeros(384, dtype=np.float32)
+            v[i % 384] = 1.0
+            vectors.append(v.tolist())
+        return vectors
+
+    def embed_query(self, text):
+        v = np.zeros(384, dtype=np.float32)
+        v[0] = 1.0
+        return v.tolist()
+
+
+@pytest.fixture()
+def fake_embedder():
+    with patch("evaluation.pipeline.get_embedder") as mock:
+        mock.return_value = FakeEmbedder()
+        yield mock
+
+
+def test_in_memory_retriever_index(fake_embedder):
+    retriever = InMemoryRetriever()
+    retriever.index(["doc A", "doc B", "doc C"])
+    assert retriever.size == 3
+
+
+def test_in_memory_retriever_empty(fake_embedder):
+    retriever = InMemoryRetriever()
+    retriever.index([])
+    assert retriever.size == 0
+    assert retriever.retrieve("query", 5) == []
+
+
+def test_in_memory_retriever_retrieve_ranking(fake_embedder):
+    retriever = InMemoryRetriever()
+    retriever.index(["doc A", "doc B", "doc C"])
+
+    results = retriever.retrieve("query", top_k=3)
+    assert len(results) == 3
+    idx, score, text = results[0]
+    assert idx == 0
+    assert score == pytest.approx(1.0)
+    assert text == "doc A"
+
+
+def test_in_memory_retriever_top_k_limit(fake_embedder):
+    retriever = InMemoryRetriever()
+    retriever.index(["a", "b", "c", "d", "e"])
+    results = retriever.retrieve("q", top_k=2)
+    assert len(results) == 2
+
+
+def test_in_memory_retriever_with_rerank(fake_embedder):
+    with patch("evaluation.pipeline.get_reranker") as mock_reranker:
+        reranker = MagicMock()
+        reranker.rerank.return_value = [(1, 0.95), (0, 0.80)]
+        mock_reranker.return_value = reranker
+
+        retriever = InMemoryRetriever()
+        retriever.index(["doc A", "doc B", "doc C"])
+
+        results = retriever.retrieve_with_rerank("query", top_k=2, candidate_k=3)
+        assert len(results) == 2
+        reranker.rerank.assert_called_once()
+        assert results[0][1] == pytest.approx(0.95)
+        assert results[1][1] == pytest.approx(0.80)
+
+
+def test_generate_fallback_on_rate_limit():
+    config = ExperimentConfig(name="test")
+    pipeline = EvalPipeline(config)
+
+    with (
+        patch("evaluation.pipeline.get_eval_settings") as mock_settings,
+        patch("evaluation.pipeline.get_rate_limited_client") as mock_client,
+    ):
+        mock_settings.return_value = MagicMock(gemini_api_key="fake-key")
+        mock_client.return_value.generate_content.side_effect = RateLimitExhausted(
+            "rate limit"
+        )
+        result = pipeline.generate("What is AI?", ["some context"])
+
+    assert result.generated_answer == "[ERROR: rate limited]"
+    assert result.latency_ms == 0.0
