@@ -9,13 +9,12 @@ class PopQALoader:
     ) -> list[EvalSample]:
         from datasets import load_dataset
 
-        ds = load_dataset("akariasai/PopQA", split=split)
+        ds = load_dataset("akariasai/PopQA", split=split, streaming=True)
 
         samples: list[EvalSample] = []
-        limit = num_samples or len(ds)
 
         for i, row in enumerate(ds):
-            if i >= limit:
+            if num_samples is not None and i >= num_samples:
                 break
 
             question = row["question"]

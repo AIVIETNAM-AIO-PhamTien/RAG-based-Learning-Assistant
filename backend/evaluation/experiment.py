@@ -4,8 +4,10 @@ import logging
 import time
 from datetime import UTC, datetime
 
+import numpy as np
+
 from evaluation.datasets.base import get_dataset_loader
-from evaluation.metrics import compute_all_metrics
+from evaluation.metrics import compute_all_metrics, compute_sample_metrics
 from evaluation.pipeline import EvalPipeline
 from evaluation.schemas import ExperimentConfig, ExperimentReport
 
@@ -32,7 +34,16 @@ class ExperimentRunner:
         pipeline = EvalPipeline(config)
         results = pipeline.evaluate_batch(samples)
 
-        aggregate = compute_all_metrics(results, use_ragas=self._use_ragas)
+        if not self._use_ragas:
+            for result in results:
+                result.metric_scores = compute_sample_metrics(result)
+            all_keys = {k for r in results for k in r.metric_scores}
+            aggregate = {
+                k: float(np.mean([r.metric_scores.get(k, 0.0) for r in results]))
+                for k in sorted(all_keys)
+            }
+        else:
+            aggregate = compute_all_metrics(results, use_ragas=True)
         duration = time.perf_counter() - start
 
         report = ExperimentReport(

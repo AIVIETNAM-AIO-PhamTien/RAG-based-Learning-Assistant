@@ -1,0 +1,807 @@
+{
+  "config": {
+    "name": "hotpotqa_5k_rerankTrue",
+    "dataset_name": "hotpotqa",
+    "dataset_path": null,
+    "num_samples": 15,
+    "chunk_size": 1600,
+    "chunk_overlap": 250,
+    "top_k": 5,
+    "rerank_enabled": true,
+    "rerank_candidate_k": 20,
+    "embedding_model": "intfloat/e5-small-v2",
+    "gemini_model": "gemini-2.5-flash"
+  },
+  "results": [
+    {
+      "sample": {
+        "question": "Were Scott Derrickson and Ed Wood of the same nationality?",
+        "ground_truth_answer": "yes",
+        "ground_truth_contexts": [
+          "Scott Derrickson (born July 16, 1966) is an American director, screenwriter and producer.  He lives in Los Angeles, California.  He is best known for directing horror films such as \"Sinister\", \"The Exorcism of Emily Rose\", and \"Deliver Us From Evil\", as well as the 2016 Marvel Cinematic Universe installment, \"Doctor Strange.\"",
+          "Edward Davis Wood Jr. (October 10, 1924 – December 10, 1978) was an American filmmaker, actor, writer, producer, and director."
+        ],
+        "metadata": {
+          "source": "hotpotqa",
+          "id": "5a8b57f25542995d1e6f1371",
+          "type": "comparison",
+          "level": "hard",
+          "distractor_contexts": [
+            "Ed Wood is a 1994 American biographical period comedy-drama film directed and produced by Tim Burton, and starring Johnny Depp as cult filmmaker Ed Wood.  The film concerns the period in Wood's life when he made his best-known films as well as his relationship with actor Bela Lugosi, played by Martin Landau.  Sarah Jessica Parker, Patricia Arquette, Jeffrey Jones, Lisa Marie, and Bill Murray are among the supporting cast.",
+            "Woodson is a census-designated place (CDP) in Pulaski County, Arkansas, in the United States.  Its population was 403 at the 2010 census.  It is part of the Little Rock–North Little Rock–Conway Metropolitan Statistical Area.  Woodson and its accompanying Woodson Lake and Wood Hollow are the namesake for Ed Wood Sr., a prominent plantation owner, trader, and businessman at the turn of the 20th century.  Woodson is adjacent to the Wood Plantation, the largest of the plantations own by Ed Wood Sr.",
+            "Tyler Bates (born June 5, 1965) is an American musician, music producer, and composer for films, television, and video games.  Much of his work is in the action and horror film genres, with films like \"Dawn of the Dead, 300, Sucker Punch,\" and \"John Wick.\"  He has collaborated with directors like Zack Snyder, Rob Zombie, Neil Marshall, William Friedkin, Scott Derrickson, and James Gunn.  With Gunn, he has scored every one of the director's films; including \"Guardians of the Galaxy\", which became one of the highest grossing domestic movies of 2014, and its 2017 sequel.  In addition, he is also the lead guitarist of the American rock band Marilyn Manson, and produced its albums \"The Pale Emperor\" and \"Heaven Upside Down\".",
+            "Deliver Us from Evil is a 2014 American supernatural horror film directed by Scott Derrickson and produced by Jerry Bruckheimer.  The film is officially based on a 2001 non-fiction book entitled \"Beware the Night\" by Ralph Sarchie and Lisa Collier Cool, and its marketing campaign highlighted that it was \"inspired by actual accounts\".  The film stars Eric Bana, Édgar Ramírez, Sean Harris, Olivia Munn, and Joel McHale in the main roles and was released on July 2, 2014.",
+            "Adam Collis is an American filmmaker and actor.  He attended the Duke University from 1986 to 1990 and the University of California, Los Angeles from 2007 to 2010.  He also studied cinema at the University of Southern California from 1991 to 1997.  Collis first work was the assistant director for the Scott Derrickson's short \"Love in the Ruins\" (1995).  In 1998, he played \"Crankshaft\" in Eric Koyanagi's \"Hundred Percent\".",
+            "Sinister is a 2012 supernatural horror film directed by Scott Derrickson and written by Derrickson and C. Robert Cargill.  It stars Ethan Hawke as fictional true-crime writer Ellison Oswalt who discovers a box of home movies in his attic that puts his family in danger.",
+            "Conrad Brooks (born Conrad Biedrzycki on January 3, 1931 in Baltimore, Maryland) is an American actor.  He moved to Hollywood, California in 1948 to pursue a career in acting.  He got his start in movies appearing in Ed Wood films such as \"Plan 9 from Outer Space\", \"Glen or Glenda\", and \"Jail Bait.\"  He took a break from acting during the 1960s and 1970s but due to the ongoing interest in the films of Ed Wood, he reemerged in the 1980s and has become a prolific actor.  He also has since gone on to write, produce and direct several films.",
+            "Doctor Strange is a 2016 American superhero film based on the Marvel Comics character of the same name, produced by Marvel Studios and distributed by Walt Disney Studios Motion Pictures.  It is the fourteenth film of the Marvel Cinematic Universe (MCU).  The film was directed by Scott Derrickson, who wrote it with Jon Spaihts and C. Robert Cargill, and stars Benedict Cumberbatch as Stephen Strange, along with Chiwetel Ejiofor, Rachel McAdams, Benedict Wong, Michael Stuhlbarg, Benjamin Bratt, Scott Adkins, Mads Mikkelsen, and Tilda Swinton.  In \"Doctor Strange\", surgeon Strange learns the mystic arts after a career-ending car accident."
+          ]
+        }
+      },
+      "retrieval": {
+        "retrieved_contexts": [
+          "Scott Derrickson (born July 16, 1966) is an American director, screenwriter and producer. He lives in Los Angeles, California. He is best known for directing horror films such as \"Sinister\", \"The Exorcism of Emily Rose\", and \"Deliver Us From Evil\", as well as the 2016 Marvel Cinematic Universe installment, \"Doctor Strange.\"",
+          "Ed Wood is a 1994 American biographical period comedy-drama film directed and produced by Tim Burton, and starring Johnny Depp as cult filmmaker Ed Wood. The film concerns the period in Wood's life when he made his best-known films as well as his relationship with actor Bela Lugosi, played by Martin Landau. Sarah Jessica Parker, Patricia Arquette, Jeffrey Jones, Lisa Marie, and Bill Murray are among the supporting cast.",
+          "Tyler Bates (born June 5, 1965) is an American musician, music producer, and composer for films, television, and video games. Much of his work is in the action and horror film genres, with films like \"Dawn of the Dead, 300, Sucker Punch,\" and \"John Wick.\" He has collaborated with directors like Zack Snyder, Rob Zombie, Neil Marshall, William Friedkin, Scott Derrickson, and James Gunn. With Gunn, he has scored every one of the director's films; including \"Guardians of the Galaxy\", which became one of the highest grossing domestic movies of 2014, and its 2017 sequel. In addition, he is also the lead guitarist of the American rock band Marilyn Manson, and produced its albums \"The Pale Emperor\" and \"Heaven Upside Down\".",
+          "Doctor Strange is a 2016 American superhero film based on the Marvel Comics character of the same name, produced by Marvel Studios and distributed by Walt Disney Studios Motion Pictures. It is the fourteenth film of the Marvel Cinematic Universe (MCU). The film was directed by Scott Derrickson, who wrote it with Jon Spaihts and C. Robert Cargill, and stars Benedict Cumberbatch as Stephen Strange, along with Chiwetel Ejiofor, Rachel McAdams, Benedict Wong, Michael Stuhlbarg, Benjamin Bratt, Scott Adkins, Mads Mikkelsen, and Tilda Swinton. In \"Doctor Strange\", surgeon Strange learns the mystic arts after a career-ending car accident.",
+          "Sinister is a 2012 supernatural horror film directed by Scott Derrickson and written by Derrickson and C. Robert Cargill. It stars Ethan Hawke as fictional true-crime writer Ellison Oswalt who discovers a box of home movies in his attic that puts his family in danger."
+        ],
+        "retrieved_scores": [
+          0.9999579191207886,
+          0.9998177886009216,
+          0.8929245471954346,
+          0.7505536079406738,
+          0.7035770416259766
+        ],
+        "latency_ms": 9413.571099983528
+      },
+      "generation": {
+        "generated_answer": "Scott Derrickson is an American director, screenwriter, and producer [1]. The provided documents do not specify the nationality of Ed Wood.",
+        "latency_ms": 3621.816399972886,
+        "citations_used": [
+          1
+        ]
+      },
+      "metric_scores": {}
+    },
+    {
+      "sample": {
+        "question": "What government position was held by the woman who portrayed Corliss Archer in the film Kiss and Tell?",
+        "ground_truth_answer": "Chief of Protocol",
+        "ground_truth_contexts": [
+          "Shirley Temple Black (April 23, 1928 – February 10, 2014) was an American actress, singer, dancer, businesswoman, and diplomat who was Hollywood's number one box-office draw as a child actress from 1935 to 1938.  As an adult, she was named United States ambassador to Ghana and to Czechoslovakia and also served as Chief of Protocol of the United States.",
+          "Kiss and Tell is a 1945 American comedy film starring then 17-year-old Shirley Temple as Corliss Archer.  In the film, two teenage girls cause their respective parents much concern when they start to become interested in boys.  The parents' bickering about which girl is the worse influence causes more problems than it solves."
+        ],
+        "metadata": {
+          "source": "hotpotqa",
+          "id": "5a8c7595554299585d9e36b6",
+          "type": "bridge",
+          "level": "hard",
+          "distractor_contexts": [
+            "Meet Corliss Archer, a program from radio's Golden Age, ran from January 7, 1943 to September 30, 1956.  Although it was CBS's answer to NBC's popular \"A Date with Judy\", it was also broadcast by NBC in 1948 as a summer replacement for \"The Bob Hope Show\".  From October 3, 1952 to June 26, 1953, it aired on ABC, finally returning to CBS.  Despite the program's long run, fewer than 24 episodes are known to exist.",
+            "Janet Marie Waldo (February 4, 1920 – June 12, 2016) was an American radio and voice actress.  She is best known in animation for voicing Judy Jetson, Nancy in \"Shazzan\", Penelope Pitstop, and Josie in \"Josie and the Pussycats\", and on radio as the title character in \"Meet Corliss Archer\".",
+            "Meet Corliss Archer is an American television sitcom that aired on CBS (July 13, 1951 - August 10, 1951) and in syndication via the Ziv Company from April to December 1954.  The program was an adaptation of the radio series of the same name, which was based on a series of short stories by F. Hugh Herbert.",
+            "The post of Lord High Treasurer or Lord Treasurer was an English government position and has been a British government position since the Acts of Union of 1707.  A holder of the post would be the third-highest-ranked Great Officer of State, below the Lord High Steward and the Lord High Chancellor.",
+            "A Kiss for Corliss is a 1949 American comedy film directed by Richard Wallace and written by Howard Dimsdale.  It stars Shirley Temple in her final starring role as well as her final film appearance.  It is a sequel to the 1945 film \"Kiss and Tell\".  \"A Kiss for Corliss\" was retitled \"Almost a Bride\" before release and this title appears in the title sequence.  The film was released on November 25, 1949, by United Artists.",
+            "The office of Secretary of State for Constitutional Affairs was a British Government position, created in 2003.  Certain functions of the Lord Chancellor which related to the Lord Chancellor's Department were transferred to the Secretary of State.  At a later date further functions were also transferred to the Secretary of State for Constitutional Affairs from the First Secretary of State, a position within the government held by the Deputy Prime Minister.",
+            "The Village Accountant (variously known as \"Patwari\", \"Talati\", \"Patel\", \"Karnam\", \"Adhikari\", \"Shanbogaru\",\"Patnaik\" etc.) is an administrative government position found in rural parts of the Indian sub-continent.  The office and the officeholder are called the \"patwari\" in Telangana, Bengal, North India and in Pakistan while in Sindh it is called \"tapedar\".  The position is known as the \"karnam\" in Andhra Pradesh, \"patnaik\" in Orissa or \"adhikari\" in Tamil Nadu, while it is commonly known as the \"talati\" in Karnataka, Gujarat and Maharashtra.  The position was known as the \"kulkarni\" in Northern Karnataka and Maharashtra.  The position was known as the \"shanbogaru\" in South Karnataka.",
+            "Charles Craft (May 9, 1902 – September 19, 1968) was an English-born American film and television editor.  Born in the county of Hampshire in England on May 9, 1902, Craft would enter the film industry in Hollywood in 1927.  The first film he edited was the Universal Pictures silent film, \"Painting the Town\".  Over the next 25 years, Craft would edit 90 feature-length films.  In the early 1950s he would switch his focus to the small screen, his first show being \"Racket Squad\", from 1951–53, for which he was the main editor, editing 93 of the 98 episodes.  He would work on several other series during the 1950s, including \"Meet Corliss Archer\" (1954), \"Science Fiction Theatre\" (1955–56), and \"Highway Patrol\" (1955–57).  In the late 1950s and early 1960s he was one of the main editors on \"Sea Hunt\", starring Lloyd Bridges, editing over half of the episodes.  His final film work would be editing \"Flipper's New Adventure\" (1964, the sequel to 1963's \"Flipper\".  When the film was made into a television series, Craft would begin the editing duties on that show, editing the first 28 episodes before he retired in 1966.  Craft died on September 19, 1968 in Los Angeles, California."
+          ]
+        }
+      },
+      "retrieval": {
+        "retrieved_contexts": [
+          "Kiss and Tell is a 1945 American comedy film starring then 17-year-old Shirley Temple as Corliss Archer. In the film, two teenage girls cause their respective parents much concern when they start to become interested in boys. The parents' bickering about which girl is the worse influence causes more problems than it solves.",
+          "Janet Marie Waldo (February 4, 1920 – June 12, 2016) was an American radio and voice actress. She is best known in animation for voicing Judy Jetson, Nancy in \"Shazzan\", Penelope Pitstop, and Josie in \"Josie and the Pussycats\", and on radio as the title character in \"Meet Corliss Archer\".",
+          "A Kiss for Corliss is a 1949 American comedy film directed by Richard Wallace and written by Howard Dimsdale. It stars Shirley Temple in her final starring role as well as her final film appearance. It is a sequel to the 1945 film \"Kiss and Tell\". \"A Kiss for Corliss\" was retitled \"Almost a Bride\" before release and this title appears in the title sequence. The film was released on November 25, 1949, by United Artists.",
+          "Shirley Temple Black (April 23, 1928 – February 10, 2014) was an American actress, singer, dancer, businesswoman, and diplomat who was Hollywood's number one box-office draw as a child actress from 1935 to 1938. As an adult, she was named United States ambassador to Ghana and to Czechoslovakia and also served as Chief of Protocol of the United States.",
+          "The office of Secretary of State for Constitutional Affairs was a British Government position, created in 2003. Certain functions of the Lord Chancellor which related to the Lord Chancellor's Department were transferred to the Secretary of State. At a later date further functions were also transferred to the Secretary of State for Constitutional Affairs from the First Secretary of State, a position within the government held by the Deputy Prime Minister."
+        ],
+        "retrieved_scores": [
+          0.9997742772102356,
+          0.737458348274231,
+          0.4957304000854492,
+          0.14357890188694,
+          0.06321568042039871
+        ],
+        "latency_ms": 1641.8668000260368
+      },
+      "generation": {
+        "generated_answer": "Shirley Temple, who portrayed Corliss Archer in the film \"Kiss and Tell\" [1], served as the United States ambassador to Ghana and to Czechoslovakia, and also as Chief of Protocol of the United States [4].",
+        "latency_ms": 3415.2939999476075,
+        "citations_used": [
+          1,
+          4
+        ]
+      },
+      "metric_scores": {}
+    },
+    {
+      "sample": {
+        "question": "What science fantasy young adult series, told in first person, has a set of companion books narrating the stories of enslaved worlds and alien species?",
+        "ground_truth_answer": "Animorphs",
+        "ground_truth_contexts": [
+          "The Hork-Bajir Chronicles is the second companion book to the \"Animorphs\" series, written by K. A. Applegate.  With respect to continuity within the series, it takes place before book #23, \"The Pretender\", although the events told in the story occur between the time of \"The Ellimist Chronicles\" and \"The Andalite Chronicles\".  The book is introduced by Tobias, who flies to the valley of the free Hork-Bajir, where Jara Hamee tells him the story of how the Yeerks enslaved the Hork-Bajir, and how Aldrea, an Andalite, and her companion, Dak Hamee, a Hork-Bajir, tried to save their world from the invasion.  Jara Hamee's story is narrated from the points of view of Aldrea, Dak Hamee, and Esplin 9466, alternating in similar fashion to the \"Megamorphs\" books.",
+          "Animorphs is a science fantasy series of young adult books written by Katherine Applegate and her husband Michael Grant, writing together under the name K. A. Applegate, and published by Scholastic.  It is told in first person, with all six main characters taking turns narrating the books through their own perspectives.  Horror, war, dehumanization, sanity, morality, innocence, leadership, freedom and growing up are the core themes of the series."
+        ],
+        "metadata": {
+          "source": "hotpotqa",
+          "id": "5a85ea095542994775f606a8",
+          "type": "bridge",
+          "level": "hard",
+          "distractor_contexts": [
+            "The Andre Norton Award for Young Adult Science Fiction and Fantasy is an annual award presented by the Science Fiction and Fantasy Writers of America (SFWA) to the author of the best young adult or middle grade science fiction or fantasy book published in the United States in the preceding year.  It is named to honor prolific science fiction and fantasy author Andre Norton (1912–2005), and it was established by then SFWA president Catherine Asaro and the SFWA Young Adult Fiction committee and announced on February 20, 2005.  Any published young adult or middle grade science fiction or fantasy novel is eligible for the prize, including graphic novels.  There is no limit on word count.  The award is presented along with the Nebula Awards and follows the same rules for nominations and voting; as the awards are separate, works may be simultaneously nominated for both the Andre Norton award and a Nebula Award.",
+            "Victoria Hanley is an American young adult fantasy novelist.  Her first three books, \"The Seer And The Sword\", \"The Healer's Keep\" and \"The Light Of The Oracle\" are companion books to one another.  Her newest book (released March 2012) is the sequel of a series, called \"Indigo Magic\", published by Egmont USA.  She's also published two non-fiction books through Cotton Wood Press; called \"Seize the Story: A Handbook For Teens Who Like To Write\", and \"Wild Ink: A Grownups Guide To Writing Fiction For Teens\".",
+            "Shadowshaper is a 2015 American urban fantasy young adult novel written by Daniel José Older.  It follows Sierra Santiago, an Afro-Boricua teenager living in Brooklyn.  She is the granddaughter of a \"shadowshaper\", or a person who infuses art with ancestral spirits.  As forces of gentrification invade their community and a mysterious being who appropriates their magic begins to hunt the aging shadowshapers, Sierra must learn about her artistic and spiritual heritage to foil the killer.",
+            "\"Left Behind: The Kids (stylized as LEFT BEHIND >THE KIDS<)\" is a series written by Jerry B. Jenkins, Tim LaHaye, and Chris Fabry.  The series consists of 40 short novels aimed primarily at the young adult market based on the adult series Left Behind also written by Jerry B. Jenkins.  It follows a core group of teenagers as they experience the rapture and tribulation, based on scriptures found in the Bible, and background plots introduced in the adult novels.  Like the adult series, the books were published by Tyndale House Publishing, and released over the 7 year period of 1997-2004.  The series has sold over 11 million copies worldwide.",
+            "Dozens of Square Enix companion books have been produced since 1998, when video game developer Square began to produce books that focused on artwork, developer interviews, and background information on the fictional worlds and characters in its games rather than on gameplay details.  The first series of these books was the \"Perfect Works\" series, written and published by Square subsidiary DigiCube.  They produced three books between 1998 and 1999 before the line was stopped in favor of the \"Ultimania\" (アルティマニア , Arutimania ) series, a portmanteau of ultimate and mania.  This series of books is written by Studio BentStuff, which had previously written game guides for Square for \"Final Fantasy VII\".  They were published by DigiCube until the company was dissolved in 2003.  Square merged with video game publisher Enix on April 1, 2003 to form Square Enix, which resumed publication of the companion books.",
+            "The Divide trilogy is a fantasy young adult novel trilogy by Elizabeth Kay, which takes place in an alternate universe.  The three books are \"The Divide\" (2002), \"Back to The Divide\" (2005), and \"Jinx on The Divide\" (2006).  The first novel was originally published by the small press publisher Chicken House (now a division of Scholastic), with subsequent volumes published by Scholastic, which also reprinted the first novel.  The books have been translated into French, German, Spanish, Finnish, Chinese, Japanese, Portuguese, Italian, Romanian and Dutch.  Interior illustrations are by Ted Dewan.",
+            "Science Fantasy, which also appeared under the titles Impulse and SF Impulse, was a British fantasy and science fiction magazine, launched in 1950 by Nova Publications as a companion to Nova's \"New Worlds\".  Walter Gillings was editor for the first two issues, and was then replaced by John Carnell, the editor of \"New Worlds\", as a cost-saving measure.  Carnell edited both magazines until Nova went out of business in early 1964.  The titles were acquired by Roberts & Vinter, who hired Kyril Bonfiglioli to edit \"Science Fantasy\"; Bonfiglioli changed the title to \"Impulse\" in early 1966, but the new title led to confusion with the distributors and sales fell, though the magazine remained profitable.  The title was changed again to \"SF Impulse\" for the last few issues.  \"Science Fantasy\" ceased publication the following year, when Roberts & Vinter came under financial pressure after their printer went bankrupt.",
+            "Etiquette & Espionage is a young adult steampunk novel by Gail Carriger.  It is her first young adult novel, and is set in the same universe as her bestselling Parasol Protectorate adult series."
+          ]
+        }
+      },
+      "retrieval": {
+        "retrieved_contexts": [
+          "Animorphs is a science fantasy series of young adult books written by Katherine Applegate and her husband Michael Grant, writing together under the name K. A. Applegate, and published by Scholastic. It is told in first person, with all six main characters taking turns narrating the books through their own perspectives. Horror, war, dehumanization, sanity, morality, innocence, leadership, freedom and growing up are the core themes of the series.",
+          "The Hork-Bajir Chronicles is the second companion book to the \"Animorphs\" series, written by K. A. Applegate. With respect to continuity within the series, it takes place before book #23, \"The Pretender\", although the events told in the story occur between the time of \"The Ellimist Chronicles\" and \"The Andalite Chronicles\". The book is introduced by Tobias, who flies to the valley of the free Hork-Bajir, where Jara Hamee tells him the story of how the Yeerks enslaved the Hork-Bajir, and how Aldrea, an Andalite, and her companion, Dak Hamee, a Hork-Bajir, tried to save their world from the invasion. Jara Hamee's story is narrated from the points of view of Aldrea, Dak Hamee, and Esplin 9466, alternating in similar fashion to the \"Megamorphs\" books.",
+          "Victoria Hanley is an American young adult fantasy novelist. Her first three books, \"The Seer And The Sword\", \"The Healer's Keep\" and \"The Light Of The Oracle\" are companion books to one another. Her newest book (released March 2012) is the sequel of a series, called \"Indigo Magic\", published by Egmont USA. She's also published two non-fiction books through Cotton Wood Press; called \"Seize the Story: A Handbook For Teens Who Like To Write\", and \"Wild Ink: A Grownups Guide To Writing Fiction For Teens\".",
+          "Dozens of Square Enix companion books have been produced since 1998, when video game developer Square began to produce books that focused on artwork, developer interviews, and background information on the fictional worlds and characters in its games rather than on gameplay details. The first series of these books was the \"Perfect Works\" series, written and published by Square subsidiary DigiCube. They produced three books between 1998 and 1999 before the line was stopped in favor of the \"Ultimania\" (アルティマニア , Arutimania ) series, a portmanteau of ultimate and mania. This series of books is written by Studio BentStuff, which had previously written game guides for Square for \"Final Fantasy VII\". They were published by DigiCube until the company was dissolved in 2003. Square merged with video game publisher Enix on April 1, 2003 to form Square Enix, which resumed publication of the companion books.",
+          "Etiquette & Espionage is a young adult steampunk novel by Gail Carriger. It is her first young adult novel, and is set in the same universe as her bestselling Parasol Protectorate adult series."
+        ],
+        "retrieved_scores": [
+          0.9995182752609253,
+          0.37390947341918945,
+          0.02233632653951645,
+          0.002804461168125272,
+          0.0006395521922968328
+        ],
+        "latency_ms": 2715.430299984291
+      },
+      "generation": {
+        "generated_answer": "The science fantasy young adult series described is Animorphs [1]. It is told in first person, with all six main characters taking turns narrating the books [1]. The Animorphs series has companion books, such as \"The Hork-Bajir Chronicles,\" which narrates the story of how the Yeerks enslaved the Hork-Bajir and how an Andalite named Aldrea and a Hork-Bajir named Dak Hamee tried to save their world from invasion [2].",
+        "latency_ms": 5666.785900015384,
+        "citations_used": [
+          1,
+          1,
+          2
+        ]
+      },
+      "metric_scores": {}
+    },
+    {
+      "sample": {
+        "question": "Are the Laleli Mosque and Esma Sultan Mansion located in the same neighborhood?",
+        "ground_truth_answer": "no",
+        "ground_truth_contexts": [
+          "The Laleli Mosque (Turkish: \"Laleli Camii, or Tulip Mosque\" ) is an 18th-century Ottoman imperial mosque located in Laleli, Fatih, Istanbul, Turkey.",
+          "The Esma Sultan Mansion (Turkish: \"Esma Sultan Yalısı\" ), a historical yalı (English: waterside mansion ) located at Bosphorus in Ortaköy neighborhood of Istanbul, Turkey and named after its original owner Esma Sultan, is used today as a cultural center after being redeveloped."
+        ],
+        "metadata": {
+          "source": "hotpotqa",
+          "id": "5adbf0a255429947ff17385a",
+          "type": "comparison",
+          "level": "hard",
+          "distractor_contexts": [
+            "Esma Sultan (21 March 1873 – 7 May 1899) was an Ottoman princess, the daughter of Sultan Abdülaziz and his wife Gevheri Kadın, herself the daughter of Salih Bey Svatnba.  She was the half-sister of Abdülmecid II, the last Caliph of the Muslim world.",
+            "The Great Mosque of Algiers (Arabic: الجامع الكبير‎ ‎ , \"Jemaa Kebir\") or “Djama’a al-Kebir” (meaning Great Mosque) is a mosque in Algiers, Algeria, located very close to Algiers Harbor.  An inscription on the minbar (منبر) or the pulpit testifies to fact that the mosque was built in 1097.  It is also known by several other names such as Grand Mosque d'Alger, Djamaa al-Kebir, El Kebir Mosque and Jami Masjid.  It is one of the few remaining examples of Almoravid architecture.  It is the oldest mosque in Algiers and is said to be the oldest mosque in Algeria after Sidi Okba Mosque.  It was built under sultan Ali ibn Yusuf.  Its minaret dates from 1332 (1324 in some sources) and was built by the Ziyyanid Sultan of Tlemcen.  The gallery at the outside of the mosque was built in 1840.  Its construction was a consequence of a complete reconstruction of the street by the French.",
+            "Küçük Hüseyin Pasha (1757 – 7 December 1803), also known as Tayazade Damat Küçük Hüseyin Pasha, was an Ottoman statesman and admiral who was Kapudan Pasha (Grand Admiral of the Ottoman Navy) from 11 March 1792 to 7 December 1803.  He was a \"damat\" (\"bridegroom\") to the Ottoman dynasty after he married an Ottoman princess, Esma Sultan.",
+            "Esma Sultan (17 July 1778 – 4 June 1848) was an Ottoman princess, daughter of Sultan Abdul Hamid I, sister of Sultan Mustafa IV and Sultan Mahmud II.  She was the adoptive mother of Bezmiâlem Sultan and Rahime Perestu Sultan.",
+            "The Sultan Ahmed Mosque or Sultan Ahmet Mosque (Turkish: \"Sultan Ahmet Camii\" ) is a historic mosque located in Istanbul, Turkey.  A popular tourist site, the Sultan Ahmed Mosque continues to function as a mosque today; men still kneel in prayer on the mosque's lush red carpet after the call to prayer.  The Blue Mosque, as it is popularly known, was constructed between 1609 and 1616 during the rule of Ahmed I.  Its Külliye contains Ahmed's tomb, a madrasah and a hospice.  Hand-painted blue tiles adorn the mosque’s interior walls, and at night the mosque is bathed in blue as lights frame the mosque’s five main domes, six minarets and eight secondary domes.  It sits next to the Hagia Sophia, another popular tourist site.",
+            "Esma Sultan is the name of three daughters of three Ottoman Sultans:",
+            "Gevheri Kadın (8 July 1856 – 6 September 1884) was the fifth wife of 32nd Ottoman Sultan Abdülaziz.  She was the mother of Şehzade Mehmed Seyfeddin and Esma Sultan of the Ottoman Empire.",
+            "Esma Sultan (14 March 1726 – 13 August 1788) was an Ottoman princess, daughter of Sultan Ahmed III and his consort Zeynep Kadın.  She was the half-sister of Sultan Mustafa III and Abdul Hamid I."
+          ]
+        }
+      },
+      "retrieval": {
+        "retrieved_contexts": [
+          "The Esma Sultan Mansion (Turkish: \"Esma Sultan Yalısı\" ), a historical yalı (English: waterside mansion ) located at Bosphorus in Ortaköy neighborhood of Istanbul, Turkey and named after its original owner Esma Sultan, is used today as a cultural center after being redeveloped.",
+          "The Laleli Mosque (Turkish: \"Laleli Camii, or Tulip Mosque\" ) is an 18th-century Ottoman imperial mosque located in Laleli, Fatih, Istanbul, Turkey.",
+          "Esma Sultan (17 July 1778 – 4 June 1848) was an Ottoman princess, daughter of Sultan Abdul Hamid I, sister of Sultan Mustafa IV and Sultan Mahmud II. She was the adoptive mother of Bezmiâlem Sultan and Rahime Perestu Sultan.",
+          "Esma Sultan (14 March 1726 – 13 August 1788) was an Ottoman princess, daughter of Sultan Ahmed III and his consort Zeynep Kadın. She was the half-sister of Sultan Mustafa III and Abdul Hamid I.",
+          "Esma Sultan (21 March 1873 – 7 May 1899) was an Ottoman princess, the daughter of Sultan Abdülaziz and his wife Gevheri Kadın, herself the daughter of Salih Bey Svatnba. She was the half-sister of Abdülmecid II, the last Caliph of the Muslim world."
+        ],
+        "retrieved_scores": [
+          0.9999663829803467,
+          0.999779999256134,
+          0.9198101758956909,
+          0.8942444920539856,
+          0.8339170813560486
+        ],
+        "latency_ms": 2831.3435999443755
+      },
+      "generation": {
+        "generated_answer": "No, the Laleli Mosque and Esma Sultan Mansion are not located in the same neighborhood. The Laleli Mosque is located in Laleli, Fatih, Istanbul, Turkey [2], while the Esma Sultan Mansion is located in the Ortaköy neighborhood of Istanbul, Turkey [1].",
+        "latency_ms": 3262.868499965407,
+        "citations_used": [
+          2,
+          1
+        ]
+      },
+      "metric_scores": {}
+    },
+    {
+      "sample": {
+        "question": "The director of the romantic comedy \"Big Stone Gap\" is based in what New York city?",
+        "ground_truth_answer": "Greenwich Village, New York City",
+        "ground_truth_contexts": [
+          "Adriana Trigiani is an Italian American best-selling author of sixteen books, television writer, film director, and entrepreneur based in Greenwich Village, New York City.  Trigiani has published a novel a year since 2000.",
+          "Big Stone Gap is a 2014 American drama romantic comedy film written and directed by Adriana Trigiani and produced by Donna Gigliotti for Altar Identity Studios, a subsidiary of Media Society.  Based on Trigiani's 2000 best-selling novel of the same name, the story is set in the actual Virginia town of Big Stone Gap circa 1970s.  The film had its world premiere at the Virginia Film Festival on November 6, 2014."
+        ],
+        "metadata": {
+          "source": "hotpotqa",
+          "id": "5a8e3ea95542995a26add48d",
+          "type": "bridge",
+          "level": "hard",
+          "distractor_contexts": [
+            "Just Another Romantic Wrestling Comedy is a 2006 film starring April Hunter and Joanie Laurer.  This Romantic comedy film was premiered at New Jersey and New York City on December 1, 2006 and was released on DVD in the United States and the United Kingdom on April 17, 2007.  After the film's DVD release \"Just Another Romantic Wrestling Comedy\" won an \"Honorable Mention\" award at the New Jersey International Festival awards.  The release is being handled by \"Victory Multimedia\".",
+            "Kingston Morning is Dave Eggar's 4th solo release recorded in Brooklyn, New York; Kingston, Jamaica; and Big Stone Gap, Virginia; and released by Domo Records.  \"Itsbynne Reel\" was nominated at the 53rd Grammy Awards for \"Best Instrumental Arrangement\".",
+            "Nola is a 2003 American romantic comedy film written and directed by Alan Hruska.  It depicts the struggle of a young woman trying to survive in New York City while looking for her birth father.  It premiered in New York City on July 23, 2004.",
+            "Great Eastern Conventions, Inc. was an entertainment company which produced comic book conventions, most actively during the years 1987-1996.  In New York City, the Great Eastern shows filled the gap between the mid-1980s demise of the annual Comic Art Convention and Creation Conventions, and the establishment of promoter Michael Carbonaro's annual Big Apple Comic Con in 1996.  From 1993–1995, Great Eastern hosted two New York City shows annually at the Jacob K. Javits Convention Center.  Great Eastern also ran shows in New Jersey, Pennsylvania, Massachusetts, Oregon, Minnesota, and Texas.",
+            "The New York Society of Model Engineers (NYSME) was originally incorporated in 1926 in New York City.  There are published records that show the Society existed as early as 1905.  In its early years, the organization moved to and from various locations throughout Manhattan.  AT that time it was basically a gentlemen's club of members who were interested in all types of model building.  In 1926 the Society was formalized and incorporated under the laws of the State of New York.  This was done so that the Society could obtain a permit to use a lake in New York City's Central Park for model motor boat races.  It was also at this time that the Society began construction of its first Model Railroad \" The Union Connecting\".  Over the next twenty years, the Society moved from its original location to two other locations.  Each move doubling the size of the previous location and of course doubling the size of the model train layout.  During WW2 many Society members were called to service in the Armed Forces.  Regrettably, the largest of the layouts had to be dismantled.  The location of the layout in the basement of the Astor Building was requested for the war effort.  The dismantling was done with care, with salvaged usable materials going into scrap drives for the War effort.  As members returned after the War a new location was searched for.  This led to an invitation from the Lackawanna Railroad to move into their Passenger Terminal in Hoboken,NJ.  They had the space for what would become the largest model railroad in the world at that time.  The space?  Only the ornate waiting room for the recently discontinued ferry boats to 23rd Street in New York City.  Here the layout was built.  It was based on the Lackawanna Railroad from Hoboken to Scranton, Pa.  It was magnificent; from the scale model of the Hoboken Terminal to the soaring Delaware Water Gap.  During the early-1950s the organization moved to its current location in Carlstadt, New Jersey.",
+            "Clinton is a city in Big Stone County, Minnesota, United States.  The city was named for New York Governor DeWitt Clinton.  The population was 449 at the 2010 census.",
+            "Hamish & Andy's Gap Year is a Logie Award winning comedy series following Hamish Blake and Andy Lee, a pair of Australian comedians, on their trips to various international locations.  The first season saw the boys visiting America for ten episodes and broadcast their show weekly from New York City.  In its second season in 2012, the show was titled \"Hamish & Andy's Euro Gap Year\" and seven episodes were broadcast from The Lord Stanley, a disused pub in East London, England.  The third season known as \"Hamish and Andy's Gap Year Asia\" in 2013 was broadcast from a bar in Bangkok, Thailand, called 'The Raintree'.",
+            "I Love NY, also known as I Love New Year, is an Indian romantic comedy film directed by Radhika Rao and Vinay Sapru starring Sunny Deol and Kangana Ranaut in lead roles.  The film is produced by Bhushan Kumar and Krishan Kumar under the banner of Super Cassettes Industries Ltd.  The film was extensively shot in Mumbai, New York City and Bangkok.  The main plot was taken from the Russian romantic comedy \"The Irony of Fate\" (1976).  After numerous delays, the film released on 10 July 2015."
+          ]
+        }
+      },
+      "retrieval": {
+        "retrieved_contexts": [
+          "Big Stone Gap is a 2014 American drama romantic comedy film written and directed by Adriana Trigiani and produced by Donna Gigliotti for Altar Identity Studios, a subsidiary of Media Society. Based on Trigiani's 2000 best-selling novel of the same name, the story is set in the actual Virginia town of Big Stone Gap circa 1970s. The film had its world premiere at the Virginia Film Festival on November 6, 2014.",
+          "Adriana Trigiani is an Italian American best-selling author of sixteen books, television writer, film director, and entrepreneur based in Greenwich Village, New York City. Trigiani has published a novel a year since 2000.",
+          "Kingston Morning is Dave Eggar's 4th solo release recorded in Brooklyn, New York; Kingston, Jamaica; and Big Stone Gap, Virginia; and released by Domo Records. \"Itsbynne Reel\" was nominated at the 53rd Grammy Awards for \"Best Instrumental Arrangement\".",
+          "I Love NY, also known as I Love New Year, is an Indian romantic comedy film directed by Radhika Rao and Vinay Sapru starring Sunny Deol and Kangana Ranaut in lead roles. The film is produced by Bhushan Kumar and Krishan Kumar under the banner of Super Cassettes Industries Ltd. The film was extensively shot in Mumbai, New York City and Bangkok. The main plot was taken from the Russian romantic comedy \"The Irony of Fate\" (1976). After numerous delays, the film released on 10 July 2015.",
+          "Nola is a 2003 American romantic comedy film written and directed by Alan Hruska. It depicts the struggle of a young woman trying to survive in New York City while looking for her birth father. It premiered in New York City on July 23, 2004."
+        ],
+        "retrieved_scores": [
+          0.9993793964385986,
+          0.8800805807113647,
+          0.34990549087524414,
+          0.2236597090959549,
+          0.0621768943965435
+        ],
+        "latency_ms": 4379.002199973911
+      },
+      "generation": {
+        "generated_answer": "The director of the romantic comedy \"Big Stone Gap,\" Adriana Trigiani, is based in Greenwich Village, New York City [1, 2].",
+        "latency_ms": 3448.4848000574857,
+        "citations_used": []
+      },
+      "metric_scores": {}
+    },
+    {
+      "sample": {
+        "question": "2014 S/S is the debut album of a South Korean boy group that was formed by who?",
+        "ground_truth_answer": "YG Entertainment",
+        "ground_truth_contexts": [
+          "2014 S/S is the debut album of South Korean group WINNER.  It was released on August 12, 2014 by the group's record label, YG Entertainment.  The members were credited for writing the lyrics and composing the majority of the album's songs.",
+          "Winner (Hangul: 위너), often stylized as WINNER, is a South Korean boy group formed in 2013 by YG Entertainment and debuted in 2014.  It currently consists of four members, Jinwoo, Seunghoon, Mino and Seungyoon.  Originally a five-piece group with Taehyun, who later departed from the group in November 2016."
+        ],
+        "metadata": {
+          "source": "hotpotqa",
+          "id": "5abd94525542992ac4f382d2",
+          "type": "bridge",
+          "level": "hard",
+          "distractor_contexts": [
+            "South Korean boy group Shinee have received several awards and nominations for their music work.  The group was formed by S.M. Entertainment in 2008 and released their first full-length album, \"The Shinee World\", on August 28, 2008, which won the Newcomer Album of the Year at the 23rd Golden Disk Awards.  The first single released from the album was \"Sanso Gateun Neo (Love Like Oxygen)\" and won first place on \"M Countdown\" on September 18, 2008 making it the group's first win on Korean music shows since debut.  Their second album \"Lucifer\" (2010) produced two singles, \"Lucifer\" and \"Hello\".  For their outstanding choreography the group was nominated for the Best Dance Performance Award at the Mnet Asian Music Awards in 2010. \" Lucifer\" also won the Disk Bonsang Award at the 25th Golden Disk Awards as well as the Popularity Award.  On March 21, 2012 the group released their fourth EP \"Sherlock\" for which the group was awarded another Disk Bonsang Award at the 27th Golden Disc Awards and the Bonsang Award at the 22nd Seoul Music Award.  Also following the success of the lead single it was also nominated for Song of the Year at the 2012 Mnet Asian Music Awards.",
+            "Cho Kyu-hyun (born February 3, 1988), better known mononymously as Kyuhyun, is a South Korean singer and musical theatre actor.  He is best known as a member of South Korean boy group Super Junior, its sub-groups Super Junior-K.R.Y., Super Junior-M and a former member of the South Korean ballad group S.M. the Ballad.  He is one of the first four Korean artists to appear on Chinese postage stamps.",
+            "History (Korean: 히스토리 ) was a South Korean boy group formed by LOEN Entertainment in 2013.  They debuted on April 26, 2013 with \"Dreamer\", featuring the narration of their labelmate IU.  They were LOEN Entertainment's first boy group.  They officially disbanded on May 12, 2017.",
+            "Madtown (Hangul: 매드타운 ), often stylized as MADTOWN, is a South Korean boy group formed in 2014 by J. Tune Camp.  The group consists of Moos, Daewon, Lee Geon, Jota, Heo Jun, Buffy and H.O.  Their debut album, \"Mad Town\", was released on October 6, 2014.  Two of the members, Moos and Buffy, originally debuted as the hip hop duo \"Pro C\" in 2013.  Madtown's official fan-base name is Mad-people.  Starting December 22, 2016, MADTOWN's contract was sold to GNI Entertainment after J. Tune Camp closed.",
+            "Ravi is a South Korean rapper, songwriter and producer, signed under Jellyfish Entertainment.  He began his career as a rapper in 2012 in the South Korean boy group VIXX, and later formed VIXX's first sub-unit VIXX LR with band mate Leo in 2015.  Ravi's songwriting career began with his participation in co-writing VIXX's debut single \"Super Hero\".  As of November 2016 with the release of \"VIXX 2016 Conception Ker\", Ravi has contributed to the writing and composing of over 46 songs recorded by VIXX.  Ravi is widely known for his participation of composing and songwriting rap portions for the group as well as lyrics and music.",
+            "SF9 (Korean: 에스에프나인 ; shortened from Sensational Feeling 9) is a South Korean boy group formed by FNC Entertainment.  SF9 is the company's first dance boy group to ever debut.  SF9 debuted on October 5, 2016 with the release of their first single album \"Feeling Sensation\".",
+            "This is the discography of South Korean boy group Seventeen.  Seventeen (Hangul: 세븐틴), also stylized as SEVENTEEN or SVT, is a South Korean boy group formed by Pledis Entertainment in 2015.  They have released one album and four EPs.",
+            "The following is the discography of South Korean boy group BTS.  The group debuted in South Korea on June 2013 with single album, \"2 Cool 4 Skool\", at number 5 on South Korean Week 31 Gaon Weekly Chart.  They made a comeback on September 2013 with an extended play, \"O!RUL8,2? \", which peaked at number 4 on Week 38 Gaon Weekly Chart.  BTS then released their second extended play, \"Skool Luv Affair\", in February 2014, where it charted at number 1 on Week 18 Gaon Weekly Chart.  This also marked the first time their album charted on international charts, Billboard World Albums and Japan's Oricon Chart, specifically.  A repackaged version of the album, \"Skool Luv Affair Special Addition\" which was released in May 2014, also peaked at number 1 on Week 21 Gaon Weekly Chart."
+          ]
+        }
+      },
+      "retrieval": {
+        "retrieved_contexts": [
+          "2014 S/S is the debut album of South Korean group WINNER. It was released on August 12, 2014 by the group's record label, YG Entertainment. The members were credited for writing the lyrics and composing the majority of the album's songs.",
+          "Winner (Hangul: 위너), often stylized as WINNER, is a South Korean boy group formed in 2013 by YG Entertainment and debuted in 2014. It currently consists of four members, Jinwoo, Seunghoon, Mino and Seungyoon. Originally a five-piece group with Taehyun, who later departed from the group in November 2016.",
+          "Madtown (Hangul: 매드타운 ), often stylized as MADTOWN, is a South Korean boy group formed in 2014 by J. Tune Camp. The group consists of Moos, Daewon, Lee Geon, Jota, Heo Jun, Buffy and H.O. Their debut album, \"Mad Town\", was released on October 6, 2014. Two of the members, Moos and Buffy, originally debuted as the hip hop duo \"Pro C\" in 2013. Madtown's official fan-base name is Mad-people. Starting December 22, 2016, MADTOWN's contract was sold to GNI Entertainment after J. Tune Camp closed.",
+          "SF9 (Korean: 에스에프나인 ; shortened from Sensational Feeling 9) is a South Korean boy group formed by FNC Entertainment. SF9 is the company's first dance boy group to ever debut. SF9 debuted on October 5, 2016 with the release of their first single album \"Feeling Sensation\".",
+          "History (Korean: 히스토리 ) was a South Korean boy group formed by LOEN Entertainment in 2013. They debuted on April 26, 2013 with \"Dreamer\", featuring the narration of their labelmate IU. They were LOEN Entertainment's first boy group. They officially disbanded on May 12, 2017."
+        ],
+        "retrieved_scores": [
+          0.9999665021896362,
+          0.9977097511291504,
+          0.9627007842063904,
+          0.9454002976417542,
+          0.9205524921417236
+        ],
+        "latency_ms": 3121.641100035049
+      },
+      "generation": {
+        "generated_answer": "\"2014 S/S\" is the debut album of the South Korean group WINNER [1]. WINNER was formed by YG Entertainment [2].",
+        "latency_ms": 3616.758599993773,
+        "citations_used": [
+          1,
+          2
+        ]
+      },
+      "metric_scores": {}
+    },
+    {
+      "sample": {
+        "question": "Who was known by his stage name Aladin and helped organizations improve their performance as a consultant?",
+        "ground_truth_answer": "Eenasul Fateh",
+        "ground_truth_contexts": [
+          "Eenasul Fateh (Bengali: ঈনাসুল ফাতেহ ; born 3 April 1959), also known by his stage name Aladin, is a Bangladeshi-British cultural practitioner, magician, live artist and former international management consultant.",
+          "Management consulting is the practice of helping organizations to improve their performance, operating primarily through the analysis of existing organizational problems and the development of plans for improvement.  Organizations may draw upon the services of management consultants for a number of reasons, including gaining external (and presumably objective) advice and access to the consultants' specialized expertise."
+        ],
+        "metadata": {
+          "source": "hotpotqa",
+          "id": "5a85b2d95542997b5ce40028",
+          "type": "bridge",
+          "level": "hard",
+          "distractor_contexts": [
+            "James P. Comer (born James Pierpont Comer, September 25, 1934 in East Chicago, Indiana) is currently the Maurice Falk Professor of Child Psychiatry at the Yale Child Study Center and has been since 1976.  He is also an associate dean at the Yale School of Medicine.  As one of the world's leading child psychiatrists, he is best known for his efforts to improve the scholastic performance of children from lower-income and minority backgrounds which led to the founding of the Comer School Development Program in 1968.  His program has been used in more than 600 schools in eighty-two school districts.  He is the author of ten books, including the autobiographical \"Maggie’s American Dream: The Life and Times of a Black Family\", 1988; \"Leave No Child Behind: Preparing Today's Youth for Tomorrow's World\", 2004; and his most recent book, \"What I Learned in School: Reflections on Race, Child Development, and School Reform\", 2009.  He has also written more than 150 articles for Parents (magazine) and more than 300 articles on children's health and development and race relations.  Dr. Comer has also served as a consultant to the Children's Television Workshop (Sesame Workshop) which produces Sesame Street and The Electric Company (1971 TV series).  He is a co-founder and past president of the Black Psychiatrists of America and has served on the board of several universities, foundations, and corporations.  He has also lectured and consulted widely not only across the United States at different universities, medical schools, and scientific associations, but also around the world in places such as London, Paris, Tokyo, Dakar, Senegal and Sydney, Australia.  For his work and scholarship, Dr. Comer has been awarded 47 honorary degrees and has been recognized by numerous organizations.",
+            "Clifford Smith (born April 1, 1971), better known by his stage name Method Man, is an American rapper, record producer, and actor.  He is known as a member of the East Coast hip hop collective Wu-Tang Clan.  He is also one half of the hip hop duo Method Man & Redman.  He took his stage name from the 1979 film \"Method Man\".  In 1996, he won a Grammy Award for Best Rap Performance by a Duo or Group, for \"I'll Be There for You/You're All I Need to Get By\", with American R&B singer-songwriter Mary J. Blige.",
+            "Indriati Gerald Bernardina (born 9 June 1942), also known by her stage name Indriati Iskak and after marriage as Indri Makki, is an Indonesian actress turned psychologist and marketer.  Born in Surabaya, she entered the Indonesian film industry and soared to popularity with Usmar Ismail's commercially successful \"Tiga Dara\" (1957).  She appeared in eight further films and established her own girl group before retiring from cinema in 1963.  She graduated from the University of Indonesia with a degree in psychology in 1968, and has taught the subject at the .  For twenty-six years she worked with Unilever, and since 1994 she has been a marketing consultant with Makki Makki.",
+            "Mick Batyske (known by his stage name Mick, sometimes styled as MICK, and formerly Mick Boogie) is an American DJ and entrepreneur.  He is an A-list DJ and spun private parties for celebrities including Kanye West, LeBron James, Jay-Z and Will Smith.  In addition to his mix tape releases, he has performed in venues internationally, including New York City, Dubai, Tokyo, Las Vegas, and Los Angeles.  As an entrepreneur, he has invested in various start-up companies including Localeur, in which he is also an advisor and consultant.",
+            "Christopher Nicholas Sarantakos (born December 19, 1967), known by the stage name Criss Angel, is an American magician, illusionist and musician.  Angel began his career in New York City, before moving his base of operations to the Las Vegas Valley.  He is known for starring in the television and stage show \"Criss Angel Mindfreak\" and his previous live performance illusion show \"Criss Angel Believe\" in collaboration with \"Cirque du Soleil\" at the Luxor casino in Las Vegas.  The show generated $150 million in tourist revenue to Las Vegas in 2010, but has since been replaced by \"Mindfreak LIVE\" on 11 May 2016 (the show is partly produced by Cirque, however the directive rights are entirely with Criss Angel).  He also starred in the television series \"Criss Angel BeLIEve\" on Spike TV, the reality-competition television show \"Phenomenon\" on NBC, and the 2014 stage show \"Criss Angel Magicjam\".",
+            "Lanre Dabiri (born May 23, 1977), better known by his stage name Eldee, stylized as eLDee, is a former Nigerian-American rapper, singer, and record producer but now an IT Consultant based in the United_States \"Lanre\" is a diminutive for the Yoruba name \"Olanrewaju\" (which translates to \"\"Wealth is moving forward\"\").  eLDee has a masters degree in Architecture from the University of Lagos, Nigeria.  He is an original member of the band Trybesmen, which was started in 1998 with rappers KB and Freestyle.  He hails from Lagos Island in Lagos State of Nigeria.",
+            "Sylvester Samuels better known by his stage name Lil Ru, is an American rapper from Ridgeway, South Carolina currently signed to Def Jam Recordings.  His debut album, 21 & Up was released on August 25, 2009.  The Ridgeway native was 16 when he made his professional foray into the music business.  Inspired by New Orleans’ innovative Cash Money Crew, Ru began making a name for himself on his local music scene, doing live shows and pressing up his own CDs.  His hard-hitting lyrics and entrepreneurial spirit caught the attention of fellow South Carolinian Angie Stone.  Shortly after the neo-soul songstress helped him secure a deal with Elektra Records, Ru found himself unsigned again, among the artists lost in the shuffle after the label merged with Atlantic Records.  Music fans first heard him on his 2001 debut single Will Destroy.  He then released his 2002 follow up, Shawty What You Doin’.  Both songs reached the Billboard R&B/Hip-Hop charts and helped land him at his next label home, Capitol Records.",
+            "Amaruk Caizapanta Anchapacxi (Quito, January 30, 1970), whose stage name is Amaruk Kayshapanta.  Is an Ecuadorian multidisciplinary artist, known in Spain and Ecuador for his artistic and humanistic trajectory in favor of the Human Rights of Immigration in Spain.  Named as the \"Chasqui de Oro\" (In the VI Race and hike \"El Chasqui-NY).  Received the award as \"Cultural Ambassador of the Andes-Mushuk Nina 2014 (Third Edition)\", for rescuing the traditions and culture of the Andes for the Indigenous Organizations of Peru, Bolivia based in Ecuador.  He obtained the prize \"100 Latinos Madrid\", by the Community of Madrid, in recognition of their non-profit altruistic and cultural work for the benefit of foreign immigrants in Spain.  Known for his role in the TV series \"Hospital Central\" in which he gave life to the character \"Edgar\".  His Philosophy \"Amawtica Amarukiana Desestructuration\" brings to the contemporary world the Philosophical study of the Andean Worldview, a spiritual legacy of transformation and balance for the awakening of a collective conscience."
+          ]
+        }
+      },
+      "retrieval": {
+        "retrieved_contexts": [
+          "Eenasul Fateh (Bengali: ঈনাসুল ফাতেহ ; born 3 April 1959), also known by his stage name Aladin, is a Bangladeshi-British cultural practitioner, magician, live artist and former international management consultant.",
+          "Management consulting is the practice of helping organizations to improve their performance, operating primarily through the analysis of existing organizational problems and the development of plans for improvement. Organizations may draw upon the services of management consultants for a number of reasons, including gaining external (and presumably objective) advice and access to the consultants' specialized expertise.",
+          "James P. Comer (born James Pierpont Comer, September 25, 1934 in East Chicago, Indiana) is currently the Maurice Falk Professor of Child Psychiatry at the Yale Child Study Center and has been since 1976. He is also an associate dean at the Yale School of Medicine. As one of the world's leading child psychiatrists, he is best known for his efforts to improve the scholastic performance of children from lower-income and minority backgrounds which led to the founding of the Comer School Development Program in 1968. His program has been used in more than 600 schools in eighty-two school districts. He is the author of ten books, including the autobiographical \"Maggie’s American Dream: The Life and Times of a Black Family\", 1988; \"Leave No Child Behind: Preparing Today's Youth for Tomorrow's World\", 2004; and his most recent book, \"What I Learned in School: Reflections on Race, Child Development, and School Reform\", 2009. He has also written more than 150 articles for Parents (magazine) and more than 300 articles on children's health and development and race relations. Dr. Comer has also served as a consultant to the Children's Television Workshop (Sesame Workshop) which produces Sesame Street and The Electric Company (1971 TV series). He is a co-founder and past president of the Black Psychiatrists of America and has served on the board of several universities, foundations, and corporations. He has also lectured and consulted widely not only across the United States at different universities, medical schools, and scientific associations, but also around the world in places such a",
+          "Mick Batyske (known by his stage name Mick, sometimes styled as MICK, and formerly Mick Boogie) is an American DJ and entrepreneur. He is an A-list DJ and spun private parties for celebrities including Kanye West, LeBron James, Jay-Z and Will Smith. In addition to his mix tape releases, he has performed in venues internationally, including New York City, Dubai, Tokyo, Las Vegas, and Los Angeles. As an entrepreneur, he has invested in various start-up companies including Localeur, in which he is also an advisor and consultant.",
+          "Clifford Smith (born April 1, 1971), better known by his stage name Method Man, is an American rapper, record producer, and actor. He is known as a member of the East Coast hip hop collective Wu-Tang Clan. He is also one half of the hip hop duo Method Man & Redman. He took his stage name from the 1979 film \"Method Man\". In 1996, he won a Grammy Award for Best Rap Performance by a Duo or Group, for \"I'll Be There for You/You're All I Need to Get By\", with American R&B singer-songwriter Mary J. Blige."
+        ],
+        "retrieved_scores": [
+          0.9995018243789673,
+          0.9893808364868164,
+          0.0067727877758443356,
+          0.004621109925210476,
+          0.0010038255713880062
+        ],
+        "latency_ms": 4476.21699993033
+      },
+      "generation": {
+        "generated_answer": "Eenasul Fateh, also known by his stage name Aladin, was a former international management consultant [1]. Management consulting involves helping organizations improve their performance [2].",
+        "latency_ms": 19619.848300004378,
+        "citations_used": [
+          1,
+          2
+        ]
+      },
+      "metric_scores": {}
+    },
+    {
+      "sample": {
+        "question": "The arena where the Lewiston Maineiacs played their home games can seat how many people?",
+        "ground_truth_answer": "3,677 seated",
+        "ground_truth_contexts": [
+          "The Androscoggin Bank Colisée (formerly Central Maine Civic Center and Lewiston Colisee) is a 4,000 capacity (3,677 seated) multi-purpose arena, in Lewiston, Maine, that opened in 1958.  In 1965 it was the location of the World Heavyweight Title fight during which one of the most famous sports photographs of the century was taken of Muhammed Ali standing over Sonny Liston.",
+          "The Lewiston Maineiacs were a junior ice hockey team of the Quebec Major Junior Hockey League based in Lewiston, Maine.  The team played its home games at the Androscoggin Bank Colisée.  They were the second QMJHL team in the United States, and the only one to play a full season.  They won the President's Cup in 2007."
+        ],
+        "metadata": {
+          "source": "hotpotqa",
+          "id": "5a87ab905542996e4f3088c1",
+          "type": "bridge",
+          "level": "hard",
+          "distractor_contexts": [
+            "The Billings Bulls were a junior ice hockey organization based in Billings, Montana.  They most recently played home games at the 550-seat Centennial Ice Arena and due to the arena's small size, the Bulls frequently sold out games.  They previously played their home games in the Metrapark which had a max capacity of 9,000 for hockey games.  However, a negotiating dispute with arena officials and local county commissioners resulted in the team losing its lease.",
+            "The Robins Center is a 7,201-seat multi-purpose arena in Richmond, Virginia.  Opened in 1972, the arena is home to the University of Richmond Spiders basketball.  It hosted the ECAC South (now known as the Colonial Athletic Association) men's basketball tournament in 1983.  It is named for E. Claiborne Robins Sr, class of 1931, who, along with his family, have been leading benefactors for the school.  The opening of the Robins Center returning Spider basketball to an on-campus facility for the first time since the mid-1940s when it outgrew Millhiser Gymnasium.  In the intervening decades, the Spiders played home games in numerous locations around the Richmond area, including the Richmond Coliseum (1971–1972), the Richmond Arena (1954–1971), the Benedictine High School gymnasium (1951–1954), Grays' Armory (1950–1951) and Blues' Armory (1947–1950).  The Robins Center arena serves as the location of the University of Richmond's commencement exercises and hosted a 1992 Presidential debate involving Bill Clinton, George H. W. Bush, and Ross Perot.",
+            "The 2011–12 QMJHL season was the 43rd season of the Quebec Major Junior Hockey League (QMJHL).  The regular season, which consisted of seventeen teams playing 68 games each, began in September 2011 and ended in March 2012.  This season was Blainville-Boisbriand Armada's first season in the league, as the team relocated to Boisbriand from Verdun where they played as the Montreal Junior Hockey Club from 2008 to 2011.  The league lost one of his charter teams when the Lewiston Maineiacs folded during after the previous season, the QMJHL later announce an expansion team to Sherbrooke for the 2012-2013 season.  In the playoffs, the Saint John Sea Dogs became the seventh team in league history to capture consecutive President's Cup championships.",
+            "Loan modification is the systematic alteration of mortgage loan agreements that help those having problems making the payments by reducing interest rates, monthly payments or principal balances.  Lending institutions could make one or more of these changes to relieve financial pressure on borrowers to prevent the condition of foreclosure.  Loan modifications have been practiced in the United States since The 2008 Crash Of The Housing Market from Washington Mutual, Chase Home Finance, Chase, JP Morgan & Chase, other contributors like MER's.  Crimes of Mortgage ad Real Estate Staff had long assisted nd finally the squeaky will could not continue as their deviant practices broke the state and crashed.  Modification owners either ordered by The United States Department of Housing, The United States IRS or President Obamas letters from Note Holders came to those various departments asking for the Democratic process to help them keep their homes and protection them from explosion.  Thus the birth of Modifications.  It is yet to date for clarity how theses enforcements came into existence and except b whom, but t is certain that note holders form the Midwest reached out in the Democratic Process for assistance.  FBI Mortgage Fraud Department came into existence.  Modifications HMAP HARP were also birthed to help note holders get Justice through reduced mortgage by making terms legal.  Modification of mortgage terms was introduced by IRS staff addressing the crisis called the HAMP TEAMS that went across the United States desiring the new products to assist homeowners that were victims of predatory lending practices, unethical staff, brokers, attorneys and lenders that contributed to the crash.  Modification were a fix to the crash as litigation has ensued as the lenders reorganized and renamed the lending institutions and government agencies are to closely monitor them.  Prior to modifications loan holders that experiences crisis would use Loan assumptions and Loan transfers to keep the note in the 1930s.  During the Great Depression, loan transfers, loan assumption, and loan bail out programs took place at the state level in an effort to reduce levels of loan foreclosures while the Federal Bureau of Investigation, Federal Trade Commission, Comptroller, the United States Government and State Government responded to lending institution violations of law in these arenas by setting public court records that are legal precedence of such illegal actions.  The legal precedents and reporting agencies were created to address the violations of laws to consumers while the Modifications were created to assist the consumers that are victims of predatory lending practices.  During the so-called \"Great Recession\" of the early 21st century, loan modification became a matter of national policy, with various actions taken to alter mortgage loan terms to prevent further economic destabilization.  Due to absorbent personal profits nothing has been done to educate Homeowners or Creditors that this money from equity, escrow is truly theirs the Loan Note Holder and it is their monetary rights as the real prize and reason for the Housing Crash was the profit n obtaining the mortgage holders Escrow.  The Escrow and Equity that is accursed form the Note Holders payments various staff through the United States claimed as recorded and cashed by all staff in real-estate from local residential Tax Assessing Staff, Real Estate Staff, Ordinance Staff, Police Staff, Brokers, attorneys, lending institutional staff but typically Attorneys who are also typically the owners or Rental properties that are trained through Bankruptcies'.  that collect the Escrow that is rightfully the Homeowners but because most Homeowners are unaware of what money is due them and how they can loose their escrow.  Most Creditors are unaware that as the note holder that the Note Holder are due a annual or semi annual equity check and again bank or other lending and or legal intuitions staff claim this monies instead.  This money Note Holders were unaware of is the prize of real estate and the cause of the Real Estate Crash of 2008 where Lending Institutions provided mortgages to people years prior they know they would eventually loose with Loan holders purchasing Balloon Mortgages lending product that is designed to make fast money off the note holder whom is always typically unaware of their escrow, equity and that are further victimized by conferences and books on HOW TO MAKE MONEY IN REAL STATE - when in fact the money is the Note Holder.  The key of the crash was not the House, but the loan product used and the interest and money that was accrued form the note holders that staff too immorally.  The immoral and illegal actions of predatory lending station and their staff began with the inception of balloon mortgages although illegal activity has always existed in the arena, yet the crash created \"Watch Dog\" like HAMP TEAM, IRS, COMPTROLLER< Federal Trade Commission Consumer Protection Bureau, FBI, CIA, Local Police Department, ICE ( The FBI online Computer crime division receives and investigates computer crimes that record keeping staff from title companies, lending institutional staff, legal staff and others created fraudulent documents to change payments and billing of note holders to obtain the money note holders are typically unaware of) and other watch dog agencies came into existence to examine if houses were purchased through a processed check at Government Debited office as many obtained free homes illegally.  Many were incarcerated for such illegal actions.  Modifications fixed the Notes to proper lower interest, escrow, tax fees that staff typically raised for no reason.  Many people from various arenas involved in reals estate have been incarcerated for these actions as well as other illegal actions like charging for a modification.  Additionally Modifications were also made to address the falsifications such as inappropriate mortgage charges, filing of fraudulently deeds, reporting of and at times filing of fraudulent mortgages that were already paid off that were fraudulently continued by lenders staff and attorneys or brokers or anyone in the Real Estate Chain through the issues of real estate terms to continue to violate United States Laws, contract law and legal precedence where collusion was often done again to defraud and steal from the Note Holder was such a common practice that was evidence as to why the Mortgage Crash in 2008 occurred for the purpose of wining the prize of stealing form Homeowners and those that foreclosed was actually often purposefully for these monies note holders were unaware of to be obtained which was why Balloon mortgages and loans were given to the staff in the Real Estate Market with the hoper and the expectation that the loan holders would default as it offered opportunity to commit illegal transactions of obtaining the homeowners funds.  While such scams were addressed through modifications in 2008.  The Market relied heavily on Consumers ignorance to prosper, ignorance of real estate terms, ignorance on what they were to be charged properly for unethical financial gain and while staff in real estates lending arenas mingled terms to deceive y deliberate confusion consumers out of cash and homes while the USA Government provided Justice through President Obamas Inception and IRS Inception of Modifications which addressed these unethical profits in Reals Estate.  It was in 2009 that HARP, HAMP and Modifications were introduced to stop the victimization of Note Holders.  Taking on the Banks that ran USA Government was a great and dangerous undertaking that made America Great Again as Justice for Consumers reigned.  Legal action taken against institutions that have such business practices can be viewed in State Code of Law and Federal Law on precedent cases that are available to the public.  Finally, It had been unlawful to be charged by an attorney to modify as well as fro banking staff to modify terms to increase a mortgage and or change lending product to a balloon in an concerted effort to make homeowner foreclose which is also illegal, computer fraud and not the governments intended purpose or definition of a modification.",
+            "Case Gym is a 1,800-seat multi-purpose arena at Boston University in Boston, Massachusetts.  It opened in 1972 as part of the Harold Case Physical Education Center, which is named after the university's fifth president, Harold C. Case.  The gym is referred to as \"The Roof\" because it is located on the top level of the building, above Walter Brown Arena.  It is home to the Boston University Terriers men's and women's basketball teams, as well as the men's wrestling team.  Basketball games are also played in Agganis Arena, and on occasion Walter Brown Arena.  When Boston University left the America East Conference for the Patriot League in July 2013, they announced that all home men's basketball conference games would be played at Agganis Arena, with the non-conference games to be played at Case.",
+            "The 2007 MasterCard Memorial Cup was played in May 2007 in Vancouver, British Columbia, at the Pacific Coliseum.  It was the 89th annual Memorial Cup competition and determined the major junior ice hockey champion of the Canadian Hockey League (CHL).  The tournament was competed between the WHL champion Medicine Hat Tigers, the OHL champion Plymouth Whalers, the QMJHL champion Lewiston Maineiacs, and the host team and tournament champion Vancouver Giants, who were competing in their second consecutive national junior championship.  The Memorial Cup tournament was a four team tournament with a round-robin format.  The Giants won their first Memorial Cup, defeating Medicine Hat 3–1 in the second all-WHL final in tournament history (the first was in 1989).  The tournament set a new Memorial Cup attendance record with 121,561 fans attending the nine games.  The previous record of 84,686 was set at the 2003 tournament in Quebec City.",
+            "The Robert and Concetta Dwyer Arena houses two ice surfaces, both 200 x 85 ft., and pro shop on Niagara University's campus in Lewiston, New York, United States.  The main rink can seat up to 1,400 people and is the home to the Niagara Purple Eagles men's ice hockey team, which plays in Atlantic Hockey.  The arena was formerly home to the women's ice hockey team, which played in College Hockey America.",
+            "The 2006–07 QMJHL season was the 38th season in the history of the Quebec Major Junior Hockey League.  The regular season ran from September 14, 2006 to March 18, 2007.  Eighteen teams played 70 games each in the schedule.  The Lewiston Maineiacs finished first overall in the regular season winning their first Jean Rougeau Trophy.  Lewiston won 16 playoff games, losing only one, en route to their first President's Cup, defeating the Val-d'Or Foreurs in the finals."
+          ]
+        }
+      },
+      "retrieval": {
+        "retrieved_contexts": [
+          "The Lewiston Maineiacs were a junior ice hockey team of the Quebec Major Junior Hockey League based in Lewiston, Maine. The team played its home games at the Androscoggin Bank Colisée. They were the second QMJHL team in the United States, and the only one to play a full season. They won the President's Cup in 2007.",
+          "The Androscoggin Bank Colisée (formerly Central Maine Civic Center and Lewiston Colisee) is a 4,000 capacity (3,677 seated) multi-purpose arena, in Lewiston, Maine, that opened in 1958. In 1965 it was the location of the World Heavyweight Title fight during which one of the most famous sports photographs of the century was taken of Muhammed Ali standing over Sonny Liston.",
+          "The Robert and Concetta Dwyer Arena houses two ice surfaces, both 200 x 85 ft., and pro shop on Niagara University's campus in Lewiston, New York, United States. The main rink can seat up to 1,400 people and is the home to the Niagara Purple Eagles men's ice hockey team, which plays in Atlantic Hockey. The arena was formerly home to the women's ice hockey team, which played in College Hockey America.",
+          "The 2007 MasterCard Memorial Cup was played in May 2007 in Vancouver, British Columbia, at the Pacific Coliseum. It was the 89th annual Memorial Cup competition and determined the major junior ice hockey champion of the Canadian Hockey League (CHL). The tournament was competed between the WHL champion Medicine Hat Tigers, the OHL champion Plymouth Whalers, the QMJHL champion Lewiston Maineiacs, and the host team and tournament champion Vancouver Giants, who were competing in their second consecutive national junior championship. The Memorial Cup tournament was a four team tournament with a round-robin format. The Giants won their first Memorial Cup, defeating Medicine Hat 3–1 in the second all-WHL final in tournament history (the first was in 1989). The tournament set a new Memorial Cup attendance record with 121,561 fans attending the nine games. The previous record of 84,686 was set at the 2003 tournament in Quebec City.",
+          "The 2011–12 QMJHL season was the 43rd season of the Quebec Major Junior Hockey League (QMJHL). The regular season, which consisted of seventeen teams playing 68 games each, began in September 2011 and ended in March 2012. This season was Blainville-Boisbriand Armada's first season in the league, as the team relocated to Boisbriand from Verdun where they played as the Montreal Junior Hockey Club from 2008 to 2011. The league lost one of his charter teams when the Lewiston Maineiacs folded during after the previous season, the QMJHL later announce an expansion team to Sherbrooke for the 2012-2013 season. In the playoffs, the Saint John Sea Dogs became the seventh team in league history to capture consecutive President's Cup championships."
+        ],
+        "retrieved_scores": [
+          0.9996833801269531,
+          0.9853943586349487,
+          0.9718675017356873,
+          0.24467436969280243,
+          0.19040289521217346
+        ],
+        "latency_ms": 5929.719000007026
+      },
+      "generation": {
+        "generated_answer": "The arena where the Lewiston Maineiacs played their home games, the Androscoggin Bank Colisée, has a capacity of 4,000 people, with 3,677 seated [1, 2].",
+        "latency_ms": 4077.802099986002,
+        "citations_used": []
+      },
+      "metric_scores": {}
+    },
+    {
+      "sample": {
+        "question": "Who is older, Annie Morton or Terry Richardson?",
+        "ground_truth_answer": "Terry Richardson",
+        "ground_truth_contexts": [
+          "Annie Morton (born October 8, 1970) is an American model born in Pennsylvania.  She has appeared on the covers of \"British Vogue\", \"ID\", \"Marie Claire\", and other magazines.  She has been photographed by Helmut Newton; Peter Lindbergh; Annie Leibovitz; Richard Avedon; Juergen Teller; Paul Jasmin, Mary Ellen Mark and Terry Richardson, and modeled for Donna Karan, Givenchy, Guerlain, Chanel, \"Harper's Bazaar\", \"Sports Illustrated\" and Victoria's Secret.  A long time vegetarian, an advocate for organic lifestyle choices and natural healthcare.  She co-founded Tsi-La Organics, a \"Green Luxury\" company that creates and sells vegan, organic perfume and skin care products.",
+          "Terrence \"Uncle Terry\" Richardson (born August 14, 1965) is an American fashion and portrait photographer who has shot advertising campaigns for Marc Jacobs, Aldo, Supreme, Sisley, Tom Ford, and Yves Saint Laurent among others.  He has also done work for magazines such as \"Rolling Stone\", \"GQ\", \"Vogue\", \"Vanity Fair\", \"Harper's Bazaar\", \"i-D\", and \"Vice\"."
+        ],
+        "metadata": {
+          "source": "hotpotqa",
+          "id": "5a7bbb64554299042af8f7cc",
+          "type": "bridge",
+          "level": "hard",
+          "distractor_contexts": [
+            "Madonna is a biography by English author Andrew Morton, chronicling the life of American recording artist Madonna.  The book was released in November 2001 by St. Martin's Press in the United States and in April 2002 by Michael O'Mara Books in the United Kingdom.  Morton decided to write a biography on Madonna in 2000.  The release was announced in April 2001 by St. Martin's Press.  President and publisher Sally Richardson described the biography to contain details about Madonna's ambitions, her relationships and her lifestyle.",
+            "Lady Gaga x Terry Richardson is a photo-book by American singer Lady Gaga and American photographer Terry Richardson, released on November 22, 2011 by Grand Central Publishing.  The book features more than 350 pictures of Gaga as taken by Richardson during a ten-month period from Gaga's performance at The Monster Ball Tour till the 2011 Grammy Awards.  In addition to photographs, it includes a foreword written by the singer about her relationship with Richardson.  The duo had collaborated on other projects prior to the shooting of the book.",
+            "Gumbo is the fourth and first self-released studio album by American singer-songwriter PJ Morton.  It was released on April 14, 2017, by Morton Records, as the follow-up to his third studio album \"New Orleans\" (2013).  The record incorporates R&B styles with elements of older soul music; its lyrics discuss themes of romance and explores political and personal themes.  The album is entirely produced by Morton himself and features guest appearances by Pell, BJ the Chicago Kid and R&B singer Anthony Hamilton's back-up group, The HamilTones.  The album features a cover of the Bee Gees' \"How Deep Is Your Love\".",
+            "Amanda Lepore (born November 21, 1967) is an American transgender model, celebutante, singer, and performance artist.  The former Club Kid has appeared in advertising for numerous companies.  Lepore is also noted as a regular subject in photographer David LaChapelle's work, serving as his muse, as well as many other photographers, such as Terry Richardson and .  She participated in LaChapelle's \"Artists and Prostitutes 1985–2005\" exhibit in New York City, where she \"lived\" in a voyeuristic life-sized set.  Lepore has also released several singles, many written by and/or recorded with Cazwell.  In 2011, she released her debut studio album, \"I.. . Amanda Lepore\", on Peace Bisquit.",
+            "Piano Girl (Turkish: \"Deli Deli Olma\" ) is a 2009 Turkish comedy-drama film, directed by Murat Saraçoğlu, starring Tarık Akan and Şerif Sezer as two elderly people forced to question their histories and reveal their big secrets.  The film, which went on nationwide general release across Turkey on  17, 2009 (2009--) , was the opening film at the Sinema Burada Film Festival in İzmir, Turkey, and has since been screened in competition at a number of other film festivals, including the 46th Antalya Golden Orange Film Festival, where, according to Terry Richardson, writing for Today's Zaman, \"the rapt audience gave it a standing ovation.\"",
+            "index Magazine was a prominent New York City based publication with in-depth interviews with prominent figures in art and culture.  It was created by Peter Halley and Bob Nickas in 1996, running until late 2005.  Covering the burgeoning Indie culture of the 1990s, index regularly employed such rising photographers as Juergen Teller, Terry Richardson, Wolfgang Tillmans, and Ryan McGinley, and featured interviews with figures including Björk, Brian Eno, Marc Jacobs, and Scarlett Johansson, mixing new talents and established names in music, film, architecture, fashion, art, and politics.  In addition to famous personalities, the publication also featured a mix of interviews with not so-famous New York personalities such as Queen Itchie or Ducky Doolittle.",
+            "Snoecks is a Belgian magazine.  The huge, 550-plus-page magazine appears once a year in October and focuses on the most interesting new international developments in the arts, photography and literature.  In recent editions the book had features on artists such as Anton Corbijn, Larry Sultan, Matthew Barney, Terry Richardson, Ron Mueck, Alberto Garcia-Alix, Peter Lindbergh, Albert Watson, Desiree Dolron, Bettina Rheims, Diana Scheunemann, Timothy Greenfield-Sanders and Andres Serrano.",
+            "Kenton Terry Richardson (born 26 July 1999) is an English professional footballer who plays as a defender for League Two side Hartlepool United."
+          ]
+        }
+      },
+      "retrieval": {
+        "retrieved_contexts": [
+          "Annie Morton (born October 8, 1970) is an American model born in Pennsylvania. She has appeared on the covers of \"British Vogue\", \"ID\", \"Marie Claire\", and other magazines. She has been photographed by Helmut Newton; Peter Lindbergh; Annie Leibovitz; Richard Avedon; Juergen Teller; Paul Jasmin, Mary Ellen Mark and Terry Richardson, and modeled for Donna Karan, Givenchy, Guerlain, Chanel, \"Harper's Bazaar\", \"Sports Illustrated\" and Victoria's Secret. A long time vegetarian, an advocate for organic lifestyle choices and natural healthcare. She co-founded Tsi-La Organics, a \"Green Luxury\" company that creates and sells vegan, organic perfume and skin care products.",
+          "Terrence \"Uncle Terry\" Richardson (born August 14, 1965) is an American fashion and portrait photographer who has shot advertising campaigns for Marc Jacobs, Aldo, Supreme, Sisley, Tom Ford, and Yves Saint Laurent among others. He has also done work for magazines such as \"Rolling Stone\", \"GQ\", \"Vogue\", \"Vanity Fair\", \"Harper's Bazaar\", \"i-D\", and \"Vice\".",
+          "Kenton Terry Richardson (born 26 July 1999) is an English professional footballer who plays as a defender for League Two side Hartlepool United.",
+          "Amanda Lepore (born November 21, 1967) is an American transgender model, celebutante, singer, and performance artist. The former Club Kid has appeared in advertising for numerous companies. Lepore is also noted as a regular subject in photographer David LaChapelle's work, serving as his muse, as well as many other photographers, such as Terry Richardson and . She participated in LaChapelle's \"Artists and Prostitutes 1985–2005\" exhibit in New York City, where she \"lived\" in a voyeuristic life-sized set. Lepore has also released several singles, many written by and/or recorded with Cazwell. In 2011, she released her debut studio album, \"I.. . Amanda Lepore\", on Peace Bisquit.",
+          "Lady Gaga x Terry Richardson is a photo-book by American singer Lady Gaga and American photographer Terry Richardson, released on November 22, 2011 by Grand Central Publishing. The book features more than 350 pictures of Gaga as taken by Richardson during a ten-month period from Gaga's performance at The Monster Ball Tour till the 2011 Grammy Awards. In addition to photographs, it includes a foreword written by the singer about her relationship with Richardson. The duo had collaborated on other projects prior to the shooting of the book."
+        ],
+        "retrieved_scores": [
+          0.9999666213989258,
+          0.9721555709838867,
+          0.722938597202301,
+          0.5802977085113525,
+          0.522639811038971
+        ],
+        "latency_ms": 935.5845000827685
+      },
+      "generation": {
+        "generated_answer": "Terrence \"Uncle Terry\" Richardson was born on August 14, 1965 [2], and Annie Morton was born on October 8, 1970 [1]. Therefore, Terry Richardson is older.",
+        "latency_ms": 7902.722800034098,
+        "citations_used": [
+          2,
+          1
+        ]
+      },
+      "metric_scores": {}
+    },
+    {
+      "sample": {
+        "question": "Are Local H and For Against both from the United States?",
+        "ground_truth_answer": "yes",
+        "ground_truth_contexts": [
+          "Local H is an American rock band originally formed by guitarist and vocalist Scott Lucas, bassist Matt Garcia, drummer Joe Daniels, and lead guitarist John Sparkman in Zion, Illinois in 1987.  The members all met in high school in 1987 and founded Local H three years later.",
+          "For Against is a United States post-punk/dream pop band from Lincoln, Nebraska.  Despite numerous lineup shuffles and some periods of dormancy, the band has produced material steadily from its 1984 inception to the present."
+        ],
+        "metadata": {
+          "source": "hotpotqa",
+          "id": "5a8db19d5542994ba4e3dd00",
+          "type": "comparison",
+          "level": "hard",
+          "distractor_contexts": [
+            "Mendocino County, California, was the first jurisdiction in the United States to ban the cultivation, production or distribution of genetically modified organisms (GMOs).  The ordinance, entitled Measure H, was passed by referendum on March 2, 2004.  Initiated by the group \"GMO Free Mendocino\", the campaign was a highly publicized grassroots effort by local farmers and environmental groups who contend that the potential risks of GMOs to human health and the ecosystem have not yet been fully understood.  The measure was met with opposition by several interest groups representing the biotechnology industry, The California Plant Health Association (now the Western Plant Health Association) and CropLife America, a Washington-based consortium whose clients represent some of the largest food distributors in the nation, including Monsanto, DuPont and Dow Chemical.  Since the enactment of the ordinance, Mendocino County has been added to an international list of \"GMO free zones.\"  Pre-emptive statutes banning local municipalities from such ordinances have now become widespread with adoption in sixteen states.",
+            "The 1978 United States Senate election in Illinois took place on November 7, 1978.  Incumbent Republican United States Senator Charles H. Percy ran for re-election to a third term in the United States Senate.  Percy was opposed by Democratic nominee Alex Seith, an attorney who had been appointed to several local government positions.  Though Percy had been expected to coast to re-election over Seith, a first-time candidate, the election quickly became competitive.  In the last few days of the campaign, a desperate Percy ran a television advertisement that featured him apologizing and acknowledging that, \"I got your message and you're right.\"  Percy's last-ditch effort appeared to have paid off, as he was able to edge out Seith to win what would end up being his third and final term in the Senate.",
+            "The William H. Cook Water Tank House is a water tank house located southeast of Jerome, Idaho, United States.  The building was constructed circa 1915 and was used to store water for William H. Cook's farm.  The rectangular building was constructed with lava rock and contains a metal tank.  Although the stone craftsmanship in the building is similar to the work of local stonemason H. T. Pugh, the builder of the house has not been determined.",
+            "Amherst ( ) is a town in Hampshire County, Massachusetts, United States, in the Connecticut River valley.  As of the 2010 census, the population was 37,819, making it the largest municipality in Hampshire County (although the county seat is Northampton).  The town is home to Amherst College, Hampshire College, and the University of Massachusetts Amherst, three of the Five Colleges.  The name of the town is pronounced without the \"h\" (\"AM-erst\"), giving rise to the local saying, \"only the 'h' is silent\", in reference both to the pronunciation and to the town's politically active populace.",
+            "The Wilford H. Fawcett House is a house in Breezy Point, Minnesota, United States, listed on the National Register of Historic Places.  Wilford H. Fawcett, also known as \"Captain Billy\", started the book \"Captain Billy's Whiz Bang\" as a joke book for soldiers during World War I.  He formed Fawcett Publications in 1919 in Robbinsdale, Minnesota.  In 1920, he bought a tract of land where the present-day Breezy Point Resort is located, and he began building cottages and a large log lodge.  The lodge has since burnt down.  He built the Fawcett House as a private residence within the resort property.  Fawcett hired the Minneapolis architects of Magney and Tusler and commissioned the design in the Swiss Chateau style.  The rustic log style was a bit ironic, since the local logging industry had declined before the resort was built.",
+            "Ophur was a rock band from the Chicago suburbs in DuPage County.  The band performed in the midwestern United States over the course of seven years with national acts including The Plain White T's, Sum 41, Violent Femmes, Local H, Lucky Boys Confusion, Veruca Salt, Two Skinee J's, Duvall, Sleeping at Last, and others.  Their music has been described as an eclectic amalgamation of U2, Red Hot Chili Peppers, and Pink Floyd.",
+            "Suffrajett is a United States rock band from New York City, currently based in Chicago, Illinois, composed of singer/violinist Simi Sernaker, guitarist Jason Chasko, bassist Kevin Roberts, and drummer Danny Severson.  Suffrajett has toured with Local H, The Last Vegas, and Bob Schneider, and have opened for the reunited MC5.  Suffrajett released their self-titled debut album on February 2, 2003, and their latest album \"Black Glitter\" was released on January 1, 2007.  They recently toured with Juliette and the Licks and Scissors for Lefty.",
+            "Hallelujah!  I'm A Bum is the seventh studio album by Chicago-based rock band Local H.  Interviews with the band have revealed that it is a concept album based on politics in the United States.  Although the album was completed in spring of 2012, the band chose to release it in September as to be closer to the 2012 presidential election.  The album makes frequent use of the sounds of the El Train in Chicago to transition songs."
+          ]
+        }
+      },
+      "retrieval": {
+        "retrieved_contexts": [
+          "Local H is an American rock band originally formed by guitarist and vocalist Scott Lucas, bassist Matt Garcia, drummer Joe Daniels, and lead guitarist John Sparkman in Zion, Illinois in 1987. The members all met in high school in 1987 and founded Local H three years later.",
+          "For Against is a United States post-punk/dream pop band from Lincoln, Nebraska. Despite numerous lineup shuffles and some periods of dormancy, the band has produced material steadily from its 1984 inception to the present.",
+          "Hallelujah! I'm A Bum is the seventh studio album by Chicago-based rock band Local H. Interviews with the band have revealed that it is a concept album based on politics in the United States. Although the album was completed in spring of 2012, the band chose to release it in September as to be closer to the 2012 presidential election. The album makes frequent use of the sounds of the El Train in Chicago to transition songs.",
+          "Suffrajett is a United States rock band from New York City, currently based in Chicago, Illinois, composed of singer/violinist Simi Sernaker, guitarist Jason Chasko, bassist Kevin Roberts, and drummer Danny Severson. Suffrajett has toured with Local H, The Last Vegas, and Bob Schneider, and have opened for the reunited MC5. Suffrajett released their self-titled debut album on February 2, 2003, and their latest album \"Black Glitter\" was released on January 1, 2007. They recently toured with Juliette and the Licks and Scissors for Lefty.",
+          "Ophur was a rock band from the Chicago suburbs in DuPage County. The band performed in the midwestern United States over the course of seven years with national acts including The Plain White T's, Sum 41, Violent Femmes, Local H, Lucky Boys Confusion, Veruca Salt, Two Skinee J's, Duvall, Sleeping at Last, and others. Their music has been described as an eclectic amalgamation of U2, Red Hot Chili Peppers, and Pink Floyd."
+        ],
+        "retrieved_scores": [
+          0.9999666213989258,
+          0.9999666213989258,
+          0.8223555684089661,
+          0.49485933780670166,
+          0.38869908452033997
+        ],
+        "latency_ms": 1309.8791000666097
+      },
+      "generation": {
+        "generated_answer": "Yes, Local H is an American rock band [1], and For Against is a United States post-punk/dream pop band [2].",
+        "latency_ms": 2839.6054001059383,
+        "citations_used": [
+          1,
+          2
+        ]
+      },
+      "metric_scores": {}
+    },
+    {
+      "sample": {
+        "question": "What is the name of the fight song of the university whose main campus is in Lawrence, Kansas and whose branch campuses are in the Kansas City metropolitan area?",
+        "ground_truth_answer": "Kansas Song",
+        "ground_truth_contexts": [
+          "Kansas Song (We’re From Kansas) is a fight song of the University of Kansas.",
+          "The University of Kansas, often referred to as KU or Kansas, is a public research university in the U.S. state of Kansas.  The main campus in Lawrence, one of the largest college towns in Kansas, is on Mount Oread, the highest elevation in Lawrence.  Two branch campuses are in the Kansas City metropolitan area: the Edwards Campus in Overland Park, and the university's medical school and hospital in Kansas City.  There are also educational and research sites in Parsons, Topeka, Garden City, Hays, and Leavenworth, and branches of the medical school in Wichita and Salina.  The university is one of the 62 members of the Association of American Universities."
+        ],
+        "metadata": {
+          "source": "hotpotqa",
+          "id": "5a7166395542994082a3e814",
+          "type": "bridge",
+          "level": "hard",
+          "distractor_contexts": [
+            "North Kansas City is a city in Clay County, Missouri, United States that despite the similarity in name to its larger counterpart, Kansas City, is an independent municipality part of the Kansas City metropolitan area.  The population was 4,208 at the 2010 census.  Originally a northern suburb across the Missouri River from Kansas City, Missouri, it is now almost completely surrounded by Kansas City, which has annexed far to the north of North Kansas City's northern city limits.  North Kansas City also adjoins the small municipality of Avondale.",
+            "The University of Missouri–Kansas City (UMKC) is a public research university serving the greater Kansas City metropolitan area.  Located in Kansas City, Missouri, UMKC is one of four system campuses that collectively constitute the University of Missouri.  UMKC is spread across multiple locales; the main Volker Campus, home to the majority of university operations, is located in Kansas City's Rockhill neighborhood, east of the Country Club Plaza, and adjacent to both the Stowers Institute for Medical Research and the world-renowned Linda Hall Library.  In 2017 the University, in collaboration with Truman Medical Center, Children's Mercy Hospital, the Missouri Health Department, the Jackson County Medical Examiners Office, and the Missouri Department of Mental Health Behavioral Medicine, formed the UMKC Health Sciences District on Hospital Hill.  This district is a first-in-the-nation partnership between local and state governments, the university, and these nationally recognized healthcare faculties, designed to promote collaboration in research, innovation, education, grant funding, and community outreach, for the advancement of health and wellness in the greater Kansas City metropolitan area.  Also in 2017, the university announced plans to expand its metropolitan identity with the construction of a downtown Campus for the Arts, located near the Kauffman Center for the Performing Arts.  The university's enrollment as of 2015 exceeded more than 16,600 students.",
+            "Kansas City jazz is a style of jazz that developed in Kansas City, Kansas and Kansas City, Missouri and the surrounding Kansas City Metropolitan Area during the 1930s and marked the transition from the structured big band style to the musical improvisation style of Bebop.  The hard-swinging, bluesy transition style is bracketed by Count Basie who in 1929 signed with the Bennie Moten's Kansas City Orchestra and Kansas City native Charlie Parker who was to usher in the Bebop style in the 1940s.  According to a Kansas City website, \"While New Orleans was the birthplace of jazz, America's music grew up in Kansas City\".  Kansas City is known as one of the most popular \"cradles of jazz\".  Other cities include New Orleans, Chicago, St. Louis, Pittsburgh, Philadelphia, and New York City.",
+            "Kansas City Scout is one of the United States' largest electronic traffic management systems.  It was created in 2000 as part of a bi-state initiative between the Missouri Department of Transportation and the Kansas Department of Transportation to provide this system for the Kansas City Metropolitan Area, which is in both Missouri and Kansas (the anchor city of Kansas City is in Missouri).  The project's cost was $43 million.  Of that amount, the Federal Highway Administration (FHWA) contributed 80-90 percent of the project cost.  KDOT and MoDOT shared the remaining cost.  The system employs a system of electronic boards placed on major highways throughout the metropolitan area that display traffic information whenever information needs to be displayed (due to an accident, lane closure, highway closure etc.), and the system also has cameras on those billboards to automatically detect traffic problems.  While the system has extensive coverage of highways in the Kansas City Metropolitan Area it still has much more to cover.  Since it would be too expensive to cover all the major highways in the Kansas City metro (which has more miles of highway per person than any other metropolitan area in the United States), studies were conducted to determine which highways or segments of highways have priority due to higher accident rates.  Since the project's beginning, it has expanded greatly, and will continue to expand.  Future plans are to extend coverage to I-635 and cover I-435 even more (especially in the northern areas of the metro) as well as other major city highways.  It was named after the iconic Kansas City Scout Statue that exists in Penn Valley Park, overlooking Downtown Kansas City.",
+            "Downtown Kansas City is the central business district (CBD) of Kansas City, Missouri and the Kansas City metropolitan area.  It is between the Missouri River in the north, to 31st Street in the south; and from the Kansas–Missouri state line east to Bruce R. Watkins Drive as defined by the Downtown Council of Kansas City; the 2010 Greater Downtown Area Plan formulated by the City of Kansas City defines the Greater Downtown Area to be the city limits of North Kansas City and Missouri to the north, the Kansas–Missouri state line to the west, 31st Street to the south and Woodland Avenue to the east.  However, the definition used by the Downtown Council is the most commonly accepted.",
+            "The Kansas City metropolitan area is a 15-county metropolitan area anchored by Kansas City, Missouri, that straddles the border between the U.S. states of Missouri and Kansas.  With a population of about 2,340,000, it ranks as the second largest metropolitan area with its core in Missouri (after Greater St. Louis).  Alongside Kansas City, the area includes a number of other cities and suburbs, the largest being Overland Park, Kansas; Kansas City, Kansas; Olathe, Kansas; and Independence, Missouri; each over 100,000 in population.  The Mid-America Regional Council (MARC) serves as the Council of Governments and the Metropolitan Planning Organization for the area.",
+            "The University of the Incarnate Word (UIW) is a private Catholic university whose main campus is located in San Antonio and Alamo Heights, Texas, United States.  Founded in 1881 by the Sisters of Charity of the Incarnate Word, the university's main campus is located on 154 acre .",
+            "The history of the Kansas City metropolitan area begins in the 19th century as Frenchmen from St. Louis, Missouri moved up the Missouri River to trap for furs and trade with the Native Americans.  The Kansas City metropolitan area, straddling the border between Missouri and Kansas at the confluence of the Kansas and Missouri Rivers, was a strategic point for commerce and security.  Kansas City, Missouri was founded in 1838 and defeated its rival Westport to become the predominant city west of St. Louis.  The area played a major role in the westward expansion of the United States.  The Santa Fe, and Oregon trails ran through the area.  In 1854, when Kansas was opened to Euro-American settlement, the Missouri-Kansas border became the first battlefield in the conflict in the American Civil War."
+          ]
+        }
+      },
+      "retrieval": {
+        "retrieved_contexts": [
+          "The University of Kansas, often referred to as KU or Kansas, is a public research university in the U.S. state of Kansas. The main campus in Lawrence, one of the largest college towns in Kansas, is on Mount Oread, the highest elevation in Lawrence. Two branch campuses are in the Kansas City metropolitan area: the Edwards Campus in Overland Park, and the university's medical school and hospital in Kansas City. There are also educational and research sites in Parsons, Topeka, Garden City, Hays, and Leavenworth, and branches of the medical school in Wichita and Salina. The university is one of the 62 members of the Association of American Universities.",
+          "Kansas Song (We’re From Kansas) is a fight song of the University of Kansas.",
+          "The Kansas City metropolitan area is a 15-county metropolitan area anchored by Kansas City, Missouri, that straddles the border between the U.S. states of Missouri and Kansas. With a population of about 2,340,000, it ranks as the second largest metropolitan area with its core in Missouri (after Greater St. Louis). Alongside Kansas City, the area includes a number of other cities and suburbs, the largest being Overland Park, Kansas; Kansas City, Kansas; Olathe, Kansas; and Independence, Missouri; each over 100,000 in population. The Mid-America Regional Council (MARC) serves as the Council of Governments and the Metropolitan Planning Organization for the area.",
+          "The University of Missouri–Kansas City (UMKC) is a public research university serving the greater Kansas City metropolitan area. Located in Kansas City, Missouri, UMKC is one of four system campuses that collectively constitute the University of Missouri. UMKC is spread across multiple locales; the main Volker Campus, home to the majority of university operations, is located in Kansas City's Rockhill neighborhood, east of the Country Club Plaza, and adjacent to both the Stowers Institute for Medical Research and the world-renowned Linda Hall Library. In 2017 the University, in collaboration with Truman Medical Center, Children's Mercy Hospital, the Missouri Health Department, the Jackson County Medical Examiners Office, and the Missouri Department of Mental Health Behavioral Medicine, formed the UMKC Health Sciences District on Hospital Hill. This district is a first-in-the-nation partnership between local and state governments, the university, and these nationally recognized healthcare faculties, designed to promote collaboration in research, innovation, education, grant funding, and community outreach, for the advancement of health and wellness in the greater Kansas City metropolitan area. Also in 2017, the university announced plans to expand its metropolitan identity with the construction of a downtown Campus for the Arts, located near the Kauffman Center for the Performing Arts. The university's enrollment as of 2015 exceeded more than 16,600 students.",
+          "Downtown Kansas City is the central business district (CBD) of Kansas City, Missouri and the Kansas City metropolitan area. It is between the Missouri River in the north, to 31st Street in the south; and from the Kansas–Missouri state line east to Bruce R. Watkins Drive as defined by the Downtown Council of Kansas City; the 2010 Greater Downtown Area Plan formulated by the City of Kansas City defines the Greater Downtown Area to be the city limits of North Kansas City and Missouri to the north, the Kansas–Missouri state line to the west, 31st Street to the south and Woodland Avenue to the east. However, the definition used by the Downtown Council is the most commonly accepted."
+        ],
+        "retrieved_scores": [
+          0.9998332262039185,
+          0.9960141181945801,
+          0.24505144357681274,
+          0.17941822111606598,
+          0.0838899090886116
+        ],
+        "latency_ms": 1981.8265999201685
+      },
+      "generation": {
+        "generated_answer": "The fight song of the university whose main campus is in Lawrence, Kansas, and whose branch campuses are in the Kansas City metropolitan area is Kansas Song (We’re From Kansas) [1, 2]. This university is the University of Kansas [1].",
+        "latency_ms": 3116.2160000531003,
+        "citations_used": [
+          1
+        ]
+      },
+      "metric_scores": {}
+    },
+    {
+      "sample": {
+        "question": "What screenwriter with credits for \"Evolution\" co-wrote a film starring Nicolas Cage and Téa Leoni?",
+        "ground_truth_answer": "David Weissman",
+        "ground_truth_contexts": [
+          "David Weissman is a screenwriter and director.  His film credits include \"The Family Man\" (2000), \"Evolution\" (2001), and \"\"When in Rome\"\" (2010).",
+          "The Family Man is a 2000 American romantic comedy-drama film directed by Brett Ratner, written by David Diamond and David Weissman, and starring Nicolas Cage and Téa Leoni.  Cage's production company, Saturn Films, helped produce the film.  The film centers on a man who sees what could have been had he made a different decision 13 years prior."
+        ],
+        "metadata": {
+          "source": "hotpotqa",
+          "id": "5a877e5d5542993e715abf7d",
+          "type": "bridge",
+          "level": "hard",
+          "distractor_contexts": [
+            "Ungod is the debut album released in 1994 on Columbia Records by the American industrial rock band Stabbing Westward.  The album was recorded in six weeks of 1993 in Chiswick, England, and released on February 15, 1994.  With adequate album sales and touring with the likes of Depeche Mode a second album was warranted, \"Wither Blister Burn & Peel\".  The guitar line in the chorus of the song \"Ungod\" was later used in Filter's song \"Hey Man, Nice Shot.\"  Stuart Zechman, who was also playing guitar for Filter at the time, took the riff and showed it to Stabbing Westward who ended up using it as well.  The song \"Nothing\" appeared in the \"Bad Boys\" movie starring Will Smith, Martin Lawrence and Téa Leoni, but was not featured on the official soundtrack album.  The song also accompanied the credits of the film \"Johnny Mnemonic\" and was included on the film's soundtrack, along with the song \"Lost\".  \"Lost\", \"Lies\" and \"Can't Happen Here\" were used in the film \"Mortal Kombat\", but Stabbing Westward refused to include it in the official soundtrack.  The \"Thread Mix\" of \"Violent Mood Swings\" was included in the Clerks soundtrack.",
+            "Season of the Witch is a 2011 American historical fantasy adventure film starring Nicolas Cage and Ron Perlman and directed by Dominic Sena with extensive uncredited reshoots by Brett Ratner.  Cage and Perlman star as Teutonic Knights, who return from the Crusades to find their fatherland ruined by the Black Death.  Two church elders accuse a girl (Claire Foy) of being a witch responsible for the destruction; they command the two knights to transport the girl to a monastery so the monks can lift her curse from the land.  The film draws inspiration from the 1957 film \"The Seventh Seal\".  It reunited Sena and Cage who had previously worked together on \"Gone in 60 Seconds\".",
+            "Time to Kill (Italian: Tempo di uccidere ) is a 1989 Italian drama film starring Nicolas Cage and Italian actors Ricky Tognazzi and Giancarlo Giannini .  It is directed by Giuliano Montaldo.  The film is set in 1936, when Ethiopia was an Italian colony, and was filmed in Zimbabwe.  It is based on the novel with the same name written by Ennio Flaiano.",
+            "Deadfall is a 1993 crime drama film directed by Christopher Coppola.  Coppola co-wrote the script with Nick Vallelonga.  The film stars Michael Biehn, Nicolas Cage, Charlie Sheen, James Coburn, and Peter Fonda.  It is also the prime influence on the song 'Deadfall', written by the American hardcore punk band Snot.  A prequel/sequel, \"Arsenal\", starring Nicolas Cage as his character Eddie King, was released in 2017.",
+            "Gone in 60 Seconds is a 2000 American action heist film, starring Nicolas Cage, Angelina Jolie, Giovanni Ribisi, Christopher Eccleston, Robert Duvall, Vinnie Jones, and Will Patton.  The film was directed by Dominic Sena, written by Scott Rosenberg, and produced by Jerry Bruckheimer, producer of \"The Rock\" and \"Con Air\" (both of which starred Cage) and \"Armageddon\" (which starred Patton), and is a loose remake of the 1974 H.B. Halicki film of the same name.",
+            "Drive Angry is a 2011 American fantasy action film starring Nicolas Cage and Amber Heard, and directed by Patrick Lussier.  It was released on February 25, 2011.  Shot in 3-D, the film was met with a mixed reception and grossed almost $29 million.",
+            "It Could Happen to You is a 1994 American romantic comedy-drama film starring Nicolas Cage and Bridget Fonda.  It is the story of New York City police officer (Cage) who wins the lottery and splits his winnings with a waitress (Fonda).  This basic premise was inspired by a real-life incident.",
+            "City of Angels is a 1998 American romantic fantasy film directed by Brad Silberling and starring Nicolas Cage and Meg Ryan.  Set in Los Angeles, California, the film is a loose remake of Wim Wenders' 1987 film \"Wings of Desire\" (\"Der Himmel über Berlin\"), which was set in Berlin.  As with the original, \"City of Angels\" tells the story of an angel (Cage) who falls in love with a mortal woman (Ryan), and wishes to become human in order to be with her.  With the guidance of a man (Dennis Franz) who has already made the transition from immortality, the angel falls and discovers the human experience."
+          ]
+        }
+      },
+      "retrieval": {
+        "retrieved_contexts": [
+          "The Family Man is a 2000 American romantic comedy-drama film directed by Brett Ratner, written by David Diamond and David Weissman, and starring Nicolas Cage and Téa Leoni. Cage's production company, Saturn Films, helped produce the film. The film centers on a man who sees what could have been had he made a different decision 13 years prior.",
+          "David Weissman is a screenwriter and director. His film credits include \"The Family Man\" (2000), \"Evolution\" (2001), and \"\"When in Rome\"\" (2010).",
+          "Deadfall is a 1993 crime drama film directed by Christopher Coppola. Coppola co-wrote the script with Nick Vallelonga. The film stars Michael Biehn, Nicolas Cage, Charlie Sheen, James Coburn, and Peter Fonda. It is also the prime influence on the song 'Deadfall', written by the American hardcore punk band Snot. A prequel/sequel, \"Arsenal\", starring Nicolas Cage as his character Eddie King, was released in 2017.",
+          "City of Angels is a 1998 American romantic fantasy film directed by Brad Silberling and starring Nicolas Cage and Meg Ryan. Set in Los Angeles, California, the film is a loose remake of Wim Wenders' 1987 film \"Wings of Desire\" (\"Der Himmel über Berlin\"), which was set in Berlin. As with the original, \"City of Angels\" tells the story of an angel (Cage) who falls in love with a mortal woman (Ryan), and wishes to become human in order to be with her. With the guidance of a man (Dennis Franz) who has already made the transition from immortality, the angel falls and discovers the human experience.",
+          "Gone in 60 Seconds is a 2000 American action heist film, starring Nicolas Cage, Angelina Jolie, Giovanni Ribisi, Christopher Eccleston, Robert Duvall, Vinnie Jones, and Will Patton. The film was directed by Dominic Sena, written by Scott Rosenberg, and produced by Jerry Bruckheimer, producer of \"The Rock\" and \"Con Air\" (both of which starred Cage) and \"Armageddon\" (which starred Patton), and is a loose remake of the 1974 H.B. Halicki film of the same name."
+        ],
+        "retrieved_scores": [
+          0.9998812675476074,
+          0.9989516735076904,
+          0.30532312393188477,
+          0.2805910110473633,
+          0.2677438259124756
+        ],
+        "latency_ms": 1537.483400083147
+      },
+      "generation": {
+        "generated_answer": "David Weissman is a screenwriter with credits for \"Evolution\" [2]. He co-wrote \"The Family Man,\" which stars Nicolas Cage and Téa Leoni [1].",
+        "latency_ms": 3531.980400090106,
+        "citations_used": [
+          2,
+          1
+        ]
+      },
+      "metric_scores": {}
+    },
+    {
+      "sample": {
+        "question": "What year did Guns N Roses perform a promo for a movie starring Arnold Schwarzenegger as a former New York Police detective?",
+        "ground_truth_answer": "1999",
+        "ground_truth_contexts": [
+          "End of Days is a 1999 American fantasy action horror thriller film directed by Peter Hyams and starring Arnold Schwarzenegger, Gabriel Byrne, Robin Tunney, Kevin Pollak, Rod Steiger, CCH Pounder, and Udo Kier.  The film follows former New York Police Department detective Jericho Cane (Schwarzenegger) after he saves a banker (Byrne) from an assassin, finds himself embroiled in a religious conflict, and must protect an innocent young woman (Tunney) who is chosen by evil forces to conceive the Antichrist with Satan.",
+          "\"Oh My God\" is a song by Guns N' Roses released in 1999 on the soundtrack to the film \"End of Days\".  The song was sent out to radio stations in November 1999 as a promo for the soundtrack and the band.  Despite being the band's first recorded release in almost five years, it was never issued as a stand-alone single for public retail."
+        ],
+        "metadata": {
+          "source": "hotpotqa",
+          "id": "5ab3b0bf5542992ade7c6e39",
+          "type": "bridge",
+          "level": "hard",
+          "distractor_contexts": [
+            "Arnold Schwarzenegger is an actor who has appeared in over 30 films, and has also ventured into directing and producing.  He began his acting career primarily with small roles in film and television.  For his first film role, he was credited as \"Arnold Strong\", but was credited with his birth name thereafter.  He has appeared mainly in action, and comedy films.  In addition to films and television, he has appeared in music videos for AC/DC, Bon Jovi, and Guns N' Roses.",
+            "Guns N' Roses is an American hard rock band formed in Los Angeles, California in 1985 by members of Hollywood Rose and L.A. Guns.  The band has released six studio albums, two live albums, two compilation albums, two extended plays, seven video albums, eighteen singles, twenty four music videos and one video single.  Guns N' Roses signed a deal with Geffen Records in 1986, after the independently released EP \"Live ?! *@ Like a Suicide\" a year before.  Its debut studio album \"Appetite for Destruction\" was released in 1987, reached the top of the \"Billboard\" 200 and sold 18 million units in the United States and approximately 33 million units worldwide.",
+            "Hammerjacks Concert Hall and Nightclub was a large concert hall in downtown Baltimore through the 1980s and into the 1990s owned by Louis J. Principio III The club attracted many big-name national acts, but also showcased many rising stars in the music world.  The bands ranged from punk, glam, and heavy metal acts most commonly associated with the venue (e.g., Guns n Roses, Kix, Ratt, Skid Row or Extreme) to pop (e.g., Badfinger) and alternative rock groups (e.g., Goo Goo Dolls).  The club was often frequented by hard core patrons and musicians donning big hair, leather, lace, spandex, and heavy makeup, and was considered a \"hard rock shrine.\"  Hamerjacks, however, attracted audiences with other attire as well.  It was torn down on June 12, 1997 to make way for M&T Bank Stadium parking lot.  Hammerjacks was billed as \"The largest nightclub on the east coast.\"",
+            "Steven Adler (born Michael Coletti; January 22, 1965) is an American musician.  He is best known as the former drummer and co-songwriter of the hard rock band Guns N' Roses, with whom he achieved worldwide success in the late 1980s.  Adler was fired from Guns N' Roses over his heroin addiction in 1990, following which he reformed his old band Road Crew and briefly joined BulletBoys, which both proved unsuccessful.  During the 2000s, Adler was the drummer of the band Adler's Appetite, and from 2012, he had held the same position in the band Adler.  In early 2017, Steven Adler declared that he has no intention to continue with the band, and that the band has now dissolved, and the reason is his lack of interest in performing during poorly attended concerts.  He appeared on the second and fifth seasons of the reality TV show \"Celebrity Rehab with Dr. Drew\", as well as on the first season of its spin-off \"Sober House\".  He was inducted into the Rock and Roll Hall of Fame in 2012 as a member of Guns N' Roses.",
+            "Faction With Jason Ellis is an uncensored hard rock, punk, hip hop, and heavy metal music mixed channel on Siruis XM Satellite Radio.  Until mid-July 2017, Faction appeared on Sirius XM channel 41.  In mid-July 2017, Faction was temporarily replaced by Guns N Roses radio.  After August 16, 2017, channel 41 was rebranded to Turbo, Sirius XM's channel for hard rock from the 1990s and 2000s.  Faction moved to channel 314, Turbo's previous channel.  Faction is currently available on select Sirius XM radios, Sirius XM streaming, and the Sirius XM smartphone app.",
+            "True Lies is a 1994 American action film written, co-produced and directed by James Cameron, starring Arnold Schwarzenegger, Jamie Lee Curtis, Tom Arnold, Art Malik, Tia Carrere, Bill Paxton, Eliza Dushku, Grant Heslov and Charlton Heston.  It is a loose remake of the 1991 French comedy film \"La Totale! \" The film follows U.S. government agent Harry Tasker (Schwarzenegger), who balances his life as a spy with his familial duties.",
+            "Last Action Hero is a 1993 American fantasy action comedy film directed and produced by John McTiernan.  It is a satire of the action genre and associated clichés, containing several parodies of action films in the form of films within the film. The film stars Arnold Schwarzenegger as Jack Slater, a Los Angeles police detective within the \"Jack Slater\" action film franchise.  Austin O'Brien co-stars as a boy magically transported into the \"Slater\" universe.  Schwarzenegger also served as the film's executive producer and plays himself as the actor portraying Jack Slater, and Charles Dance plays an assassin who escapes from the \"Slater\" world into the real world.",
+            "Get Christie Love!  is a 1974 made-for-television film and subsequent crime drama TV series starring Teresa Graves as an undercover female police detective who is determined to overthrow a drug ring.  This film is based on Dorothy Uhnak's crime-thriller novel \"The Ledger\".  However, the main character \"Christie Opara\"—a white, New York Police detective—was dropped completely and \"Christie Love\" emerged."
+          ]
+        }
+      },
+      "retrieval": {
+        "retrieved_contexts": [
+          "End of Days is a 1999 American fantasy action horror thriller film directed by Peter Hyams and starring Arnold Schwarzenegger, Gabriel Byrne, Robin Tunney, Kevin Pollak, Rod Steiger, CCH Pounder, and Udo Kier. The film follows former New York Police Department detective Jericho Cane (Schwarzenegger) after he saves a banker (Byrne) from an assassin, finds himself embroiled in a religious conflict, and must protect an innocent young woman (Tunney) who is chosen by evil forces to conceive the Antichrist with Satan.",
+          "\"Oh My God\" is a song by Guns N' Roses released in 1999 on the soundtrack to the film \"End of Days\". The song was sent out to radio stations in November 1999 as a promo for the soundtrack and the band. Despite being the band's first recorded release in almost five years, it was never issued as a stand-alone single for public retail.",
+          "True Lies is a 1994 American action film written, co-produced and directed by James Cameron, starring Arnold Schwarzenegger, Jamie Lee Curtis, Tom Arnold, Art Malik, Tia Carrere, Bill Paxton, Eliza Dushku, Grant Heslov and Charlton Heston. It is a loose remake of the 1991 French comedy film \"La Totale! \" The film follows U.S. government agent Harry Tasker (Schwarzenegger), who balances his life as a spy with his familial duties.",
+          "Guns N' Roses is an American hard rock band formed in Los Angeles, California in 1985 by members of Hollywood Rose and L.A. Guns. The band has released six studio albums, two live albums, two compilation albums, two extended plays, seven video albums, eighteen singles, twenty four music videos and one video single. Guns N' Roses signed a deal with Geffen Records in 1986, after the independently released EP \"Live ?! *@ Like a Suicide\" a year before. Its debut studio album \"Appetite for Destruction\" was released in 1987, reached the top of the \"Billboard\" 200 and sold 18 million units in the United States and approximately 33 million units worldwide.",
+          "Arnold Schwarzenegger is an actor who has appeared in over 30 films, and has also ventured into directing and producing. He began his acting career primarily with small roles in film and television. For his first film role, he was credited as \"Arnold Strong\", but was credited with his birth name thereafter. He has appeared mainly in action, and comedy films. In addition to films and television, he has appeared in music videos for AC/DC, Bon Jovi, and Guns N' Roses."
+        ],
+        "retrieved_scores": [
+          0.9998775720596313,
+          0.9373295903205872,
+          0.6487259864807129,
+          0.4077838957309723,
+          0.3264720141887665
+        ],
+        "latency_ms": 1425.6127999396995
+      },
+      "generation": {
+        "generated_answer": "Guns N' Roses performed a promo in 1999 for the film \"End of Days\" [2]. This film, released in 1999, starred Arnold Schwarzenegger as Jericho Cane, a former New York Police Department detective [1]. The song \"Oh My God\" by Guns N' Roses was released in 1999 on the soundtrack to \"End of Days\" and was sent to radio stations in November 1999 as a promo for the soundtrack and the band [2].",
+        "latency_ms": 22068.00089997705,
+        "citations_used": [
+          2,
+          1,
+          2
+        ]
+      },
+      "metric_scores": {}
+    },
+    {
+      "sample": {
+        "question": "Are Random House Tower and 888 7th Avenue both used for real estate?",
+        "ground_truth_answer": "no",
+        "ground_truth_contexts": [
+          "888 7th Avenue is a 628 ft (191m) tall modern-style office skyscraper in Midtown Manhattan which was completed in 1969 and has 46 floors.  Emery Roth & Sons designed the building, which is tied with Central Park Place for the 65th tallest building in New York City.  It currently carries the Vornado Realty Trust corporate headquarters.  Previously known as the Arlen Building, its namesake being the company responsible for its construction, Arlen Realty & Development Corporation.  The Red Eye Grill is located in the building at street level.",
+          "The Random House Tower, also known as the Park Imperial Apartments, is a 52-story mixed-use tower in New York City, United States, that is used as the headquarters of book publisher Random House and a luxury apartment complex.  The book publisher entrance is on Broadway and goes up to 27 floors, while the apartment complex entrance is on West 56th Street."
+        ],
+        "metadata": {
+          "source": "hotpotqa",
+          "id": "5ab56e32554299637185c594",
+          "type": "comparison",
+          "level": "hard",
+          "distractor_contexts": [
+            "Real estate benchmarking is the standard of measurement used to analyze the financial characteristics of a real estate investment property.  In the general sense, real estate benchmarking refers to the comparison of potential real estate investment properties against a predetermined framework of measurement.  In a narrow sense, the term real estate benchmarking refers to the specific real estate indicators used to measure the real estate properties.",
+            "Hounsfield Heights/Briar Hill is an inner suburban neighbourhood in northwest Calgary, Alberta, Canada.  Located north of the Hillhurst and West Hillhurst communities, the boundaries of the district are 16th Avenue N (Trans-Canada Highway)to the north; 14th Street W to the east; Lane north of 7th Avenue N to 19th Street W and 8th Avenue N to the south; and Crowchild Trail, 12th Avenue N, Juniper Road, and 22nd Street W to the west.  Lions Park C-Train station is located within the community.  The community is built on an escarpment and is popular for its views of downtown to the south and the Rocky Mountains to the west.",
+            "Villard, also known as Villard Books, is a publishing imprint of Random House, one of the largest publishing companies in the world.  It was founded in 1983.  Villard began as an independent imprint of Random House and is currently a sub-imprint of Ballantine Books, itself an imprint of Random House.  It was named after a Stanford White brownstone mansion on Madison Avenue that was the home of Random House for twenty years.",
+            "Pershing Square Capital Management is an American hedge fund management company founded and run by Bill Ackman, located at 888 7th Avenue in New York.",
+            "The Carl B. Stokes Federal Court House Building is a skyscraper located in downtown Cleveland, Ohio.  It is also known as the Carl B. Stokes Federal Court House Tower, Federal Court House Tower, and the Stokes Tower.  The 23-story building is 430 ft tall and is located at the corner of Huron Road and Superior Avenue.  It is currently the fourth tallest United States courthouse in the country.",
+            "Real Estate Technology or Property Technology, often referred to as (\"RE Tech\") or (\"Proptech\"), is an economic industry composed of companies which use technology to make real estate transactions more efficient.  Real estate technology is a sub-category under financial technology as real estate is an asset class which represents a significant investment.  Besides for own stay, there are investors who generate income and capital gains by investing in different categories of Real Estate properties over time - They are broadly residential, commercial and industrial.  Historically used as a more tactical investment or for providing portfolio alpha, real estate has been used as part of a long-term core strategy due to increased market efficiency and increasing concerns about the future long-term variability of stock and bond returns.  In fact, real estate is known for its ability to serve as a portfolio diversifier and inflation hedge.",
+            "Loan modification is the systematic alteration of mortgage loan agreements that help those having problems making the payments by reducing interest rates, monthly payments or principal balances.  Lending institutions could make one or more of these changes to relieve financial pressure on borrowers to prevent the condition of foreclosure.  Loan modifications have been practiced in the United States since The 2008 Crash Of The Housing Market from Washington Mutual, Chase Home Finance, Chase, JP Morgan & Chase, other contributors like MER's.  Crimes of Mortgage ad Real Estate Staff had long assisted nd finally the squeaky will could not continue as their deviant practices broke the state and crashed.  Modification owners either ordered by The United States Department of Housing, The United States IRS or President Obamas letters from Note Holders came to those various departments asking for the Democratic process to help them keep their homes and protection them from explosion.  Thus the birth of Modifications.  It is yet to date for clarity how theses enforcements came into existence and except b whom, but t is certain that note holders form the Midwest reached out in the Democratic Process for assistance.  FBI Mortgage Fraud Department came into existence.  Modifications HMAP HARP were also birthed to help note holders get Justice through reduced mortgage by making terms legal.  Modification of mortgage terms was introduced by IRS staff addressing the crisis called the HAMP TEAMS that went across the United States desiring the new products to assist homeowners that were victims of predatory lending practices, unethical staff, brokers, attorneys and lenders that contributed to the crash.  Modification were a fix to the crash as litigation has ensued as the lenders reorganized and renamed the lending institutions and government agencies are to closely monitor them.  Prior to modifications loan holders that experiences crisis would use Loan assumptions and Loan transfers to keep the note in the 1930s.  During the Great Depression, loan transfers, loan assumption, and loan bail out programs took place at the state level in an effort to reduce levels of loan foreclosures while the Federal Bureau of Investigation, Federal Trade Commission, Comptroller, the United States Government and State Government responded to lending institution violations of law in these arenas by setting public court records that are legal precedence of such illegal actions.  The legal precedents and reporting agencies were created to address the violations of laws to consumers while the Modifications were created to assist the consumers that are victims of predatory lending practices.  During the so-called \"Great Recession\" of the early 21st century, loan modification became a matter of national policy, with various actions taken to alter mortgage loan terms to prevent further economic destabilization.  Due to absorbent personal profits nothing has been done to educate Homeowners or Creditors that this money from equity, escrow is truly theirs the Loan Note Holder and it is their monetary rights as the real prize and reason for the Housing Crash was the profit n obtaining the mortgage holders Escrow.  The Escrow and Equity that is accursed form the Note Holders payments various staff through the United States claimed as recorded and cashed by all staff in real-estate from local residential Tax Assessing Staff, Real Estate Staff, Ordinance Staff, Police Staff, Brokers, attorneys, lending institutional staff but typically Attorneys who are also typically the owners or Rental properties that are trained through Bankruptcies'.  that collect the Escrow that is rightfully the Homeowners but because most Homeowners are unaware of what money is due them and how they can loose their escrow.  Most Creditors are unaware that as the note holder that the Note Holder are due a annual or semi annual equity check and again bank or other lending and or legal intuitions staff claim this monies instead.  This money Note Holders were unaware of is the prize of real estate and the cause of the Real Estate Crash of 2008 where Lending Institutions provided mortgages to people years prior they know they would eventually loose with Loan holders purchasing Balloon Mortgages lending product that is designed to make fast money off the note holder whom is always typically unaware of their escrow, equity and that are further victimized by conferences and books on HOW TO MAKE MONEY IN REAL STATE - when in fact the money is the Note Holder.  The key of the crash was not the House, but the loan product used and the interest and money that was accrued form the note holders that staff too immorally.  The immoral and illegal actions of predatory lending station and their staff began with the inception of balloon mortgages although illegal activity has always existed in the arena, yet the crash created \"Watch Dog\" like HAMP TEAM, IRS, COMPTROLLER< Federal Trade Commission Consumer Protection Bureau, FBI, CIA, Local Police Department, ICE ( The FBI online Computer crime division receives and investigates computer crimes that record keeping staff from title companies, lending institutional staff, legal staff and others created fraudulent documents to change payments and billing of note holders to obtain the money note holders are typically unaware of) and other watch dog agencies came into existence to examine if houses were purchased through a processed check at Government Debited office as many obtained free homes illegally.  Many were incarcerated for such illegal actions.  Modifications fixed the Notes to proper lower interest, escrow, tax fees that staff typically raised for no reason.  Many people from various arenas involved in reals estate have been incarcerated for these actions as well as other illegal actions like charging for a modification.  Additionally Modifications were also made to address the falsifications such as inappropriate mortgage charges, filing of fraudulently deeds, reporting of and at times filing of fraudulent mortgages that were already paid off that were fraudulently continued by lenders staff and attorneys or brokers or anyone in the Real Estate Chain through the issues of real estate terms to continue to violate United States Laws, contract law and legal precedence where collusion was often done again to defraud and steal from the Note Holder was such a common practice that was evidence as to why the Mortgage Crash in 2008 occurred for the purpose of wining the prize of stealing form Homeowners and those that foreclosed was actually often purposefully for these monies note holders were unaware of to be obtained which was why Balloon mortgages and loans were given to the staff in the Real Estate Market with the hoper and the expectation that the loan holders would default as it offered opportunity to commit illegal transactions of obtaining the homeowners funds.  While such scams were addressed through modifications in 2008.  The Market relied heavily on Consumers ignorance to prosper, ignorance of real estate terms, ignorance on what they were to be charged properly for unethical financial gain and while staff in real estates lending arenas mingled terms to deceive y deliberate confusion consumers out of cash and homes while the USA Government provided Justice through President Obamas Inception and IRS Inception of Modifications which addressed these unethical profits in Reals Estate.  It was in 2009 that HARP, HAMP and Modifications were introduced to stop the victimization of Note Holders.  Taking on the Banks that ran USA Government was a great and dangerous undertaking that made America Great Again as Justice for Consumers reigned.  Legal action taken against institutions that have such business practices can be viewed in State Code of Law and Federal Law on precedent cases that are available to the public.  Finally, It had been unlawful to be charged by an attorney to modify as well as fro banking staff to modify terms to increase a mortgage and or change lending product to a balloon in an concerted effort to make homeowner foreclose which is also illegal, computer fraud and not the governments intended purpose or definition of a modification.",
+            "South Phoenix is a region of Phoenix, Arizona, with the boundaries of the Gila River Indian Community to the south and west, 48th Street or Interstate-10 (Phoenix/Tempe and Phoenix/Chandler borders) to the east, and the Salt River to the north.  This area includes Phoenix's following Urban Villages: South Mountain Village (aka South Mountain District) along with Laveen Village and Ahwatukee Village.  The area is sometimes simply referred to as \"the Southside\" by its residents.  Major arterial east-west streets include Broadway Road, Southern Avenue, Baseline Road, Dobbins Road, Elliott Road, Warner Road, Chandler Boulevard, and Pecos Road, most of which connect South Phoenix with the suburbs of Tempe and Chandler.  Major arterial south-north streets include 24th Street, 16th Street, 7th Street, Central Avenue, 7th Avenue, and 19th Avenue connecting South Mountain Village to Central and North Phoenix; 27th Avenue, 35th Avenue, 43rd Avenue, 51st Avenue, 59th Avenue, 67th Avenue, and 75th Avenue connecting Laveen to west Phoenix; and 32nd Street, 40th Street, and 48th Street connecting South Mountain Village to east Phoenix and Tempe."
+          ]
+        }
+      },
+      "retrieval": {
+        "retrieved_contexts": [
+          "888 7th Avenue is a 628 ft (191m) tall modern-style office skyscraper in Midtown Manhattan which was completed in 1969 and has 46 floors. Emery Roth & Sons designed the building, which is tied with Central Park Place for the 65th tallest building in New York City. It currently carries the Vornado Realty Trust corporate headquarters. Previously known as the Arlen Building, its namesake being the company responsible for its construction, Arlen Realty & Development Corporation. The Red Eye Grill is located in the building at street level.",
+          "The Random House Tower, also known as the Park Imperial Apartments, is a 52-story mixed-use tower in New York City, United States, that is used as the headquarters of book publisher Random House and a luxury apartment complex. The book publisher entrance is on Broadway and goes up to 27 floors, while the apartment complex entrance is on West 56th Street.",
+          "Pershing Square Capital Management is an American hedge fund management company founded and run by Bill Ackman, located at 888 7th Avenue in New York.",
+          "Real Estate Technology or Property Technology, often referred to as (\"RE Tech\") or (\"Proptech\"), is an economic industry composed of companies which use technology to make real estate transactions more efficient. Real estate technology is a sub-category under financial technology as real estate is an asset class which represents a significant investment. Besides for own stay, there are investors who generate income and capital gains by investing in different categories of Real Estate properties over time - They are broadly residential, commercial and industrial. Historically used as a more tactical investment or for providing portfolio alpha, real estate has been used as part of a long-term core strategy due to increased market efficiency and increasing concerns about the future long-term variability of stock and bond returns. In fact, real estate is known for its ability to serve as a portfolio diversifier and inflation hedge.",
+          "Real estate benchmarking is the standard of measurement used to analyze the financial characteristics of a real estate investment property. In the general sense, real estate benchmarking refers to the comparison of potential real estate investment properties against a predetermined framework of measurement. In a narrow sense, the term real estate benchmarking refers to the specific real estate indicators used to measure the real estate properties."
+        ],
+        "retrieved_scores": [
+          0.9999661445617676,
+          0.9999091625213623,
+          0.40848901867866516,
+          0.001527836313471198,
+          0.0011909946333616972
+        ],
+        "latency_ms": 5645.199800026603
+      },
+      "generation": {
+        "generated_answer": "888 7th Avenue houses the Vornado Realty Trust corporate headquarters [1]. The Random House Tower is a mixed-use building used as the headquarters of book publisher Random House and a luxury apartment complex [2]. Based on the provided documents, only 888 7th Avenue is explicitly stated to be used for a real estate-related purpose.",
+        "latency_ms": 4079.882299993187,
+        "citations_used": [
+          1,
+          2
+        ]
+      },
+      "metric_scores": {}
+    },
+    {
+      "sample": {
+        "question": "The football manager who recruited David Beckham managed Manchester United during what timeframe?",
+        "ground_truth_answer": "from 1986 to 2013",
+        "ground_truth_contexts": [
+          "The 1995–96 season was Manchester United's fourth season in the Premier League, and their 21st consecutive season in the top division of English football.  United finished the season by becoming the first English team to win the Double (league title and FA Cup) twice.  Their triumph was made all the more remarkable by the fact that Alex Ferguson had sold experienced players Paul Ince, Mark Hughes and Andrei Kanchelskis before the start of the season, and not made any major signings.  Instead, he had drafted in young players like Nicky Butt, David Beckham, Paul Scholes and the Neville brothers, Gary and Phil.",
+          "Sir Alexander Chapman Ferguson, CBE (born 31 December 1941) is a Scottish former football manager and player who managed Manchester United from 1986 to 2013.  He is regarded by many players, managers and analysts to be one of the greatest and most successful managers of all time."
+        ],
+        "metadata": {
+          "source": "hotpotqa",
+          "id": "5ab6d09255429954757d337d",
+          "type": "bridge",
+          "level": "hard",
+          "distractor_contexts": [
+            "Joshua Parlby (born 1855 in Longton, Staffordshire) was an English football manager who managed Manchester City in the 1890s.",
+            "The 1996 FA Charity Shield (also known as the Littlewoods FA Charity Shield for sponsorship reasons) was the 74th FA Charity Shield, an annual football match played between the winners of the previous season's Premier League and FA Cup competitions.  The match was played on 11 August 1996 at Wembley Stadium and contested by Manchester United, who had won the Double of Premier League and FA Cup in 1995–96, and Newcastle United, who had finished as runners-up in the Premier League.  Manchester United won the match 4–0 with goals from Eric Cantona, Nicky Butt, David Beckham and Roy Keane.",
+            "The Sir Matt Busby Sports Complex is a public leisure centre located in Bellshill, North Lanarkshire, Scotland.  It is named in honour of Sir Matt Busby, the football manager who was born in Bellshill in 1909, managed Manchester United from 1945 to 1969 and died in 1994.",
+            "James Ernest Mangnall (4 January 1866 – 13 January 1932) was an English football manager who started his career with Burnley and managed Manchester United between 1903–1912 and then went on to manage Manchester City from 1912–1924, and is the only man to date to have managed both clubs.",
+            "The David Beckham Academy was a football school founded by England international David Beckham in 2005.  In 2009 it operated in two locations: in London, United Kingdom, and in Los Angeles, California, United States.  The academy pulled out of the London site at the end of the lease in October 2009, and the California branch closed soon after.",
+            "The Class of '92 is a 2013 British documentary film, released on 1 December 2013.  The film centres on the rise of six young Manchester United footballers – David Beckham, Nicky Butt, Ryan Giggs, Gary Neville, Phil Neville and Paul Scholes – and details their careers for Manchester United starting in 1992.",
+            "David Beckham's Soccer USA was a football highlights and general discussion show presented by Tim Lovejoy and produced and broadcast in the United Kingdom by Five.  The show began following David Beckham's move to Los Angeles Galaxy, and Beckham often contributes to the show in the form of Interviews. Each week there was a special guest in the studio, usually a British sports personality, to whom Lovejoy chatted about their career and their views on Major League Soccer.  A slightly different version of the show hosted by Natalie Pinkham and completely devoid of any content derived from British studio footage was broadcast in the USA on Fox Soccer Channel.",
+            "Sir Alexander Matthew Busby, CBE, KCSG (26 May 1909 – 20 January 1994) was a Scottish football player and manager, who managed Manchester United between 1945 and 1969 and again for the second half of the 1970–71 season.  He is widely regarded as one of the greatest managers of all time.  His managerial records and longevity at the helm of Manchester United are surpassed only by Sir Alex Ferguson."
+          ]
+        }
+      },
+      "retrieval": {
+        "retrieved_contexts": [
+          "Sir Alexander Chapman Ferguson, CBE (born 31 December 1941) is a Scottish former football manager and player who managed Manchester United from 1986 to 2013. He is regarded by many players, managers and analysts to be one of the greatest and most successful managers of all time.",
+          "Sir Alexander Matthew Busby, CBE, KCSG (26 May 1909 – 20 January 1994) was a Scottish football player and manager, who managed Manchester United between 1945 and 1969 and again for the second half of the 1970–71 season. He is widely regarded as one of the greatest managers of all time. His managerial records and longevity at the helm of Manchester United are surpassed only by Sir Alex Ferguson.",
+          "James Ernest Mangnall (4 January 1866 – 13 January 1932) was an English football manager who started his career with Burnley and managed Manchester United between 1903–1912 and then went on to manage Manchester City from 1912–1924, and is the only man to date to have managed both clubs.",
+          "The Sir Matt Busby Sports Complex is a public leisure centre located in Bellshill, North Lanarkshire, Scotland. It is named in honour of Sir Matt Busby, the football manager who was born in Bellshill in 1909, managed Manchester United from 1945 to 1969 and died in 1994.",
+          "The 1995–96 season was Manchester United's fourth season in the Premier League, and their 21st consecutive season in the top division of English football. United finished the season by becoming the first English team to win the Double (league title and FA Cup) twice. Their triumph was made all the more remarkable by the fact that Alex Ferguson had sold experienced players Paul Ince, Mark Hughes and Andrei Kanchelskis before the start of the season, and not made any major signings. Instead, he had drafted in young players like Nicky Butt, David Beckham, Paul Scholes and the Neville brothers, Gary and Phil."
+        ],
+        "retrieved_scores": [
+          0.9990943670272827,
+          0.9990357160568237,
+          0.9919460415840149,
+          0.9193766713142395,
+          0.8183888792991638
+        ],
+        "latency_ms": 1633.2054999656975
+      },
+      "generation": {
+        "generated_answer": "The football manager who recruited David Beckham was Alex Ferguson [5]. He managed Manchester United from 1986 to 2013 [1].",
+        "latency_ms": 4075.8213999215513,
+        "citations_used": [
+          5,
+          1
+        ]
+      },
+      "metric_scores": {}
+    }
+  ],
+  "aggregate_metrics": {
+    "recall_at_5": 0.13333333333333333,
+    "mrr": 0.16666666666666666,
+    "citation_coverage_avg": 0.8666666666666667,
+    "retrieval_latency_p50": 2715.430299984291,
+    "retrieval_latency_p95": 6974.874629999973,
+    "generation_latency_p50": 3621.816399972886,
+    "generation_latency_p95": 20354.294079996176,
+    "faithfulness_nli": 0.41111111111111115,
+    "answer_similarity": 0.8877186899097833,
+    "rouge_l": 0.131775403706244,
+    "token_f1": 0.131775403706244,
+    "context_relevance_avg": 0.6518401103924649
+  },
+  "timestamp": "2026-06-25T04:40:10.807312+00:00",
+  "duration_seconds": 218.21
+}

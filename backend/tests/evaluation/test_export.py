@@ -13,7 +13,7 @@ from evaluation.schemas import (
 )
 
 
-def _make_report() -> ExperimentReport:
+def _make_report(with_metrics: bool = False) -> ExperimentReport:
     result = EvalResult(
         sample=EvalSample(question="Q?", ground_truth_answer="A"),
         retrieval=RetrievalResult(
@@ -23,6 +23,8 @@ def _make_report() -> ExperimentReport:
             generated_answer="Answer [1]", latency_ms=100.0, citations_used=[1]
         ),
     )
+    if with_metrics:
+        result.metric_scores = {"recall": 0.85, "token_f1": 0.72, "rouge_l": 0.65}
     return ExperimentReport(
         config=ExperimentConfig(name="test"),
         results=[result],
@@ -32,8 +34,8 @@ def _make_report() -> ExperimentReport:
     )
 
 
-def test_export_csv_no_metric_columns(tmp_path: Path):
-    report = _make_report()
+def test_export_csv_without_metrics(tmp_path: Path):
+    report = _make_report(with_metrics=False)
     csv_path = tmp_path / "test.csv"
     export_csv(report, csv_path)
 
@@ -43,11 +45,26 @@ def test_export_csv_no_metric_columns(tmp_path: Path):
         rows = list(reader)
 
     assert "question" in headers
-    assert "generated_answer" in headers
+    assert "recall" not in headers
     assert len(rows) == 1
-    assert rows[0]["question"] == "Q?"
-    for h in headers:
-        assert rows[0][h] != "0.0000"
+
+
+def test_export_csv_with_per_sample_metrics(tmp_path: Path):
+    report = _make_report(with_metrics=True)
+    csv_path = tmp_path / "test.csv"
+    export_csv(report, csv_path)
+
+    with open(csv_path, encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        headers = reader.fieldnames
+        rows = list(reader)
+
+    assert "recall" in headers
+    assert "token_f1" in headers
+    assert "rouge_l" in headers
+    assert len(rows) == 1
+    assert rows[0]["recall"] == "0.8500"
+    assert rows[0]["token_f1"] == "0.7200"
 
 
 def test_export_json_roundtrip(tmp_path: Path):

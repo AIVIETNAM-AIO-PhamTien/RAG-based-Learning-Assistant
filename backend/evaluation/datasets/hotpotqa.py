@@ -9,13 +9,12 @@ class HotpotQALoader:
     ) -> list[EvalSample]:
         from datasets import load_dataset
 
-        ds = load_dataset("hotpot_qa", "distractor", split=split)
+        ds = load_dataset("hotpotqa/hotpot_qa", "distractor", split=split, streaming=True)
 
         samples: list[EvalSample] = []
-        limit = num_samples or len(ds)
 
         for i, row in enumerate(ds):
-            if i >= limit:
+            if num_samples is not None and i >= num_samples:
                 break
 
             titles = row["context"]["title"]

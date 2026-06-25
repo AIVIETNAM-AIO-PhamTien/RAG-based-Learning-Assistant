@@ -18,7 +18,7 @@ def export_csv(report: ExperimentReport, path: Path) -> None:
     if not report.results:
         return
 
-    fieldnames = [
+    base_fields = [
         "question",
         "ground_truth_answer",
         "generated_answer",
@@ -28,12 +28,18 @@ def export_csv(report: ExperimentReport, path: Path) -> None:
         "citations_used",
     ]
 
+    metric_keys: set[str] = set()
+    for r in report.results:
+        metric_keys.update(r.metric_scores.keys())
+    metric_fields = sorted(metric_keys)
+    fieldnames = base_fields + metric_fields
+
     with open(path, "w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
 
         for r in report.results:
-            writer.writerow({
+            row = {
                 "question": r.sample.question,
                 "ground_truth_answer": r.sample.ground_truth_answer,
                 "generated_answer": r.generation.generated_answer,
@@ -41,7 +47,10 @@ def export_csv(report: ExperimentReport, path: Path) -> None:
                 "generation_latency_ms": f"{r.generation.latency_ms:.1f}",
                 "num_retrieved": len(r.retrieval.retrieved_contexts),
                 "citations_used": str(r.generation.citations_used),
-            })
+            }
+            for mk in metric_fields:
+                row[mk] = f"{r.metric_scores.get(mk, 0.0):.4f}"
+            writer.writerow(row)
 
 
 def export_comparison_csv(reports: list[ExperimentReport], path: Path) -> None:
