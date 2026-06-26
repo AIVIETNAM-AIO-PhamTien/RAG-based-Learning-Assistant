@@ -3,10 +3,13 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 
 from evaluation.metrics import (
+    _compute_relevance_vector,
     _context_overlap,
     _lcs_length,
+    _ndcg_from_relevances,
     _rouge_l_f1,
     _token_f1,
+    compute_all_metrics,
     compute_sample_metrics,
 )
 from evaluation.schemas import EvalResult, EvalSample, GenerationResult, RetrievalResult
@@ -167,7 +170,8 @@ def test_compute_sample_metrics_returns_all_keys():
         scores = compute_sample_metrics(result)
 
     expected_keys = {
-        "recall", "rr", "answer_similarity", "rouge_l", "token_f1",
+        "recall", "rr", "precision_at_k", "hit_rate_at_k", "ndcg_at_k",
+        "answer_similarity", "rouge_l", "token_f1",
         "citation_coverage", "faithfulness_nli", "context_relevance",
     }
     assert set(scores.keys()) == expected_keys
@@ -240,3 +244,94 @@ def test_compute_sample_metrics_no_citations():
         scores = compute_sample_metrics(result)
 
     assert scores["citation_coverage"] == 0.0
+
+
+# --- New retrieval metrics ---
+
+
+def test_precision_at_k_all_relevant():
+    relevances = _compute_relevance_vector(
+        ["the answer is here"], ["the answer is here"]
+    )
+    assert sum(relevances) / len(relevances) == 1.0
+
+
+def test_precision_at_k_none_relevant():
+    relevances = _compute_relevance_vector(
+        ["completely unrelated"], ["the answer is here"]
+    )
+    assert sum(relevances) / len(relevances) == 0.0
+
+
+def test_precision_at_k_partial():
+    relevances = _compute_relevance_vector(
+        ["target text is here", "unrelated stuff"], ["target text"]
+    )
+    assert sum(relevances) / len(relevances) == 0.5
+
+
+def test_hit_rate_found():
+    relevances = _compute_relevance_vector(
+        ["unrelated", "target text is here"], ["target text"]
+    )
+    assert any(relevances)
+
+
+def test_hit_rate_not_found():
+    relevances = _compute_relevance_vector(
+        ["alpha beta", "gamma delta"], ["xyz completely different"]
+    )
+    assert not any(relevances)
+
+
+def test_ndcg_perfect_order():
+    assert _ndcg_from_relevances([True, False, False]) == 1.0
+
+
+def test_ndcg_no_relevant():
+    assert _ndcg_from_relevances([False, False, False]) == 0.0
+
+
+def test_ndcg_reversed():
+    score = _ndcg_from_relevances([False, False, True])
+    assert 0.0 < score < 1.0
+
+
+def test_ndcg_empty():
+    assert _ndcg_from_relevances([]) == 0.0
+
+
+# --- Latency percentiles ---
+
+
+def test_latency_percentiles_without_ragas():
+    results = [
+        _make_result(ret_latency=10.0, gen_latency=100.0),
+        _make_result(ret_latency=20.0, gen_latency=200.0),
+        _make_result(ret_latency=30.0, gen_latency=300.0),
+    ]
+    fake_reranker = MagicMock()
+    fake_reranker.rerank.return_value = [(0, 0.5)]
+
+    fake_embedder = MagicMock()
+    v = np.ones(384, dtype=np.float32) / np.sqrt(384)
+    fake_embedder.embed_query.return_value = v.tolist()
+
+    fake_nli = MagicMock()
+    fake_nli.predict.return_value = [0.8]
+
+    with (
+        patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
+        patch("evaluation.metrics.get_reranker", return_value=fake_reranker),
+        patch("evaluation.metrics._get_nli_model", return_value=fake_nli),
+    ):
+        for r in results:
+            r.metric_scores = compute_sample_metrics(r)
+
+    agg = compute_all_metrics(results, use_ragas=False)
+    assert "retrieval_latency_p50" in agg
+    assert "retrieval_latency_p95" in agg
+    assert "retrieval_latency_mean" in agg
+    assert "generation_latency_p50" in agg
+    assert "generation_latency_p95" in agg
+    assert "generation_latency_mean" in agg

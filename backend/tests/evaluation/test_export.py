@@ -28,7 +28,7 @@ def _make_report(with_metrics: bool = False) -> ExperimentReport:
     return ExperimentReport(
         config=ExperimentConfig(name="test"),
         results=[result],
-        aggregate_metrics={"recall_at_5": 1.0, "mrr": 1.0},
+        aggregate_metrics={"recall_at_5": 1.0, "rr": 1.0},
         timestamp="2026-06-24T00:00:00Z",
         duration_seconds=5.0,
     )
@@ -80,3 +80,37 @@ def test_export_json_roundtrip(tmp_path: Path):
     assert restored.aggregate_metrics["recall_at_5"] == 1.0
     assert len(restored.results) == 1
     assert restored.results[0].sample.question == "Q?"
+
+
+def test_export_csv_includes_k_columns(tmp_path: Path):
+    result = EvalResult(
+        sample=EvalSample(question="Q?", ground_truth_answer="A"),
+        retrieval=RetrievalResult(
+            retrieved_contexts=["ctx1"],
+            retrieved_scores=[0.9],
+            latency_ms=10.0,
+            requested_k=5,
+            effective_k=1,
+        ),
+        generation=GenerationResult(
+            generated_answer="Answer [1]", latency_ms=100.0, citations_used=[1]
+        ),
+    )
+    report = ExperimentReport(
+        config=ExperimentConfig(name="test"),
+        results=[result],
+        timestamp="2026-06-24T00:00:00Z",
+        duration_seconds=5.0,
+    )
+    csv_path = tmp_path / "test.csv"
+    export_csv(report, csv_path)
+
+    with open(csv_path, encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        headers = reader.fieldnames
+        rows = list(reader)
+
+    assert "requested_k" in headers
+    assert "effective_k" in headers
+    assert rows[0]["requested_k"] == "5"
+    assert rows[0]["effective_k"] == "1"

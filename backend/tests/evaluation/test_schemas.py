@@ -31,6 +31,8 @@ def test_retrieval_result_defaults():
     assert result.retrieved_contexts == []
     assert result.retrieved_scores == []
     assert result.latency_ms == 0.0
+    assert result.requested_k is None
+    assert result.effective_k is None
 
 
 def test_generation_result_defaults():
@@ -90,7 +92,7 @@ def test_experiment_report_serialization():
     config = ExperimentConfig(name="test")
     report = ExperimentReport(
         config=config,
-        aggregate_metrics={"recall_at_5": 0.85, "mrr": 0.72},
+        aggregate_metrics={"recall_at_5": 0.85, "rr": 0.72},
         timestamp="2026-06-24T00:00:00Z",
         duration_seconds=42.5,
     )
@@ -101,3 +103,30 @@ def test_experiment_report_serialization():
     restored = ExperimentReport(**data)
     assert restored.config.name == "test"
     assert restored.duration_seconds == 42.5
+
+
+def test_old_retrieval_json_backward_compat():
+    old_data = {
+        "retrieved_contexts": ["ctx1"],
+        "retrieved_scores": [0.9],
+        "latency_ms": 10.0,
+    }
+    result = RetrievalResult(**old_data)
+    assert result.requested_k is None
+    assert result.effective_k is None
+
+
+def test_experiment_report_grouped_metrics():
+    config = ExperimentConfig(name="test")
+    report = ExperimentReport(
+        config=config,
+        aggregate_metrics={"recall": 0.8, "retrieval_latency_p50": 10.0},
+        retrieval_metrics={"recall": 0.8},
+        latency_metrics={"retrieval_latency_p50": 10.0},
+    )
+    data = report.model_dump()
+    assert data["retrieval_metrics"]["recall"] == 0.8
+    assert data["latency_metrics"]["retrieval_latency_p50"] == 10.0
+
+    restored = ExperimentReport(**data)
+    assert restored.retrieval_metrics["recall"] == 0.8

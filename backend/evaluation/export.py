@@ -24,6 +24,8 @@ def export_csv(report: ExperimentReport, path: Path) -> None:
         "generated_answer",
         "retrieval_latency_ms",
         "generation_latency_ms",
+        "requested_k",
+        "effective_k",
         "num_retrieved",
         "citations_used",
     ]
@@ -45,6 +47,12 @@ def export_csv(report: ExperimentReport, path: Path) -> None:
                 "generated_answer": r.generation.generated_answer,
                 "retrieval_latency_ms": f"{r.retrieval.latency_ms:.1f}",
                 "generation_latency_ms": f"{r.generation.latency_ms:.1f}",
+                "requested_k": r.retrieval.requested_k or "",
+                "effective_k": (
+                    r.retrieval.effective_k
+                    if r.retrieval.effective_k is not None
+                    else len(r.retrieval.retrieved_contexts)
+                ),
                 "num_retrieved": len(r.retrieval.retrieved_contexts),
                 "citations_used": str(r.generation.citations_used),
             }
@@ -166,7 +174,21 @@ def _fallback_summary(reports: list[ExperimentReport]) -> str:
     lines = []
     for report in reports:
         lines.append(f"\n=== {report.config.name} ===")
-        for k, v in sorted(report.aggregate_metrics.items()):
-            lines.append(f"  {k}: {v:.4f}")
+        if report.retrieval_metrics or report.generation_metrics or report.latency_metrics:
+            if report.retrieval_metrics:
+                lines.append("  [Retrieval]")
+                for k, v in sorted(report.retrieval_metrics.items()):
+                    lines.append(f"    {k}: {v:.4f}")
+            if report.generation_metrics:
+                lines.append("  [Generation]")
+                for k, v in sorted(report.generation_metrics.items()):
+                    lines.append(f"    {k}: {v:.4f}")
+            if report.latency_metrics:
+                lines.append("  [Latency]")
+                for k, v in sorted(report.latency_metrics.items()):
+                    lines.append(f"    {k}: {v:.1f}ms")
+        else:
+            for k, v in sorted(report.aggregate_metrics.items()):
+                lines.append(f"  {k}: {v:.4f}")
         lines.append(f"  duration: {report.duration_seconds:.1f}s")
     return "\n".join(lines)

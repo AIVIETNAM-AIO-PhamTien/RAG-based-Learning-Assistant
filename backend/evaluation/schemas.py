@@ -14,6 +14,8 @@ class RetrievalResult(BaseModel):
     retrieved_contexts: list[str] = Field(default_factory=list)
     retrieved_scores: list[float] = Field(default_factory=list)
     latency_ms: float = 0.0
+    requested_k: int | None = None
+    effective_k: int | None = None
 
 
 class GenerationResult(BaseModel):
@@ -43,9 +45,36 @@ class ExperimentConfig(BaseModel):
     gemini_model: str = "gemini-2.5-flash"
 
 
+class RetrievalArtifact(BaseModel):
+    """Output of retrieval-only stage."""
+
+    config: ExperimentConfig
+    samples: list[EvalSample] = Field(default_factory=list)
+    retrieval_results: list[RetrievalResult] = Field(default_factory=list)
+    retrieval_metrics: dict[str, float] = Field(default_factory=dict)
+    latency_metrics: dict[str, float] = Field(default_factory=dict)
+    timestamp: str = ""
+    duration_seconds: float = 0.0
+
+
+class GenerationArtifact(BaseModel):
+    """Output of generation stage."""
+
+    config: ExperimentConfig
+    samples: list[EvalSample] = Field(default_factory=list)
+    retrieval_results: list[RetrievalResult] = Field(default_factory=list)
+    generation_results: list[GenerationResult] = Field(default_factory=list)
+    timestamp: str = ""
+    duration_seconds: float = 0.0
+
+
 class ExperimentReport(BaseModel):
     config: ExperimentConfig
     results: list[EvalResult] = Field(default_factory=list)
     aggregate_metrics: dict[str, float] = Field(default_factory=dict)
+    retrieval_metrics: dict[str, float] = Field(default_factory=dict)
+    generation_metrics: dict[str, float] = Field(default_factory=dict)
+    latency_metrics: dict[str, float] = Field(default_factory=dict)
     timestamp: str = ""
     duration_seconds: float = 0.0
+    stages_completed: list[str] = Field(default_factory=list)

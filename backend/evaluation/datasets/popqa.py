@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from evaluation.schemas import EvalSample
 
 
@@ -19,7 +21,13 @@ class PopQALoader:
 
             question = row["question"]
             answer = row["possible_answers"]
-            if isinstance(answer, list):
+            if isinstance(answer, str):
+                try:
+                    parsed = json.loads(answer)
+                    answer = parsed[0] if parsed else answer
+                except (json.JSONDecodeError, IndexError):
+                    pass
+            elif isinstance(answer, list):
                 answer = answer[0] if answer else ""
 
             subj = row.get("subj", "")

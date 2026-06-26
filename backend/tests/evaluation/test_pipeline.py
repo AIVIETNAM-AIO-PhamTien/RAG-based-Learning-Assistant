@@ -94,3 +94,47 @@ def test_generate_fallback_on_rate_limit():
 
     assert result.generated_answer == "[ERROR: rate limited]"
     assert result.latency_ms == 0.0
+
+
+def test_warmup_calls_embedder_and_reranker():
+    config = ExperimentConfig(name="test", rerank_enabled=True)
+    pipeline = EvalPipeline(config)
+
+    fake_emb = MagicMock()
+    fake_rnk = MagicMock()
+    fake_rnk.rerank.return_value = [(0, 0.9)]
+
+    with (
+        patch("evaluation.pipeline.get_embedder", return_value=fake_emb),
+        patch("evaluation.pipeline.get_reranker", return_value=fake_rnk),
+    ):
+        pipeline.warmup()
+
+    fake_emb.embed_query.assert_called_once_with("warmup")
+    fake_rnk.rerank.assert_called_once_with("warmup", ["warmup document"], 1)
+
+
+def test_warmup_skips_reranker_when_disabled():
+    config = ExperimentConfig(name="test", rerank_enabled=False)
+    pipeline = EvalPipeline(config)
+
+    fake_emb = MagicMock()
+
+    with (
+        patch("evaluation.pipeline.get_embedder", return_value=fake_emb),
+        patch("evaluation.pipeline.get_reranker") as mock_rnk,
+    ):
+        pipeline.warmup()
+
+    fake_emb.embed_query.assert_called_once_with("warmup")
+    mock_rnk.assert_not_called()
+
+
+def test_retrieve_returns_k_fields(fake_embedder):
+    config = ExperimentConfig(name="test", top_k=3, rerank_enabled=False)
+    pipeline = EvalPipeline(config)
+    pipeline.prepare_corpus(["context A", "context B"])
+
+    result = pipeline.retrieve("test query")
+    assert result.requested_k == 3
+    assert result.effective_k == len(result.retrieved_contexts)

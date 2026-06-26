@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import re
 import time
+from collections.abc import Iterable
 
 import numpy as np
 from google.genai import types
@@ -80,6 +81,19 @@ class EvalPipeline:
         self._chunk_texts: list[str] = []
         self._chunk_to_context: dict[int, int] = {}
 
+    def warmup(self) -> None:
+        """Load models with a dummy call so first eval sample latency is clean."""
+        logger = logging.getLogger(__name__)
+        logger.info("Warming up models...")
+        start = time.perf_counter()
+        embedder = get_embedder()
+        embedder.embed_query("warmup")
+        if self.config.rerank_enabled:
+            reranker = get_reranker()
+            reranker.rerank("warmup", ["warmup document"], 1)
+        elapsed = (time.perf_counter() - start) * 1000
+        logger.info("Warmup complete in %.0fms", elapsed)
+
     def prepare_corpus(
         self,
         contexts: list[str],
@@ -117,6 +131,8 @@ class EvalPipeline:
             retrieved_contexts=[text for _, _, text in results],
             retrieved_scores=[score for _, score, _ in results],
             latency_ms=latency,
+            requested_k=self.config.top_k,
+            effective_k=len(results),
         )
 
     def generate(self, query: str, retrieved_contexts: list[str]) -> GenerationResult:
@@ -167,12 +183,21 @@ class EvalPipeline:
             citations_used=used,
         )
 
-    def evaluate_sample(self, sample: EvalSample) -> EvalResult:
+    def retrieve_sample(self, sample: EvalSample) -> RetrievalResult:
+        """Run corpus preparation and retrieval for a single sample."""
         distractors = sample.metadata.get("distractor_contexts", [])
         self.prepare_corpus(sample.ground_truth_contexts, distractors)
+        return self.retrieve(sample.question)
 
-        retrieval = self.retrieve(sample.question)
-        generation = self.generate(sample.question, retrieval.retrieved_contexts)
+    def generate_sample(
+        self, query: str, retrieval: RetrievalResult
+    ) -> GenerationResult:
+        """Run generation for a single sample given retrieval results."""
+        return self.generate(query, retrieval.retrieved_contexts)
+
+    def evaluate_sample(self, sample: EvalSample) -> EvalResult:
+        retrieval = self.retrieve_sample(sample)
+        generation = self.generate_sample(sample.question, retrieval)
 
         return EvalResult(
             sample=sample,
@@ -180,11 +205,58 @@ class EvalPipeline:
             generation=generation,
         )
 
+    def retrieve_batch(
+        self, samples: list[EvalSample], show_progress: bool = True
+    ) -> list[RetrievalResult]:
+        """Run retrieval for all samples without generation."""
+        results: list[RetrievalResult] = []
+        iterator: Iterable[EvalSample] = samples
+
+        if show_progress:
+            try:
+                from tqdm import tqdm
+
+                iterator = tqdm(samples, desc="Retrieving", unit="sample")
+            except ImportError:
+                pass
+
+        for sample in iterator:
+            result = self.retrieve_sample(sample)
+            results.append(result)
+
+        return results
+
+    def generate_batch(
+        self,
+        samples: list[EvalSample],
+        retrieval_results: list[RetrievalResult],
+        show_progress: bool = True,
+    ) -> list[GenerationResult]:
+        """Run generation for all samples using existing retrieval results."""
+        results: list[GenerationResult] = []
+        pairs = zip(samples, retrieval_results, strict=True)
+
+        if show_progress:
+            try:
+                from tqdm import tqdm
+
+                pairs = tqdm(
+                    list(pairs), desc="Generating", unit="sample"
+                )
+            except ImportError:
+                pass
+
+        for sample, retrieval in pairs:
+            result = self.generate_sample(sample.question, retrieval)
+            results.append(result)
+
+        return results
+
     def evaluate_batch(
         self, samples: list[EvalSample], show_progress: bool = True
     ) -> list[EvalResult]:
         results: list[EvalResult] = []
-        iterator = samples
+        iterator: Iterable[EvalSample] = samples
 
         if show_progress:
             try:

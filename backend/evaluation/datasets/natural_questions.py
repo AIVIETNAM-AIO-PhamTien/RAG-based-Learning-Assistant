@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 
+from evaluation.datasets.base import columnar_to_rows
 from evaluation.schemas import EvalSample
 
 
@@ -21,8 +22,8 @@ class NaturalQuestionsLoader:
 
         samples: list[EvalSample] = []
 
-        for i, row in enumerate(ds):
-            if num_samples is not None and i >= num_samples:
+        for row in ds:
+            if num_samples is not None and len(samples) >= num_samples:
                 break
 
             try:
@@ -34,9 +35,8 @@ class NaturalQuestionsLoader:
             short_answers = []
             contexts = []
 
-            for annotation in row.get("annotations", []):
-                sa_list = annotation.get("short_answers", [])
-                for sa in sa_list:
+            for annotation in columnar_to_rows(row.get("annotations", [])):
+                for sa in columnar_to_rows(annotation.get("short_answers", [])):
                     start = sa.get("start_token", -1)
                     end = sa.get("end_token", -1)
                     if start >= 0 and end > start:
@@ -62,7 +62,7 @@ class NaturalQuestionsLoader:
                     ground_truth_contexts=contexts[:3],
                     metadata={
                         "source": "natural_questions",
-                        "id": i,
+                        "id": len(samples),
                         "all_short_answers": short_answers,
                     },
                 )

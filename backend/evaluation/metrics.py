@@ -12,7 +12,12 @@ from app.rag.embedder import get_embedder
 from app.rag.metrics import citation_coverage
 from app.rag.reranker import get_reranker
 from evaluation.config import get_eval_settings
-from evaluation.schemas import EvalResult
+from evaluation.schemas import (
+    EvalResult,
+    EvalSample,
+    GenerationResult,
+    RetrievalResult,
+)
 
 logger = logging.getLogger(__name__)
 RAGAS_BATCH_SIZE = 20
@@ -97,6 +102,38 @@ def _context_overlap(
     return recall, rr
 
 
+def _compute_relevance_vector(
+    retrieved: list[str], ground_truth: list[str]
+) -> list[bool]:
+    """Binary relevance for each retrieved doc. Single O(n*m) pass."""
+    relevances = []
+    for ret_ctx in retrieved:
+        ret_lower = ret_ctx.lower()
+        matched = any(
+            g.lower().strip() in ret_lower or ret_lower in g.lower().strip()
+            for g in ground_truth
+        )
+        relevances.append(matched)
+    return relevances
+
+
+def _ndcg_from_relevances(relevances: list[bool]) -> float:
+    if not relevances or not any(relevances):
+        return 0.0
+    dcg = sum(
+        (1.0 if rel else 0.0) / np.log2(rank + 2)
+        for rank, rel in enumerate(relevances)
+    )
+    ideal_rels = sorted(relevances, reverse=True)
+    idcg = sum(
+        (1.0 if rel else 0.0) / np.log2(rank + 2)
+        for rank, rel in enumerate(ideal_rels)
+    )
+    if idcg == 0.0:
+        return 0.0
+    return dcg / idcg
+
+
 @lru_cache
 def _get_nli_model():
     from sentence_transformers import CrossEncoder
@@ -114,55 +151,27 @@ def _is_valid_answer(answer: str) -> bool:
 # ---------------------------------------------------------------------------
 
 
-def compute_sample_metrics(result: EvalResult) -> dict[str, float]:
+def compute_retrieval_metrics(
+    sample: EvalSample, retrieval: RetrievalResult
+) -> dict[str, float]:
+    """Compute retrieval-only metrics: recall, rr, precision_at_k, hit_rate_at_k, ndcg_at_k, context_relevance."""
     scores: dict[str, float] = {}
-    retrieved = result.retrieval.retrieved_contexts
+    retrieved = retrieval.retrieved_contexts
 
-    recall, rr = _context_overlap(retrieved, result.sample.ground_truth_contexts)
+    recall, rr = _context_overlap(retrieved, sample.ground_truth_contexts)
     scores["recall"] = recall
     scores["rr"] = rr
 
-    answer = result.generation.generated_answer
-
-    if _is_valid_answer(answer):
-        embedder = get_embedder()
-        q_emb = np.array(embedder.embed_query(result.sample.question))
-        a_emb = np.array(embedder.embed_query(answer))
-        scores["answer_similarity"] = max(0.0, min(1.0, float(q_emb @ a_emb)))
-        scores["rouge_l"] = _rouge_l_f1(result.sample.ground_truth_answer, answer)
-        scores["token_f1"] = _token_f1(result.sample.ground_truth_answer, answer)
-
-        available = set(range(1, len(retrieved) + 1))
-        scores["citation_coverage"] = citation_coverage(answer, available)
-
-        if retrieved:
-            nli_model = _get_nli_model()
-            context_text = " ".join(retrieved)
-            sentences = _split_sentences(answer)
-            if sentences:
-                pairs = [(context_text, s) for s in sentences]
-                preds = nli_model.predict(pairs)
-                if hasattr(preds[0], "__len__"):
-                    ent = [float(p[0]) for p in preds]
-                else:
-                    ent = [float(p) for p in preds]
-                scores["faithfulness_nli"] = (
-                    sum(1 for s in ent if s > 0.5) / len(sentences)
-                )
-            else:
-                scores["faithfulness_nli"] = 0.0
-        else:
-            scores["faithfulness_nli"] = 0.0
-    else:
-        for k in (
-            "answer_similarity", "rouge_l", "token_f1",
-            "citation_coverage", "faithfulness_nli",
-        ):
-            scores[k] = 0.0
+    relevances = _compute_relevance_vector(retrieved, sample.ground_truth_contexts)
+    scores["precision_at_k"] = (
+        sum(relevances) / len(relevances) if relevances else 0.0
+    )
+    scores["hit_rate_at_k"] = 1.0 if any(relevances) else 0.0
+    scores["ndcg_at_k"] = _ndcg_from_relevances(relevances)
 
     if retrieved:
         reranker = get_reranker()
-        ranking = reranker.rerank(result.sample.question, retrieved, len(retrieved))
+        ranking = reranker.rerank(sample.question, retrieved, len(retrieved))
         ctx_scores = [s for _, s in ranking]
         scores["context_relevance"] = (
             float(np.mean(ctx_scores)) if ctx_scores else 0.0
@@ -171,6 +180,103 @@ def compute_sample_metrics(result: EvalResult) -> dict[str, float]:
         scores["context_relevance"] = 0.0
 
     return scores
+
+
+def compute_generation_metrics(
+    sample: EvalSample,
+    retrieval: RetrievalResult,
+    generation: GenerationResult,
+) -> dict[str, float]:
+    """Compute generation metrics: similarity, rouge_l, token_f1, citation, faithfulness."""
+    scores: dict[str, float] = {}
+    answer = generation.generated_answer
+    retrieved = retrieval.retrieved_contexts
+
+    if not _is_valid_answer(answer):
+        for k in (
+            "answer_similarity", "rouge_l", "token_f1",
+            "citation_coverage", "faithfulness_nli",
+        ):
+            scores[k] = 0.0
+        return scores
+
+    embedder = get_embedder()
+    q_emb = np.array(embedder.embed_query(sample.question))
+    a_emb = np.array(embedder.embed_query(answer))
+    scores["answer_similarity"] = max(0.0, min(1.0, float(q_emb @ a_emb)))
+    scores["rouge_l"] = _rouge_l_f1(sample.ground_truth_answer, answer)
+    scores["token_f1"] = _token_f1(sample.ground_truth_answer, answer)
+
+    available = set(range(1, len(retrieved) + 1))
+    scores["citation_coverage"] = citation_coverage(answer, available)
+
+    if retrieved:
+        nli_model = _get_nli_model()
+        context_text = " ".join(retrieved)
+        sentences = _split_sentences(answer)
+        if sentences:
+            pairs = [(context_text, s) for s in sentences]
+            preds = nli_model.predict(pairs)
+            if hasattr(preds[0], "__len__"):
+                ent = [float(p[0]) for p in preds]
+            else:
+                ent = [float(p) for p in preds]
+            scores["faithfulness_nli"] = (
+                sum(1 for s in ent if s > 0.5) / len(sentences)
+            )
+        else:
+            scores["faithfulness_nli"] = 0.0
+    else:
+        scores["faithfulness_nli"] = 0.0
+
+    return scores
+
+
+def compute_sample_metrics(result: EvalResult) -> dict[str, float]:
+    scores = compute_retrieval_metrics(result.sample, result.retrieval)
+    scores.update(
+        compute_generation_metrics(
+            result.sample, result.retrieval, result.generation
+        )
+    )
+    return scores
+
+
+# ---------------------------------------------------------------------------
+# Latency percentiles
+# ---------------------------------------------------------------------------
+
+
+def _compute_latency_percentiles(results: list[EvalResult]) -> dict[str, float]:
+    """Compute latency percentiles from EvalResults."""
+    if not results:
+        return {}
+    metrics: dict[str, float] = {}
+    ret_latencies = [r.retrieval.latency_ms for r in results]
+    if ret_latencies:
+        metrics["retrieval_latency_p50"] = float(np.percentile(ret_latencies, 50))
+        metrics["retrieval_latency_p95"] = float(np.percentile(ret_latencies, 95))
+        metrics["retrieval_latency_mean"] = float(np.mean(ret_latencies))
+    gen_latencies = [r.generation.latency_ms for r in results]
+    if any(lat > 0 for lat in gen_latencies):
+        metrics["generation_latency_p50"] = float(np.percentile(gen_latencies, 50))
+        metrics["generation_latency_p95"] = float(np.percentile(gen_latencies, 95))
+        metrics["generation_latency_mean"] = float(np.mean(gen_latencies))
+    return metrics
+
+
+def compute_retrieval_latency_percentiles(
+    retrieval_results: list[RetrievalResult],
+) -> dict[str, float]:
+    """Compute latency percentiles for retrieval-only pipeline."""
+    if not retrieval_results:
+        return {}
+    latencies = [r.latency_ms for r in retrieval_results]
+    return {
+        "retrieval_latency_p50": float(np.percentile(latencies, 50)),
+        "retrieval_latency_p95": float(np.percentile(latencies, 95)),
+        "retrieval_latency_mean": float(np.mean(latencies)),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -187,10 +293,12 @@ def compute_all_metrics(
     all_keys = {k for r in results for k in r.metric_scores}
     if not all_keys:
         return {}
-    return {
+    agg = {
         k: float(np.mean([r.metric_scores.get(k, 0.0) for r in results]))
         for k in sorted(all_keys)
     }
+    agg.update(_compute_latency_percentiles(results))
+    return agg
 
 
 # ---------------------------------------------------------------------------
@@ -207,8 +315,6 @@ def _compute_ragas_aggregate(results: list[EvalResult]) -> dict[str, float]:
     recall_scores: list[float] = []
     rr_scores: list[float] = []
     cov_scores: list[float] = []
-    ret_latencies: list[float] = []
-    gen_latencies: list[float] = []
 
     for r in results:
         rc, rr = _context_overlap(
@@ -219,18 +325,15 @@ def _compute_ragas_aggregate(results: list[EvalResult]) -> dict[str, float]:
 
         available = set(range(1, len(r.retrieval.retrieved_contexts) + 1))
         cov_scores.append(citation_coverage(r.generation.generated_answer, available))
-        ret_latencies.append(r.retrieval.latency_ms)
-        gen_latencies.append(r.generation.latency_ms)
 
     metrics["recall_at_5"] = float(np.mean(recall_scores))
     metrics["mrr"] = float(np.mean(rr_scores))
     metrics["citation_coverage_avg"] = float(np.mean(cov_scores))
-    metrics["retrieval_latency_p50"] = float(np.percentile(ret_latencies, 50))
-    metrics["retrieval_latency_p95"] = float(np.percentile(ret_latencies, 95))
-    metrics["generation_latency_p50"] = float(np.percentile(gen_latencies, 50))
-    metrics["generation_latency_p95"] = float(np.percentile(gen_latencies, 95))
+    metrics.update(_compute_latency_percentiles(results))
 
-    has_generation = any(_is_valid_answer(r.generation.generated_answer) for r in results)
+    has_generation = any(
+        _is_valid_answer(r.generation.generated_answer) for r in results
+    )
     if has_generation:
         try:
             metrics.update(compute_ragas_metrics(results))

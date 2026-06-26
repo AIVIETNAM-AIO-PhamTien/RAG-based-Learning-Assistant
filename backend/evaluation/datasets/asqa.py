@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from evaluation.datasets.base import columnar_to_rows
 from evaluation.schemas import EvalSample
 
 
@@ -18,21 +19,21 @@ class ASQALoader:
                 break
 
             question = row["ambiguous_question"]
-            long_answer = row.get("annotations", [{}])
-            if isinstance(long_answer, list) and long_answer:
-                long_answer_text = long_answer[0].get("long_answer", "")
+
+            annotations = columnar_to_rows(row.get("annotations", []))
+            if annotations:
+                long_answer_text = annotations[0].get("long_answer", "")
             else:
                 long_answer_text = ""
 
             short_answers: list[str] = []
-            qa_pairs = row.get("qa_pairs", [])
-            for qa in qa_pairs:
+            contexts: list[str] = []
+
+            for qa in columnar_to_rows(row.get("qa_pairs", [])):
                 sa = qa.get("short_answers", [])
                 if isinstance(sa, list):
                     short_answers.extend(sa)
 
-            contexts: list[str] = []
-            for qa in qa_pairs:
                 ctx = qa.get("context", "")
                 if ctx:
                     contexts.append(ctx)

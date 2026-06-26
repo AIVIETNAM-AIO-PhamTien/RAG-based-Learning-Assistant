@@ -19,9 +19,8 @@ class PubHealthLoader:
 
             claim = row.get("claim", "")
             explanation = row.get("explanation", "")
-            label = row.get("label")
-            label_map = {0: "true", 1: "false", 2: "mixture", 3: "unproven"}
-            label_str = label_map.get(label, "unknown")
+            label = row.get("label", "unknown")
+            label_str = str(label) if label is not None else "unknown"
 
             main_text = row.get("main_text", "")
             contexts = [main_text] if main_text else []

@@ -11,6 +11,19 @@ class DatasetLoader(Protocol):
     ) -> list[EvalSample]: ...
 
 
+def columnar_to_rows(data) -> list[dict]:
+    """Convert HF columnar format {k: [v1, v2]} to [{k: v1}, {k: v2}]."""
+    if isinstance(data, list):
+        return data
+    if isinstance(data, dict):
+        keys = list(data.keys())
+        if not keys:
+            return []
+        n = len(data[keys[0]])
+        return [{k: data[k][i] for k in keys} for i in range(n)]
+    return []
+
+
 def get_dataset_loader(name: str, **kwargs) -> DatasetLoader:
     loaders = {
         "pdf_qa": _load_pdf_qa,
