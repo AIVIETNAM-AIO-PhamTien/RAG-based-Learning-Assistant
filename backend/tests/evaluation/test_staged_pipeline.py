@@ -173,7 +173,7 @@ def test_compute_generation_metrics():
 
     with (
         patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
-        patch("evaluation.metrics._get_nli_model", return_value=fake_nli),
+        patch("evaluation.metrics._get_nli_model", return_value=(fake_nli, 1)),
     ):
         scores = compute_generation_metrics(sample, retrieval, generation)
 

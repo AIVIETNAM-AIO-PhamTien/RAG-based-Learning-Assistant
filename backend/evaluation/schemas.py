@@ -43,6 +43,7 @@ class ExperimentConfig(BaseModel):
     rerank_candidate_k: int = 20
     embedding_model: str = "intfloat/e5-small-v2"
     gemini_model: str = "gemini-2.5-flash"
+    compute_context_relevance: bool = True
 
 
 class RetrievalArtifact(BaseModel):

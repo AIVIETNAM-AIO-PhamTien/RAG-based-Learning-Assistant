@@ -138,3 +138,40 @@ def test_retrieve_returns_k_fields(fake_embedder):
     result = pipeline.retrieve("test query")
     assert result.requested_k == 3
     assert result.effective_k == len(result.retrieved_contexts)
+
+
+def test_embedding_model_mismatch_raises():
+    config = ExperimentConfig(name="test", embedding_model="intfloat/e5-base-v2")
+
+    with pytest.raises(ValueError, match="differs from app setting"):
+        EvalPipeline(config)
+
+
+def test_prepare_corpus_caching():
+    config = ExperimentConfig(name="test", rerank_enabled=False)
+
+    embed_call_count = 0
+    original_fake = FakeEmbedder()
+
+    class TrackingEmbedder:
+        def embed_texts(self, texts):
+            nonlocal embed_call_count
+            embed_call_count += 1
+            return original_fake.embed_texts(texts)
+
+        def embed_query(self, text):
+            return original_fake.embed_query(text)
+
+    with patch("evaluation.pipeline.get_embedder", return_value=TrackingEmbedder()):
+        pipeline = EvalPipeline(config)
+
+        result1 = pipeline.prepare_corpus(["context A", "context B"])
+        assert embed_call_count == 1
+
+        result2 = pipeline.prepare_corpus(["context A", "context B"])
+        assert result1 == result2
+        assert embed_call_count == 1
+
+        result3 = pipeline.prepare_corpus(["context C"])
+        assert result3 != result1
+        assert embed_call_count == 2
