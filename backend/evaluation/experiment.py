@@ -87,12 +87,14 @@ class ExperimentRunner:
         retrieval_results = pipeline.retrieve_batch(samples)
 
         ret_metrics_list = [
-            compute_retrieval_metrics(s, r)
+            compute_retrieval_metrics(
+                s, r, compute_context_relevance=config.compute_context_relevance
+            )
             for s, r in zip(samples, retrieval_results, strict=True)
         ]
         all_keys = {k for m in ret_metrics_list for k in m}
         aggregate = {
-            k: float(np.mean([m.get(k, 0.0) for m in ret_metrics_list]))
+            k: float(np.nanmean([m.get(k, 0.0) for m in ret_metrics_list]))
             for k in sorted(all_keys)
         }
 
@@ -139,13 +141,15 @@ class ExperimentRunner:
         ):
             ev = EvalResult(sample=sample, retrieval=ret, generation=gen)
             if not self._use_ragas:
-                ev.metric_scores = compute_sample_metrics(ev)
+                ev.metric_scores = compute_sample_metrics(
+                    ev, compute_context_relevance=config.compute_context_relevance
+                )
             results.append(ev)
 
         if not self._use_ragas:
             all_keys = {k for r in results for k in r.metric_scores}
             aggregate = {
-                k: float(np.mean([r.metric_scores.get(k, 0.0) for r in results]))
+                k: float(np.nanmean([r.metric_scores.get(k, 0.0) for r in results]))
                 for k in sorted(all_keys)
             }
         else:
@@ -187,10 +191,12 @@ class ExperimentRunner:
 
         if not self._use_ragas:
             for result in results:
-                result.metric_scores = compute_sample_metrics(result)
+                result.metric_scores = compute_sample_metrics(
+                    result, compute_context_relevance=config.compute_context_relevance
+                )
             all_keys = {k for r in results for k in r.metric_scores}
             aggregate = {
-                k: float(np.mean([r.metric_scores.get(k, 0.0) for r in results]))
+                k: float(np.nanmean([r.metric_scores.get(k, 0.0) for r in results]))
                 for k in sorted(all_keys)
             }
         else:

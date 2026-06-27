@@ -1,0 +1,343 @@
+{
+  "config": {
+    "name": "nq_5k_rerankTrue",
+    "dataset_name": "nq",
+    "dataset_path": null,
+    "num_samples": 10,
+    "chunk_size": 1600,
+    "chunk_overlap": 250,
+    "top_k": 5,
+    "rerank_enabled": true,
+    "rerank_candidate_k": 20,
+    "embedding_model": "intfloat/e5-small-v2",
+    "gemini_model": "gemini-2.5-flash",
+    "compute_context_relevance": true
+  },
+  "samples": [
+    {
+      "question": "what purpose did seasonal monsoon winds have on trade",
+      "ground_truth_answer": "enabled European empire expansion into the Americas and trade routes to become established across the Atlantic and Pacific oceans",
+      "ground_truth_contexts": [
+        "The trade winds are the prevailing pattern of easterly surface winds found in the tropics , within the lower portion of the Earth 's atmosphere , in the lower section of the troposphere near the Earth 's equator . The trade winds blow predominantly from the northeast in the Northern Hemisphere and from the southeast in the Southern Hemisphere , strengthening during the winter and when the Arctic oscillation is in its warm phase . Trade winds have been used by captains of sailing ships to cross the world 's oceans for centuries , and enabled European empire expansion into the Americas and trade routes to become established across the Atlantic and Pacific oceans .",
+        "The trade winds are the prevailing pattern of easterly surface winds found in the tropics , within the lower portion of the Earth 's atmosphere , in the lower section of the troposphere near the Earth 's equator . The trade winds blow predominantly from the northeast in the Northern Hemisphere and from the southeast in the Southern Hemisphere , strengthening during the winter and when the Arctic oscillation is in its warm phase . Trade winds have been used by captains of sailing ships to cross the world 's oceans for centuries , and enabled European empire expansion into the Americas and trade routes to become established across the Atlantic and Pacific oceans ."
+      ],
+      "metadata": {
+        "source": "natural_questions",
+        "id": 0,
+        "all_short_answers": [
+          "enabled European empire expansion into the Americas and trade routes to become established across the Atlantic and Pacific oceans"
+        ]
+      }
+    },
+    {
+      "question": "who got the first nobel prize in physics",
+      "ground_truth_answer": "Wilhelm Conrad Röntgen , of Germany",
+      "ground_truth_contexts": [
+        "Year     Laureate     Country     Rationale         1901         Wilhelm Conrad Röntgen     Germany     `` in recognition of the extraordinary services he has rendered by the discovery of the remarkable rays subsequently named after him ''         1902         Hendrik Lorentz     Netherlands     `` in recognition of the extraordinary service they rendered by their researches into the influence of magnetism upon radiation phenomena ''             Pieter Zeeman     Netherlands         1903         Antoine Henri Becquerel     France     `` for his discovery of spontaneous radioactivity ''             Pierre Curie     France     `` for their joint researches on the radiation phenomena discovered by Professor Henri Becquerel ''             Maria Skłodowska - Curie     Poland France         1904         Lord Rayleigh     United Kingdom     `` for his investigations of the densities of the most important gases and for his discovery of argon in connection with these studies ''         1905         Philipp Eduard Anton von Lenard     Austria - Hungary Germany     `` for his work on cathode rays ''         1906         Joseph John Thomson     United Kingdom     `` for his theoretical and experimental investigations on the conduction of electricity by gases ''         1907         Albert Abraham Michelson     United States Poland     `` for his optical precision instruments and the spectroscopic and metrological investigations carried out with their aid ''         1908         Gabriel Lippmann     France     `` for his method of reproducing colours photographically based on the phenomenon of interference ''         1909         Guglielmo Marconi     Italy     `` for their contributions to the development of wireless telegraphy ''             Karl Ferdinand Braun     Germany         1910         Johannes Diderik van der Waals     Netherlands     `` for his work on the equation of state for gases and liquids ''         1911         Wilhelm Wien     Germany     `` for his discoveries regarding the laws governing the radiation of heat ''         1912         Nils Gustaf Dalén     Sweden     `` for his invention of automatic valves designed to be used in combination with gas accumulators in lighthouses and buoys ''         1913         Heike Kamerlingh - Onnes     Netherlands     `` for his investigations on the properties of matter at low temperatures which led , inter alia , to the production of liquid helium ''         1914         Max von Laue     Germany     `` For his discovery of the diffraction of X-rays by crystals '' , an important step in the development of X-ray spectroscopy .         1915         William Henry Bragg     United Kingdom     `` For their services in the analysis of crystal structure by means of X-rays '' , an important step in the development of X-ray crystallography             William Lawrence Bragg     Australia   United Kingdom           1916     Not awarded World War I         1917         Charles Glover Barkla     United Kingdom     `` For his discovery of the characteristic Röntgen radiation of the elements '' , another important step in the development of X-ray spectroscopy         1918         Max Planck     Germany     `` for the services he rendered to the advancement of physics by his discovery of energy quanta ''         1919         Johannes Stark     Germany     `` for his discovery of the Doppler effect in canal rays and the splitting of spectral lines in electric fields ''         1920         Charles Édouard Guillaume     Switzerland     `` for the service he has rendered to precision measurements in physics by his discovery of anomalies in nickel - steel alloys ''         1921         Albert Einstein     Germany Switzerland     `` for his services to theoretical physics , and especially for his discovery of the law of the photoelectric effect ''         1922         Niels Bohr     Denmark     `` for his services in the investigation of the structure of atoms and of the radiation emanating from them ''         1923         Robert Andrews Millikan     United States     `` for his work on the elementary charge of electricity and on the photoelectric effect ''         1924         Manne Siegbahn     Sweden     `` for his discoveries and research in the field of X-ray spectroscopy ''         1925         James Franck     Germany     `` for their discovery of the laws governing the impact of an electron upon an atom ''             Gustav Hertz     Germany         1926         Jean Baptiste Perrin     France     `` for his work on the discontinuous structure of matter , and especially for his discovery of sedimentation equilibrium ''         1927         Arthur Holly Compton     United States     `` for his discovery of the effect named after him ''             Charles Thomson Rees Wilson     United Kingdom     `` for his method of making the paths of electrically charged particles visible by condensation of vapour ''         1928         Owen Willans Richardson     United Kingdom     `` for his work on the thermionic phenomenon and especially for the discovery of the law named after him ''         1929         Louis Victor Pierre Raymond , 7th Duc de Broglie     France     `` for his discovery of the wave nature of electrons ''         1930         Chandrasekhara Venkata Raman     India     `` for his work on the scattering of light and for the discovery of the effect named after him ''         1931     Not awarded         1932         Werner Heisenberg     Germany     `` for the creation of quantum mechanics , the application of which has , inter alia , led to the discovery of the allotropic forms of hydrogen ''         1933         Erwin Schrödinger     Austria     `` for the discovery of new productive forms of atomic theory ''             Paul Dirac     United Kingdom         1934     Not awarded         1935         James Chadwick     United Kingdom     `` for the discovery of the neutron ''         1936         Victor Francis Hess     Austria     `` for his discovery of cosmic radiation ''             Carl David Anderson     United States     `` for his discovery of the positron ''         1937         Clinton Joseph Davisson     United States     `` for their experimental discovery of the diffraction of electrons by crystals ''             George Paget Thomson     United Kingdom         1938         Enrico Fermi     Italy     `` for his demonstrations of the existence of new radioactive elements produced by neutron irradiation , and for his related discovery of nuclear reactions brought about by slow neutrons ''         1939         Ernest Lawrence     United States     `` for the invention and development of the cyclotron and for results obtained with it , especially with regard to artificial radioactive elements ''         1940     Not awarded World War II         1941     Not awarded World War II         1942     Not awarded World War II         1943         Otto Stern     United States     `` for his contribution to the development of the molecular ray method and his discovery of the magnetic moment of the proton ''         1944         Isidor Isaac Rabi     United States Poland     `` for his resonance method for recording the magnetic properties of atomic nuclei ''         1945         Wolfgang Pauli     Austria     `` for the discovery of the Exclusion Principle , also called the Pauli principle ''         1946         Percy Williams Bridgman     United States     `` for the invention of an apparatus to produce extremely high pressures , and for the discoveries he made there within the field of high pressure physics ''         1947         Edward Victor Appleton     United Kingdom     `` for his investigations of the physics of the upper atmosphere especially for the discovery of the so - called Appleton layer ''         1948         Patrick Maynard Stuart Blackett     United Kingdom     `` for his development of the Wilson cloud chamber method , and his discoveries therewith in the fields of nuclear physics and cosmic radiation ''         1949         Hideki Yukawa     Japan     `` for his prediction of the existence of mesons on the basis of theoretical work on nuclear forces ''         1950         Cecil Frank Powell     United Kingdom     `` for his development of the photographic method of studying nuclear processes and his discoveries regarding mesons made with this method ''         1951         John Douglas Cockcroft     United Kingdom     `` for their pioneer work on the transmutation of atomic nuclei by artificially accelerated atomic particles ''             Ernest Thomas Sinton Walton     Ireland         1952         Felix Bloch     Switzerland United States     `` for their development of new methods for nuclear magnetic precision measurements and discoveries in connection therewith ''             Edward Mills Purcell     United States         1953         Frits Zernike     Netherlands     `` for his demonstration of the phase contrast method , especially for his invention of the phase contrast microscope ''         1954         Max Born     West Germany     `` for his fundamental research in quantum mechanics , especially for his statistical interpretation of the wavefunction ''             Walther Bothe     West Germany     `` for the coincidence method and his discoveries made therewith ''         1955         Willis Eugene Lamb     United States     `` for his discoveries concerning the fine structure of the hydrogen spectrum ''             Polykarp Kusch     United States Germany     `` for his precision determination of the magnetic moment of the electron ''         1956         John Bardeen     United States     `` for their researches on semiconductors and their discovery of the transistor effect ''             Walter Houser Brattain     United States             William Bradford Shockley     United States         1957         Tsung - Dao Lee     Republic of China     `` for their penetrating investigation of the so - called parity laws which has led to important discoveries regarding the elementary particles ''             Chen Ning Yang     Republic of China         1958         Pavel Alekseyevich Cherenkov     Soviet Union     `` for the discovery and the interpretation of the Cherenkov effect ''             Ilya Frank     Soviet Union             Igor Yevgenyevich Tamm     Soviet Union         1959         Emilio Gino Segrè     Italy United States     `` for their discovery of the antiproton ''             Owen Chamberlain     United States         1960         Donald Arthur Glaser     United States     `` for the invention of the bubble chamber ''         1961         Robert Hofstadter     United States     `` for his pioneering studies of electron scattering in atomic nuclei and for his thereby achieved discoveries concerning the structure of the nucleons ''             Rudolf Ludwig Mössbauer     West Germany     `` for his researches concerning the resonance absorption of gamma radiation and his discovery in this connection of the effect which bears his name ''         1962         Lev Davidovich Landau     Soviet Union     `` for his pioneering theories for condensed matter , especially liquid helium ''         1963         Eugene Paul Wigner     Hungary United States     `` for his contributions to the theory of the atomic nucleus and the elementary particles , particularly through the discovery and application of fundamental symmetry principles ''             Maria Goeppert - Mayer     United States     `` for their discoveries concerning nuclear shell structure ''             J. Hans D. Jensen     West Germany         1964         Nicolay Gennadiyevich Basov     Soviet Union     `` for fundamental work in the field of quantum electronics , which has led to the construction of oscillators and amplifiers based on the maser -- laser principle ''             Alexander Prokhorov     Soviet Union             Charles Hard Townes     United States         1965         Richard Phillips Feynman     United States     `` for their fundamental work in quantum electrodynamics ( QED ) , with deep - ploughing consequences for the physics of elementary particles ''             Julian Schwinger     United States             Shin'ichirō Tomonaga     Japan         1966         Alfred Kastler     France     `` for the discovery and development of optical methods for studying Hertzian resonances in atoms ''         1967         Hans Albrecht Bethe     United States     `` for his contributions to the theory of nuclear reactions , especially his discoveries concerning the energy production in stars ''         1968         Luis Walter Alvarez     United States     `` for his decisive contributions to elementary particle physics , in particular the discovery of a large number of resonance states , made possible through his development of the technique of using hydrogen bubble chamber and data analysis ''         1969         Murray Gell - Mann     United States     `` for his contributions and discoveries concerning the classification of elementary particles and their interactions ''         1970         Hannes Olof Gösta Alfvén     Sweden     `` for fundamental work and discoveries in magneto - hydrodynamics with fruitful applications in different parts of plasma physics ''             Louis Néel     France     `` for fundamental work and discoveries concerning antiferromagnetism and ferrimagnetism which have led to important applications in solid state physics ''         1971         Dennis Gabor     Hungary United Kingdom     `` for his invention and development of the holographic method ''         1972         John Bardeen     United States     `` for their jointly developed theory of superconductivity , usually called the BCS - theory ''             Leon Neil Cooper     United States             John Robert Schrieffer     United States         1973         Leo Esaki     Japan     `` for their experimental discoveries regarding tunneling phenomena in semiconductors and superconductors , respectively ''             Ivar Giaever     United States Norway             Brian David Josephson     United Kingdom     `` for his theoretical predictions of the properties of a supercurrent through a tunnel barrier , in particular those phenomena which are generally known as the Josephson effect ''                 Martin Ryle     United Kingdom     `` for their pioneering research in radio astrophysics : Ryle for his observations and inventions , in particular of the aperture synthesis technique , and Hewish for his decisive role in the discovery of pulsars ''             Antony Hewish     United Kingdom                 Aage Bohr     Denmark     `` for the discovery of the connection between collective motion and particle motion in atomic nuclei and the development of the theory of the structure of the atomic nucleus based on this connection ''             Ben Roy Mottelson     Denmark             Leo James Rainwater     United States         1976         Burton Richter     United States     `` for their pioneering work in the discovery of a heavy elementary particle of a new kind ''             Samuel Chao Chung Ting     United States         1977         Philip Warren Anderson     United States     `` for their fundamental theoretical investigations of the electronic structure of magnetic and disordered systems ''             Nevill Francis Mott     United Kingdom             John Hasbrouck Van Vleck     United States         1978         Pyotr Leonidovich Kapitsa     Soviet Union     `` for his basic inventions and discoveries in the area of low - temperature physics ''             Arno Allan Penzias     United States     `` for their discovery of cosmic microwave background radiation ''             Robert Woodrow Wilson     United States         1979         Sheldon Lee Glashow     United States     `` for their contributions to the theory of the unified weak and electromagnetic interaction between elementary particles , including , inter alia , the prediction of the weak neutral current ''             Abdus Salam     Pakistan             Steven Weinberg     United States         1980         James Watson Cronin     United States     `` for the discovery of violations of fundamental symmetry principles in the decay of neutral K - mesons ''             Val Logsdon Fitch     United States         1981         Nicolaas Bloembergen     Netherlands United States     `` for their contribution to the development of laser spectroscopy ''             Arthur Leonard Schawlow     United States             Kai Manne Börje Siegbahn     Sweden     `` for his contribution to the development of high - resolution electron spectroscopy ''         1982         Kenneth G. Wilson     United States     `` for his theory for critical phenomena in connection with phase transitions ''                 Subrahmanyan Chandrasekhar     India United States     `` for his theoretical studies of the physical processes of importance to the structure and evolution of the stars ''             William Alfred Fowler     United States     `` for his theoretical and experimental studies of the nuclear reactions of importance in the formation of the chemical elements in the universe ''         1984         Carlo Rubbia     Italy     `` for their decisive contributions to the large project , which led to the discovery of the field particles W and Z , communicators of weak interaction ''             Simon van der Meer     Netherlands         1985         Klaus von Klitzing     West Germany     `` for the discovery of the quantized Hall effect ''         1986         Ernst Ruska     West Germany     `` for his fundamental work in electron optics , and for the design of the first electron microscope ''             Gerd Binnig     West Germany     `` for their design of the scanning tunneling microscope ''             Heinrich Rohrer     Switzerland                 Johannes Georg Bednorz     West Germany     `` for their important break - through in the discovery of superconductivity in ceramic materials ''             Karl Alexander Müller     Switzerland         1988         Leon Max Lederman     United States     `` for the neutrino beam method and the demonstration of the doublet structure of the leptons through the discovery of the muon neutrino ''             Melvin Schwartz     United States             Jack Steinberger     United States         1989         Norman Foster Ramsey     United States     `` for the invention of the separated oscillatory fields method and its use in the hydrogen maser and other atomic clocks ''             Hans Georg Dehmelt     United States Germany     `` for the development of the ion trap technique ''             Wolfgang Paul     West Germany         1990         Jerome I. Friedman     United States     `` for their pioneering investigations concerning deep inelastic scattering of electrons on protons and bound neutrons , which have been of essential importance for the development of the quark model in particle physics ''             Henry Way Kendall     United States             Richard E. Taylor     Canada         1991         Pierre - Gilles de Gennes     France     `` for discovering that methods developed for studying order phenomena in simple systems can be generalized to more complex forms of matter , in particular to liquid crystals and polymers ''         1992         Georges Charpak     France Poland     `` for his invention and development of particle detectors , in particular the multiwire proportional chamber ''         1993         Russell Alan Hulse     United States     `` for the discovery of a new type of pulsar , a discovery that has opened up new possibilities for the study of gravitation ''             Joseph Hooton Taylor , Jr .     United States         1994         Bertram Brockhouse     Canada     `` for the development of neutron spectroscopy '' and `` for pioneering contributions to the development of neutron scattering techniques for studies of condensed matter ''             Clifford Glenwood Shull     United States     `` for the development of the neutron diffraction technique '' and `` for pioneering contributions to the development of neutron scattering techniques for studies of condensed matter ''         1995         Martin Lewis Perl     United States     `` for the discovery of the tau lepton '' and `` for pioneering experimental contributions to lepton physics ''             Frederick Reines     United States     `` for the detection of the neutrino '' and `` for pioneering experimental contributions to lepton physics ''                 David Morris Lee     United States     `` for their discovery of superfluidity in helium - 3 ''             Douglas D. Osheroff     United States             Robert Coleman Richardson     United States         1997         Steven Chu     United States     `` for development of methods to cool and trap atoms with laser light . ''             Claude Cohen - Tannoudji     France             William Daniel Phillips     United States         1998         Robert B. Laughlin     United States     `` for their discovery of a new form of quantum fluid with fractionally charged excitations ''             Horst Ludwig Störmer     Germany             Daniel Chee Tsui     Republic of China United States         1999         Gerard ' t Hooft     Netherlands     `` for elucidating the quantum structure of electroweak interactions in physics ''             Martinus J.G. Veltman     Netherlands         2000         Zhores Ivanovich Alferov     Russia     `` for developing semiconductor heterostructures used in high - speed - and optoelectronics ''             Herbert Kroemer     Germany             Jack St. Clair Kilby     United States     `` for his part in the invention of the integrated circuit ''         2001         Eric Allin Cornell     United States     `` for the achievement of Bose -- Einstein condensation in dilute gases of alkali atoms , and for early fundamental studies of the properties of the condensates ''             Carl Edwin Wieman     United States             Wolfgang Ketterle     Germany         2002         Raymond Davis , Jr .     United States     `` for pioneering contributions to astrophysics , in particular for the detection of cosmic neutrinos ''             Masatoshi Koshiba     Japan             Riccardo Giacconi     Italy United States     `` for pioneering contributions to astrophysics , which have led to the discovery of cosmic X-ray sources ''         2003         Alexei Alexeyevich Abrikosov     Russia United States     `` for pioneering contributions to the theory of superconductors and superfluids ''             Vitaly Lazarevich Ginzburg     Russia             Anthony James Leggett     United Kingdom United States                 David J. Gross     United States     `` for the discovery of asymptotic freedom in the theory of the strong interaction ''             Hugh David Politzer     United States             Frank Wilczek     United States         2005         Roy J. Glauber     United States     `` for his contribution to the quantum theory of optical coherence ''             John L. Hall     United States     `` for their contributions to the development of laser - based precision spectroscopy , including the optical frequency comb technique ''             Theodor W. Hänsch     Germany         2006         John C. Mather     United States     `` for their discovery of the blackbody form and anisotropy of the cosmic microwave background radiation ''             George F. Smoot     United States         2007         Albert Fert     France     `` for the discovery of giant magnetoresistance ''             Peter Grünberg     Germany         2008         Makoto Kobayashi     Japan     `` for the discovery of the origin of the broken symmetry which predicts the existence of at least three families of quarks in nature ''             Toshihide Maskawa     Japan             Yoichiro Nambu     Japan United States     `` for the discovery of the mechanism of spontaneous broken symmetry in subatomic physics ''         2009         Charles K. Kao     Hong Kong United Kingdom United States     `` for groundbreaking achievements concerning the transmission of light in fibers for optical communication ''             Willard S. Boyle     Canada United States     `` for the invention of an imaging semiconductor circuit -- the CCD sensor ''             George E. Smith     United States                 Andre Geim     Russia United Kingdom Netherlands     `` for groundbreaking experiments regarding the two - dimensional material graphene ''             Konstantin Novoselov     Russia United Kingdom         2011         Saul Perlmutter     United States     `` for the discovery of the accelerating expansion of the Universe through observations of distant supernovae ''             Brian P. Schmidt     Australia United States             Adam G. Riess     United States         2012         Serge Haroche     France     `` for ground - breaking experimental methods that enable measuring and manipulation of individual quantum systems . ''             David J. Wineland     United States         2013         François Englert     Belgium     `` for the theoretical discovery of a mechanism that contributes to our understanding of the origin of mass of subatomic particles , and which recently was confirmed through the discovery of the predicted fundamental particle , by the ATLAS and CMS experiments at CERN 's Large Hadron Collider ''             Peter Higgs     United Kingdom         2014         Isamu Akasaki     Japan     `` for the invention of efficient blue light - emitting diodes which has enabled bright and energy - saving white light sources ''             Hiroshi Amano     Japan             Shuji Nakamura     Japan United States         2015         Takaaki Kajita     Japan     `` for the discovery of neutrino oscillations , which shows that neutrinos have mass ''             Arthur B. McDonald     Canada         2016         David J. Thouless     United Kingdom United States     `` for theoretical discoveries of topological phase transitions and topological phases of matter ''             F. Duncan M. Haldane     United Kingdom United States             John M. Kosterlitz     United Kingdom United States         2017         Rainer Weiss     Germany United States     `` for decisive contributions to the LIGO detector and the observation of gravitational waves ''             Kip Thorne     United States             Barry Barish     United States",
+        "The first Nobel Prize in Physics was awarded in 1901 to Wilhelm Conrad Röntgen , of Germany , who received 150,782 SEK , which is equal to 7,731,004 SEK in December 2007 . John Bardeen is the only laureate to win the prize twice -- in 1956 and 1972 . Maria Skłodowska - Curie also won two Nobel Prizes , for physics in 1903 and chemistry in 1911 . William Lawrence Bragg was , until October 2014 , the youngest ever Nobel laureate ; he won the prize in 1915 at the age of 25 . Two women have won the prize : Curie and Maria Goeppert - Mayer ( 1963 ) . As of 2017 , the prize has been awarded to 206 individuals . There have been six years in which the Nobel Prize in Physics was not awarded ( 1916 , 1931 , 1934 , 1940 -- 1942 ) .",
+        "The first Nobel Prize in Physics was awarded in 1901 to Wilhelm Conrad Röntgen , of Germany , who received 150,782 SEK , which is equal to 7,731,004 SEK in December 2007 . John Bardeen is the only laureate to win the prize twice -- in 1956 and 1972 . Maria Skłodowska - Curie also won two Nobel Prizes , for physics in 1903 and chemistry in 1911 . William Lawrence Bragg was , until October 2014 , the youngest ever Nobel laureate ; he won the prize in 1915 at the age of 25 . Two women have won the prize : Curie and Maria Goeppert - Mayer ( 1963 ) . As of 2017 , the prize has been awarded to 206 individuals . There have been six years in which the Nobel Prize in Physics was not awarded ( 1916 , 1931 , 1934 , 1940 -- 1942 ) ."
+      ],
+      "metadata": {
+        "source": "natural_questions",
+        "id": 1,
+        "all_short_answers": [
+          "Wilhelm Conrad Röntgen , of Germany",
+          "Wilhelm Conrad Röntgen , of Germany",
+          "Wilhelm Conrad Röntgen",
+          "Wilhelm Conrad Röntgen"
+        ]
+      }
+    },
+    {
+      "question": "when is the next deadpool movie being released",
+      "ground_truth_answer": "May 18 , 2018",
+      "ground_truth_contexts": [
+        "Deadpool 2 is scheduled to be released in the United States on May 18 , 2018 . A sequel , Deadpool 3 , is in development .",
+        "Deadpool 2 is scheduled to be released in the United States on May 18 , 2018 . A sequel , Deadpool 3 , is in development .",
+        "Deadpool 2 is scheduled to be released in the United States on May 18 , 2018 . A sequel , Deadpool 3 , is in development ."
+      ],
+      "metadata": {
+        "source": "natural_questions",
+        "id": 2,
+        "all_short_answers": [
+          "May 18 , 2018",
+          "May 18 , 2018",
+          "May 18 , 2018",
+          "May 18 , 2018",
+          "May 18 , 2018"
+        ]
+      }
+    },
+    {
+      "question": "where did the idea of fortnite come from",
+      "ground_truth_answer": "as a cross between Minecraft and Left 4 Dead",
+      "ground_truth_contexts": [
+        "Fortnite is set in contemporary Earth , where the sudden appearance of a worldwide storm causes 98 % of the world 's population to disappear , and zombie - like creatures rise to attack the remainder . Considered by Epic as a cross between Minecraft and Left 4 Dead , Fortnite has up to four players cooperating on various missions on randomly - generated maps to collect resources , build fortifications around defensive objectives that are meant to help fight the storm and protect survivors , and construct weapons and traps to engage in combat with waves of these creatures that attempt to destroy the objectives . Players gain rewards through these missions to improve their hero characters , support teams , and arsenal of weapon and trap schematics to be able to take on more difficult missions . The game is supported through microtransactions to purchase in - game currency that can be used towards these upgrades .",
+        "Fortnite was first revealed at the 2011 Spike Video Game Awards ( VGA ) , with Epic 's former design director Cliff Bleszinski introducing a trailer for the game . Donald Mustard , creative lead at Epic , said in 2017 that this announcement was `` three weeks after we came up with the idea , before we even made the game '' . The title , which started out as an internal game jam project , represents a departure from the company 's previous work . As Bleszinski explained during the Spike event , Epic wanted to `` switch things up a little bit and do something different and fun '' with Fortnite , describing it as `` a world where you explore , you scavenge , you build and ultimately you survive . '' In an interview with Engadget , he also echoed these statements , claiming that the game would be different from the Gears of War series : `` There 's no dudebros in it ... Not that there 's anything wrong with that , right ? But creatively for the team , Gears has been amazing for us . But it 's fun to kind of stretch our wings and do something that 's a little different from the usual . '' Epic Games Vice President of Publishing Mike Fischer said in 2015 that Epic recognized that they `` announced this game too soon '' , and that its lengthy development period was due to `` very good reasons . ''"
+      ],
+      "metadata": {
+        "source": "natural_questions",
+        "id": 3,
+        "all_short_answers": [
+          "as a cross between Minecraft and Left 4 Dead"
+        ]
+      }
+    },
+    {
+      "question": "which mode is used for short wave broadcast service",
+      "ground_truth_answer": "MFSK",
+      "ground_truth_contexts": [
+        "Shortwave radio is radio transmission using shortwave radio frequencies . There is no official definition of the band , but the range always includes all of the high frequency band ( HF ) , and generally extends from 1.7 -- 30 MHz ( 176.3 -- 10.0 m ) ; from the high end of the medium frequency band ( MF ) just above the mediumwave AM broadcast band , to the end of the HF band .",
+        "Very little infrastructure is required for long - distance two - way communications using shortwave radio . All one needs is a pair of transceivers , each with an antenna , and a source of energy ( such as a battery , a portable generator , or the electrical grid ) . This makes shortwave radio one of the most robust means of communications , which can be disrupted only by interference or bad ionospheric conditions . Modern digital transmission modes such as MFSK and Olivia are even more robust , allowing successful reception of signals well below the noise floor of a conventional receiver ."
+      ],
+      "metadata": {
+        "source": "natural_questions",
+        "id": 4,
+        "all_short_answers": [
+          "MFSK",
+          "Olivia"
+        ]
+      }
+    },
+    {
+      "question": "the south west wind blows across nigeria between",
+      "ground_truth_answer": "arrives in central Nigeria in July",
+      "ground_truth_contexts": [
+        "With the Intertropical Convergence Zone ( ITCZ ) swinging northward over West Africa from the Southern Hemisphere in April , heavy showers coming from pre-monsoonal convective clouds mainly in the form of squall lines also known as the north easterlies formed mainly as a result of the interactions of the two dominant airmasses in Nigeria known as the Maritime tropical ( south westerlies ) and the Continental tropical ( north easterlies ) , begins in central Nigeria while the Monsoons from the south atlantic ocean arrives in central Nigeria in July bringing with it high humidity , heavy cloud cover and heavy rainfall which can be daily occurrence lasting till September when the monsoons gradually begin retreating southward to the southern part of Nigeria. Rainfall totals in central Nigeria varies from 1,100 mm ( 43.3 in ) in the lowlands of the river Niger Benue trough to over 2,000 mm ( 78.7 in ) along the south western escarpment of the Jos Plateau ."
+      ],
+      "metadata": {
+        "source": "natural_questions",
+        "id": 5,
+        "all_short_answers": [
+          "arrives in central Nigeria in July",
+          "till September"
+        ]
+      }
+    },
+    {
+      "question": "what does hp mean in war and order",
+      "ground_truth_answer": "hit points or health points",
+      "ground_truth_contexts": [
+        "Health or vitality is an attribute assigned to entities , such as the player character , enemies and objects within a role - playing or video game , that indicates its state in combat . Health is usually measured in hit points or health points , shortened to HP . When the HP of a player character reaches zero , the player may lose a life or their character might become incapacitated or die . When the HP of an enemy reaches zero , it may be defeated or die and the player is usually rewarded in some way ."
+      ],
+      "metadata": {
+        "source": "natural_questions",
+        "id": 6,
+        "all_short_answers": [
+          "hit points or health points"
+        ]
+      }
+    },
+    {
+      "question": "who wrote the first declaration of human rights",
+      "ground_truth_answer": "Cyrus",
+      "ground_truth_contexts": [
+        "The Cylinder 's text has traditionally been seen by biblical scholars as corroborative evidence of Cyrus ' policy of the repatriation of the Jewish people following their Babylonian captivity ( an act that the Book of Ezra attributes to Cyrus ) , as the text refers to the restoration of cult sanctuaries and repatriation of deported peoples . This interpretation has been disputed , as the text identifies only Mesopotamian sanctuaries , and makes no mention of Jews , Jerusalem , or Judea . The Cylinder has also been referred to by Mohammad Reza Pahlavi , the last Shah of Iran as the first declaration of universal human rights , a view rejected by some historians as anachronistic and a misunderstanding of the Cylinder 's generic nature as a typical statement made by a new monarch at the beginning of his reign . Neil MacGregor , Director of the British Museum , has stated that the cylinder was `` the first attempt we know about running a society , a state with different nationalities and faiths -- a new kind of statecraft . '' It was adopted as a national symbol of Iran by the Imperial State which put it on display in Tehran in 1971 to commemorate 2,500 year celebration of the Persian Empire . On October 14 , the Mohammad Reza Shah 's sister , Princess Ashraf Pahlavi , presented the United Nations Secretary General U Thant with a replica of the Cylinder . The princess asserted that `` the heritage of Cyrus was the heritage of human understanding , tolerance , courage , compassion and , above all , human liberty '' .",
+        "The Cylinder 's text has traditionally been seen by biblical scholars as corroborative evidence of Cyrus ' policy of the repatriation of the Jewish people following their Babylonian captivity ( an act that the Book of Ezra attributes to Cyrus ) , as the text refers to the restoration of cult sanctuaries and repatriation of deported peoples . This interpretation has been disputed , as the text identifies only Mesopotamian sanctuaries , and makes no mention of Jews , Jerusalem , or Judea . The Cylinder has also been referred to by Mohammad Reza Pahlavi , the last Shah of Iran as the first declaration of universal human rights , a view rejected by some historians as anachronistic and a misunderstanding of the Cylinder 's generic nature as a typical statement made by a new monarch at the beginning of his reign . Neil MacGregor , Director of the British Museum , has stated that the cylinder was `` the first attempt we know about running a society , a state with different nationalities and faiths -- a new kind of statecraft . '' It was adopted as a national symbol of Iran by the Imperial State which put it on display in Tehran in 1971 to commemorate 2,500 year celebration of the Persian Empire . On October 14 , the Mohammad Reza Shah 's sister , Princess Ashraf Pahlavi , presented the United Nations Secretary General U Thant with a replica of the Cylinder . The princess asserted that `` the heritage of Cyrus was the heritage of human understanding , tolerance , courage , compassion and , above all , human liberty '' ."
+      ],
+      "metadata": {
+        "source": "natural_questions",
+        "id": 7,
+        "all_short_answers": [
+          "Cyrus"
+        ]
+      }
+    },
+    {
+      "question": "who was the governor general of india when country became independent",
+      "ground_truth_answer": "Louis Mountbatten , 1st Earl Mountbatten of Burma",
+      "ground_truth_contexts": [
+        "India and Pakistan acquired independence in 1947 , but Governors - General continued to be appointed over each nation until republican constitutions were written . Louis Mountbatten , 1st Earl Mountbatten of Burma remained Governor - General of India for some time after independence , but the two nations were otherwise headed by native Governors - General . India became a secular republic in 1950 ; Pakistan became an Islamic one in 1956 .",
+        "India and Pakistan acquired independence in 1947 , but Governors - General continued to be appointed over each nation until republican constitutions were written . Louis Mountbatten , 1st Earl Mountbatten of Burma remained Governor - General of India for some time after independence , but the two nations were otherwise headed by native Governors - General . India became a secular republic in 1950 ; Pakistan became an Islamic one in 1956 .",
+        "India and Pakistan acquired independence in 1947 , but Governors - General continued to be appointed over each nation until republican constitutions were written . Louis Mountbatten , 1st Earl Mountbatten of Burma remained Governor - General of India for some time after independence , but the two nations were otherwise headed by native Governors - General . India became a secular republic in 1950 ; Pakistan became an Islamic one in 1956 ."
+      ],
+      "metadata": {
+        "source": "natural_questions",
+        "id": 8,
+        "all_short_answers": [
+          "Louis Mountbatten , 1st Earl Mountbatten of Burma",
+          "Louis Mountbatten , 1st Earl Mountbatten of Burma",
+          "Louis Mountbatten , 1st Earl Mountbatten of Burma"
+        ]
+      }
+    },
+    {
+      "question": "who is the owner of reading football club",
+      "ground_truth_answer": "Dai Yongge",
+      "ground_truth_contexts": [
+        "Reading             Full name     Reading Football Club         Nickname ( s )     The Royals         Founded     1871 ; 147 years ago ( 1871 )         Ground     Madejski Stadium         Ground Capacity     24,161         Owner     Dai Yongge and Dai Xiuli ( majority )         Chairman     Sir John Madejski         Manager     Jaap Stam         League     Championship         2016 -- 17     Championship , 3rd         Website     Club website                       Home colours     Away colours                       Current season",
+        "Reading             Full name     Reading Football Club         Nickname ( s )     The Royals         Founded     1871 ; 147 years ago ( 1871 )         Ground     Madejski Stadium         Ground Capacity     24,161         Owner     Dai Yongge and Dai Xiuli ( majority )         Chairman     Sir John Madejski         Manager     Jaap Stam         League     Championship         2016 -- 17     Championship , 3rd         Website     Club website                       Home colours     Away colours                       Current season",
+        "Reading Football Club ownership structure : 75 % Owned by Renhe Sports Management Ltd , 100 % owned by Xiu Li Dai and Yongge Dai . 25 % Owned by Narin Niruttinanon"
+      ],
+      "metadata": {
+        "source": "natural_questions",
+        "id": 9,
+        "all_short_answers": [
+          "Dai Yongge",
+          "Dai Xiuli",
+          "Dai Yongge and Dai Xiuli ( majority )",
+          "Xiu Li Dai",
+          "Yongge Dai",
+          "Dai Yongge and Dai Xiuli ( majority )",
+          "Xiu Li Dai",
+          "Yongge Dai"
+        ]
+      }
+    }
+  ],
+  "retrieval_results": [
+    {
+      "retrieved_contexts": [
+        "The trade winds are the prevailing pattern of easterly surface winds found in the tropics , within the lower portion of the Earth 's atmosphere , in the lower section of the troposphere near the Earth 's equator . The trade winds blow predominantly from the northeast in the Northern Hemisphere and from the southeast in the Southern Hemisphere , strengthening during the winter and when the Arctic oscillation is in its warm phase . Trade winds have been used by captains of sailing ships to cross the world 's oceans for centuries , and enabled European empire expansion into the Americas and trade routes to become established across the Atlantic and Pacific oceans .",
+        "The trade winds are the prevailing pattern of easterly surface winds found in the tropics , within the lower portion of the Earth 's atmosphere , in the lower section of the troposphere near the Earth 's equator . The trade winds blow predominantly from the northeast in the Northern Hemisphere and from the southeast in the Southern Hemisphere , strengthening during the winter and when the Arctic oscillation is in its warm phase . Trade winds have been used by captains of sailing ships to cross the world 's oceans for centuries , and enabled European empire expansion into the Americas and trade routes to become established across the Atlantic and Pacific oceans ."
+      ],
+      "retrieved_scores": [
+        0.9452992081642151,
+        0.9452992081642151
+      ],
+      "latency_ms": 503.3362000249326,
+      "requested_k": 5,
+      "effective_k": 2
+    },
+    {
+      "retrieved_contexts": [
+        "The first Nobel Prize in Physics was awarded in 1901 to Wilhelm Conrad Röntgen , of Germany , who received 150,782 SEK , which is equal to 7,731,004 SEK in December 2007 . John Bardeen is the only laureate to win the prize twice -- in 1956 and 1972 . Maria Skłodowska - Curie also won two Nobel Prizes , for physics in 1903 and chemistry in 1911 . William Lawrence Bragg was , until October 2014 , the youngest ever Nobel laureate ; he won the prize in 1915 at the age of 25 . Two women have won the prize : Curie and Maria Goeppert - Mayer ( 1963 ) . As of 2017 , the prize has been awarded to 206 individuals . There have been six years in which the Nobel Prize in Physics was not awarded ( 1916 , 1931 , 1934 , 1940 -- 1942 ) .",
+        "The first Nobel Prize in Physics was awarded in 1901 to Wilhelm Conrad Röntgen , of Germany , who received 150,782 SEK , which is equal to 7,731,004 SEK in December 2007 . John Bardeen is the only laureate to win the prize twice -- in 1956 and 1972 . Maria Skłodowska - Curie also won two Nobel Prizes , for physics in 1903 and chemistry in 1911 . William Lawrence Bragg was , until October 2014 , the youngest ever Nobel laureate ; he won the prize in 1915 at the age of 25 . Two women have won the prize : Curie and Maria Goeppert - Mayer ( 1963 ) . As of 2017 , the prize has been awarded to 206 individuals . There have been six years in which the Nobel Prize in Physics was not awarded ( 1916 , 1931 , 1934 , 1940 -- 1942 ) .",
+        "ra Japan United States 2015 Takaaki Kajita Japan `` for the discovery of neutrino oscillations , which shows that neutrinos have mass '' Arthur B. McDonald Canada 2016 David J. Thouless United Kingdom United States `` for theoretical discoveries of topological phase transitions and topological phases of matter '' F. Duncan M. Haldane United Kingdom United States John M. Kosterlitz United Kingdom United States 2017 Rainer Weiss Germany United States `` for decisive contributions to the LIGO detector and the observation of gravitational waves '' Kip Thorne United States Barry Barish United States",
+        "neutral current '' Abdus Salam Pakistan Steven Weinberg United States 1980 James Watson Cronin United States `` for the discovery of violations of fundamental symmetry principles in the decay of neutral K - mesons '' Val Logsdon Fitch United States 1981 Nicolaas Bloembergen Netherlands United States `` for their contribution to the development of laser spectroscopy '' Arthur Leonard Schawlow United States Kai Manne Börje Siegbahn Sweden `` for his contribution to the development of high - resolution electron spectroscopy '' 1982 Kenneth G. Wilson United States `` for his theory for critical phenomena in connection with phase transitions '' Subrahmanyan Chandrasekhar India United States `` for his theoretical studies of the physical processes of importance to the structure and evolution of the stars '' William Alfred Fowler United States `` for his theoretical and experimental studies of the nuclear reactions of importance in the formation of the chemical elements in the universe '' 1984 Carlo Rubbia Italy `` for their decisive contributions to the large project , which led to the discovery of the field particles W and Z , communicators of weak interaction '' Simon van der Meer Netherlands 1985 Klaus von Klitzing West Germany `` for the discovery of the quantized Hall effect '' 1986 Ernst Ruska West Germany `` for his fundamental work in electron optics , and for the design of the first electron microscope '' Gerd Binnig West Germany `` for their design of the scanning tunneling microscope '' Heinrich Rohrer Switzerland Johannes Georg Bednorz West Germany `` for their impor",
+        "'' 1949 Hideki Yukawa Japan `` for his prediction of the existence of mesons on the basis of theoretical work on nuclear forces '' 1950 Cecil Frank Powell United Kingdom `` for his development of the photographic method of studying nuclear processes and his discoveries regarding mesons made with this method '' 1951 John Douglas Cockcroft United Kingdom `` for their pioneer work on the transmutation of atomic nuclei by artificially accelerated atomic particles '' Ernest Thomas Sinton Walton Ireland 1952 Felix Bloch Switzerland United States `` for their development of new methods for nuclear magnetic precision measurements and discoveries in connection therewith '' Edward Mills Purcell United States 1953 Frits Zernike Netherlands `` for his demonstration of the phase contrast method , especially for his invention of the phase contrast microscope '' 1954 Max Born West Germany `` for his fundamental research in quantum mechanics , especially for his statistical interpretation of the wavefunction '' Walther Bothe West Germany `` for the coincidence method and his discoveries made therewith '' 1955 Willis Eugene Lamb United States `` for his discoveries concerning the fine structure of the hydrogen spectrum '' Polykarp Kusch United States Germany `` for his precision determination of the magnetic moment of the electron '' 1956 John Bardeen United States `` for their researches on semiconductors and their discovery of the transistor effect '' Walter Houser Brattain United States William Bradford Shockley United States 1957 Tsung - Dao Lee Republic of China `` for their penetrati"
+      ],
+      "retrieved_scores": [
+        0.9999662637710571,
+        0.9999662637710571,
+        0.9900802969932556,
+        0.9828794598579407,
+        0.973678708076477
+      ],
+      "latency_ms": 7242.656099959277,
+      "requested_k": 5,
+      "effective_k": 5
+    },
+    {
+      "retrieved_contexts": [
+        "Deadpool 2 is scheduled to be released in the United States on May 18 , 2018 . A sequel , Deadpool 3 , is in development .",
+        "Deadpool 2 is scheduled to be released in the United States on May 18 , 2018 . A sequel , Deadpool 3 , is in development .",
+        "Deadpool 2 is scheduled to be released in the United States on May 18 , 2018 . A sequel , Deadpool 3 , is in development ."
+      ],
+      "retrieved_scores": [
+        0.999521017074585,
+        0.999521017074585,
+        0.999521017074585
+      ],
+      "latency_ms": 292.3598000779748,
+      "requested_k": 5,
+      "effective_k": 3
+    },
+    {
+      "retrieved_contexts": [
+        "Fortnite is set in contemporary Earth , where the sudden appearance of a worldwide storm causes 98 % of the world 's population to disappear , and zombie - like creatures rise to attack the remainder . Considered by Epic as a cross between Minecraft and Left 4 Dead , Fortnite has up to four players cooperating on various missions on randomly - generated maps to collect resources , build fortifications around defensive objectives that are meant to help fight the storm and protect survivors , and construct weapons and traps to engage in combat with waves of these creatures that attempt to destroy the objectives . Players gain rewards through these missions to improve their hero characters , support teams , and arsenal of weapon and trap schematics to be able to take on more difficult missions . The game is supported through microtransactions to purchase in - game currency that can be used towards these upgrades .",
+        "Fortnite was first revealed at the 2011 Spike Video Game Awards ( VGA ) , with Epic 's former design director Cliff Bleszinski introducing a trailer for the game . Donald Mustard , creative lead at Epic , said in 2017 that this announcement was `` three weeks after we came up with the idea , before we even made the game '' . The title , which started out as an internal game jam project , represents a departure from the company 's previous work . As Bleszinski explained during the Spike event , Epic wanted to `` switch things up a little bit and do something different and fun '' with Fortnite , describing it as `` a world where you explore , you scavenge , you build and ultimately you survive . '' In an interview with Engadget , he also echoed these statements , claiming that the game would be different from the Gears of War series : `` There 's no dudebros in it ... Not that there 's anything wrong with that , right ? But creatively for the team , Gears has been amazing for us . But it 's fun to kind of stretch our wings and do something that 's a little different from the usual . '' Epic Games Vice President of Publishing Mike Fischer said in 2015 that Epic recognized that they `` announced this game too soon '' , and that its lengthy development period was due to `` very good reasons . ''"
+      ],
+      "retrieved_scores": [
+        0.9035240411758423,
+        0.49427488446235657
+      ],
+      "latency_ms": 892.4604000058025,
+      "requested_k": 5,
+      "effective_k": 2
+    },
+    {
+      "retrieved_contexts": [
+        "Very little infrastructure is required for long - distance two - way communications using shortwave radio . All one needs is a pair of transceivers , each with an antenna , and a source of energy ( such as a battery , a portable generator , or the electrical grid ) . This makes shortwave radio one of the most robust means of communications , which can be disrupted only by interference or bad ionospheric conditions . Modern digital transmission modes such as MFSK and Olivia are even more robust , allowing successful reception of signals well below the noise floor of a conventional receiver .",
+        "Shortwave radio is radio transmission using shortwave radio frequencies . There is no official definition of the band , but the range always includes all of the high frequency band ( HF ) , and generally extends from 1.7 -- 30 MHz ( 176.3 -- 10.0 m ) ; from the high end of the medium frequency band ( MF ) just above the mediumwave AM broadcast band , to the end of the HF band ."
+      ],
+      "retrieved_scores": [
+        0.7734411954879761,
+        0.7732878923416138
+      ],
+      "latency_ms": 444.3404999328777,
+      "requested_k": 5,
+      "effective_k": 2
+    },
+    {
+      "retrieved_contexts": [
+        "With the Intertropical Convergence Zone ( ITCZ ) swinging northward over West Africa from the Southern Hemisphere in April , heavy showers coming from pre-monsoonal convective clouds mainly in the form of squall lines also known as the north easterlies formed mainly as a result of the interactions of the two dominant airmasses in Nigeria known as the Maritime tropical ( south westerlies ) and the Continental tropical ( north easterlies ) , begins in central Nigeria while the Monsoons from the south atlantic ocean arrives in central Nigeria in July bringing with it high humidity , heavy cloud cover and heavy rainfall which can be daily occurrence lasting till September when the monsoons gradually begin retreating southward to the southern part of Nigeria. Rainfall totals in central Nigeria varies from 1,100 mm ( 43.3 in ) in the lowlands of the river Niger Benue trough to over 2,000 mm ( 78.7 in ) along the south western escarpment of the Jos Plateau ."
+      ],
+      "retrieved_scores": [
+        0.871649444103241
+      ],
+      "latency_ms": 393.19799991790205,
+      "requested_k": 5,
+      "effective_k": 1
+    },
+    {
+      "retrieved_contexts": [
+        "Health or vitality is an attribute assigned to entities , such as the player character , enemies and objects within a role - playing or video game , that indicates its state in combat . Health is usually measured in hit points or health points , shortened to HP . When the HP of a player character reaches zero , the player may lose a life or their character might become incapacitated or die . When the HP of an enemy reaches zero , it may be defeated or die and the player is usually rewarded in some way ."
+      ],
+      "retrieved_scores": [
+        0.8927523493766785
+      ],
+      "latency_ms": 291.51530005037785,
+      "requested_k": 5,
+      "effective_k": 1
+    },
+    {
+      "retrieved_contexts": [
+        "The Cylinder 's text has traditionally been seen by biblical scholars as corroborative evidence of Cyrus ' policy of the repatriation of the Jewish people following their Babylonian captivity ( an act that the Book of Ezra attributes to Cyrus ) , as the text refers to the restoration of cult sanctuaries and repatriation of deported peoples . This interpretation has been disputed , as the text identifies only Mesopotamian sanctuaries , and makes no mention of Jews , Jerusalem , or Judea . The Cylinder has also been referred to by Mohammad Reza Pahlavi , the last Shah of Iran as the first declaration of universal human rights , a view rejected by some historians as anachronistic and a misunderstanding of the Cylinder 's generic nature as a typical statement made by a new monarch at the beginning of his reign . Neil MacGregor , Director of the British Museum , has stated that the cylinder was `` the first attempt we know about running a society , a state with different nationalities and faiths -- a new kind of statecraft . '' It was adopted as a national symbol of Iran by the Imperial State which put it on display in Tehran in 1971 to commemorate 2,500 year celebration of the Persian Empire . On October 14 , the Mohammad Reza Shah 's sister , Princess Ashraf Pahlavi , presented the United Nations Secretary General U Thant with a replica of the Cylinder . The princess asserted that `` the heritage of Cyrus was the heritage of human understanding , tolerance , courage , compassion and , above all , human liberty '' .",
+        "The Cylinder 's text has traditionally been seen by biblical scholars as corroborative evidence of Cyrus ' policy of the repatriation of the Jewish people following their Babylonian captivity ( an act that the Book of Ezra attributes to Cyrus ) , as the text refers to the restoration of cult sanctuaries and repatriation of deported peoples . This interpretation has been disputed , as the text identifies only Mesopotamian sanctuaries , and makes no mention of Jews , Jerusalem , or Judea . The Cylinder has also been referred to by Mohammad Reza Pahlavi , the last Shah of Iran as the first declaration of universal human rights , a view rejected by some historians as anachronistic and a misunderstanding of the Cylinder 's generic nature as a typical statement made by a new monarch at the beginning of his reign . Neil MacGregor , Director of the British Museum , has stated that the cylinder was `` the first attempt we know about running a society , a state with different nationalities and faiths -- a new kind of statecraft . '' It was adopted as a national symbol of Iran by the Imperial State which put it on display in Tehran in 1971 to commemorate 2,500 year celebration of the Persian Empire . On October 14 , the Mohammad Reza Shah 's sister , Princess Ashraf Pahlavi , presented the United Nations Secretary General U Thant with a replica of the Cylinder . The princess asserted that `` the heritage of Cyrus was the heritage of human understanding , tolerance , courage , compassion and , above all , human liberty '' ."
+      ],
+      "retrieved_scores": [
+        0.9848218560218811,
+        0.9848218560218811
+      ],
+      "latency_ms": 1047.5422999588773,
+      "requested_k": 5,
+      "effective_k": 2
+    },
+    {
+      "retrieved_contexts": [
+        "India and Pakistan acquired independence in 1947 , but Governors - General continued to be appointed over each nation until republican constitutions were written . Louis Mountbatten , 1st Earl Mountbatten of Burma remained Governor - General of India for some time after independence , but the two nations were otherwise headed by native Governors - General . India became a secular republic in 1950 ; Pakistan became an Islamic one in 1956 .",
+        "India and Pakistan acquired independence in 1947 , but Governors - General continued to be appointed over each nation until republican constitutions were written . Louis Mountbatten , 1st Earl Mountbatten of Burma remained Governor - General of India for some time after independence , but the two nations were otherwise headed by native Governors - General . India became a secular republic in 1950 ; Pakistan became an Islamic one in 1956 .",
+        "India and Pakistan acquired independence in 1947 , but Governors - General continued to be appointed over each nation until republican constitutions were written . Louis Mountbatten , 1st Earl Mountbatten of Burma remained Governor - General of India for some time after independence , but the two nations were otherwise headed by native Governors - General . India became a secular republic in 1950 ; Pakistan became an Islamic one in 1956 ."
+      ],
+      "retrieved_scores": [
+        0.9957893490791321,
+        0.9957893490791321,
+        0.9957893490791321
+      ],
+      "latency_ms": 470.5006000585854,
+      "requested_k": 5,
+      "effective_k": 3
+    },
+    {
+      "retrieved_contexts": [
+        "Reading Football Club ownership structure : 75 % Owned by Renhe Sports Management Ltd , 100 % owned by Xiu Li Dai and Yongge Dai . 25 % Owned by Narin Niruttinanon",
+        "Reading Full name Reading Football Club Nickname ( s ) The Royals Founded 1871 ; 147 years ago ( 1871 ) Ground Madejski Stadium Ground Capacity 24,161 Owner Dai Yongge and Dai Xiuli ( majority ) Chairman Sir John Madejski Manager Jaap Stam League Championship 2016 -- 17 Championship , 3rd Website Club website Home colours Away colours Current season",
+        "Reading Full name Reading Football Club Nickname ( s ) The Royals Founded 1871 ; 147 years ago ( 1871 ) Ground Madejski Stadium Ground Capacity 24,161 Owner Dai Yongge and Dai Xiuli ( majority ) Chairman Sir John Madejski Manager Jaap Stam League Championship 2016 -- 17 Championship , 3rd Website Club website Home colours Away colours Current season"
+      ],
+      "retrieved_scores": [
+        0.9998096823692322,
+        0.996696949005127,
+        0.996696949005127
+      ],
+      "latency_ms": 402.45559997856617,
+      "requested_k": 5,
+      "effective_k": 3
+    }
+  ],
+  "retrieval_metrics": {
+    "context_relevance": 0.9149145979682605,
+    "hit_rate_at_k": 1.0,
+    "ndcg_at_k": 1.0,
+    "precision_at_k": 0.8733333333333334,
+    "recall": 0.9,
+    "rr": 1.0
+  },
+  "latency_metrics": {
+    "retrieval_latency_p50": 457.42054999573156,
+    "retrieval_latency_p95": 4454.85488995909,
+    "retrieval_latency_mean": 1198.0364799965173
+  },
+  "timestamp": "2026-06-27T03:41:05.632662+00:00",
+  "duration_seconds": 89.35
+}

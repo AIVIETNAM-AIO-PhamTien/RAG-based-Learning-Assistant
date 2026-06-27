@@ -135,11 +135,20 @@ def _ndcg_from_relevances(relevances: list[bool]) -> float:
 
 
 @lru_cache
-def _get_nli_model():
+def _get_nli_model() -> tuple:
     from sentence_transformers import CrossEncoder
 
     settings = get_eval_settings()
-    return CrossEncoder(settings.nli_model_name)
+    model = CrossEncoder(settings.nli_model_name)
+    id2label = getattr(model.model.config, "id2label", None)
+    if id2label:
+        entailment_idx = next(
+            (int(i) for i, label in id2label.items() if label.lower() == "entailment"),
+            1,
+        )
+    else:
+        entailment_idx = 1
+    return model, entailment_idx
 
 
 def _is_valid_answer(answer: str) -> bool:
@@ -152,7 +161,10 @@ def _is_valid_answer(answer: str) -> bool:
 
 
 def compute_retrieval_metrics(
-    sample: EvalSample, retrieval: RetrievalResult
+    sample: EvalSample,
+    retrieval: RetrievalResult,
+    *,
+    compute_context_relevance: bool = True,
 ) -> dict[str, float]:
     """Compute retrieval-only metrics: recall, rr, precision_at_k, hit_rate_at_k, ndcg_at_k, context_relevance."""
     scores: dict[str, float] = {}
@@ -169,7 +181,7 @@ def compute_retrieval_metrics(
     scores["hit_rate_at_k"] = 1.0 if any(relevances) else 0.0
     scores["ndcg_at_k"] = _ndcg_from_relevances(relevances)
 
-    if retrieved:
+    if compute_context_relevance and retrieved:
         reranker = get_reranker()
         ranking = reranker.rerank(sample.question, retrieved, len(retrieved))
         ctx_scores = [s for _, s in ranking]
@@ -201,9 +213,12 @@ def compute_generation_metrics(
         return scores
 
     embedder = get_embedder()
-    q_emb = np.array(embedder.embed_query(sample.question))
-    a_emb = np.array(embedder.embed_query(answer))
-    scores["answer_similarity"] = max(0.0, min(1.0, float(q_emb @ a_emb)))
+    if not sample.ground_truth_answer:
+        scores["answer_similarity"] = float("nan")
+    else:
+        ref_emb = np.array(embedder.embed_query(sample.ground_truth_answer))
+        a_emb = np.array(embedder.embed_query(answer))
+        scores["answer_similarity"] = max(0.0, min(1.0, float(ref_emb @ a_emb)))
     scores["rouge_l"] = _rouge_l_f1(sample.ground_truth_answer, answer)
     scores["token_f1"] = _token_f1(sample.ground_truth_answer, answer)
 
@@ -211,14 +226,14 @@ def compute_generation_metrics(
     scores["citation_coverage"] = citation_coverage(answer, available)
 
     if retrieved:
-        nli_model = _get_nli_model()
+        nli_model, entailment_idx = _get_nli_model()
         context_text = " ".join(retrieved)
         sentences = _split_sentences(answer)
         if sentences:
             pairs = [(context_text, s) for s in sentences]
             preds = nli_model.predict(pairs)
             if hasattr(preds[0], "__len__"):
-                ent = [float(p[0]) for p in preds]
+                ent = [float(p[entailment_idx]) for p in preds]
             else:
                 ent = [float(p) for p in preds]
             scores["faithfulness_nli"] = (
@@ -232,8 +247,12 @@ def compute_generation_metrics(
     return scores
 
 
-def compute_sample_metrics(result: EvalResult) -> dict[str, float]:
-    scores = compute_retrieval_metrics(result.sample, result.retrieval)
+def compute_sample_metrics(
+    result: EvalResult, *, compute_context_relevance: bool = True
+) -> dict[str, float]:
+    scores = compute_retrieval_metrics(
+        result.sample, result.retrieval, compute_context_relevance=compute_context_relevance
+    )
     scores.update(
         compute_generation_metrics(
             result.sample, result.retrieval, result.generation
@@ -294,7 +313,7 @@ def compute_all_metrics(
     if not all_keys:
         return {}
     agg = {
-        k: float(np.mean([r.metric_scores.get(k, 0.0) for r in results]))
+        k: float(np.nanmean([r.metric_scores.get(k, 0.0) for r in results]))
         for k in sorted(all_keys)
     }
     agg.update(_compute_latency_percentiles(results))

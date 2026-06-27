@@ -10,6 +10,8 @@ from evaluation.metrics import (
     _rouge_l_f1,
     _token_f1,
     compute_all_metrics,
+    compute_generation_metrics,
+    compute_retrieval_metrics,
     compute_sample_metrics,
 )
 from evaluation.schemas import EvalResult, EvalSample, GenerationResult, RetrievalResult
@@ -165,7 +167,7 @@ def test_compute_sample_metrics_returns_all_keys():
     with (
         patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
         patch("evaluation.metrics.get_reranker", return_value=fake_reranker),
-        patch("evaluation.metrics._get_nli_model", return_value=fake_nli),
+        patch("evaluation.metrics._get_nli_model", return_value=(fake_nli, 1)),
     ):
         scores = compute_sample_metrics(result)
 
@@ -213,7 +215,7 @@ def test_compute_sample_metrics_citation_coverage():
     with (
         patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
         patch("evaluation.metrics.get_reranker", return_value=fake_reranker),
-        patch("evaluation.metrics._get_nli_model", return_value=fake_nli),
+        patch("evaluation.metrics._get_nli_model", return_value=(fake_nli, 1)),
     ):
         scores = compute_sample_metrics(result)
 
@@ -239,7 +241,7 @@ def test_compute_sample_metrics_no_citations():
     with (
         patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
         patch("evaluation.metrics.get_reranker", return_value=fake_reranker),
-        patch("evaluation.metrics._get_nli_model", return_value=fake_nli),
+        patch("evaluation.metrics._get_nli_model", return_value=(fake_nli, 1)),
     ):
         scores = compute_sample_metrics(result)
 
@@ -323,7 +325,7 @@ def test_latency_percentiles_without_ragas():
     with (
         patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
         patch("evaluation.metrics.get_reranker", return_value=fake_reranker),
-        patch("evaluation.metrics._get_nli_model", return_value=fake_nli),
+        patch("evaluation.metrics._get_nli_model", return_value=(fake_nli, 1)),
     ):
         for r in results:
             r.metric_scores = compute_sample_metrics(r)
@@ -335,3 +337,151 @@ def test_latency_percentiles_without_ragas():
     assert "generation_latency_p50" in agg
     assert "generation_latency_p95" in agg
     assert "generation_latency_mean" in agg
+
+
+# --- NLI faithfulness entailment index ---
+
+
+def test_faithfulness_high_entailment():
+    """When entailment probability is high (index 1), faithfulness should be high."""
+    result = _make_result(
+        retrieved=["The sky is blue."],
+        answer="The sky is blue.",
+    )
+
+    fake_embedder = MagicMock()
+    v = np.ones(384, dtype=np.float32) / np.sqrt(384)
+    fake_embedder.embed_query.return_value = v.tolist()
+
+    fake_nli = MagicMock()
+    fake_nli.predict.return_value = [np.array([0.05, 0.9, 0.05])]
+
+    with (
+        patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
+        patch("evaluation.metrics._get_nli_model", return_value=(fake_nli, 1)),
+    ):
+        scores = compute_generation_metrics(result.sample, result.retrieval, result.generation)
+
+    assert scores["faithfulness_nli"] == 1.0
+
+
+def test_faithfulness_high_contradiction():
+    """When contradiction is high (index 0), faithfulness should be low."""
+    result = _make_result(
+        retrieved=["The sky is blue."],
+        answer="The sky is green.",
+    )
+
+    fake_embedder = MagicMock()
+    v = np.ones(384, dtype=np.float32) / np.sqrt(384)
+    fake_embedder.embed_query.return_value = v.tolist()
+
+    fake_nli = MagicMock()
+    fake_nli.predict.return_value = [np.array([0.9, 0.05, 0.05])]
+
+    with (
+        patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
+        patch("evaluation.metrics._get_nli_model", return_value=(fake_nli, 1)),
+    ):
+        scores = compute_generation_metrics(result.sample, result.retrieval, result.generation)
+
+    assert scores["faithfulness_nli"] == 0.0
+
+
+# --- answer_similarity with empty ground truth ---
+
+
+def test_answer_similarity_empty_ground_truth():
+    """answer_similarity should be NaN when ground_truth_answer is empty."""
+    result = _make_result(
+        ground_truth="",
+        retrieved=["some context"],
+        answer="Some answer.",
+    )
+
+    fake_embedder = MagicMock()
+    v = np.ones(384, dtype=np.float32) / np.sqrt(384)
+    fake_embedder.embed_query.return_value = v.tolist()
+
+    fake_nli = MagicMock()
+    fake_nli.predict.return_value = [0.5]
+
+    with (
+        patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
+        patch("evaluation.metrics._get_nli_model", return_value=(fake_nli, 1)),
+    ):
+        scores = compute_generation_metrics(result.sample, result.retrieval, result.generation)
+
+    assert np.isnan(scores["answer_similarity"])
+
+
+def test_answer_similarity_uses_ground_truth():
+    """answer_similarity should embed ground_truth_answer, not question."""
+    result = _make_result(
+        question="What color is the sky?",
+        ground_truth="The sky is blue.",
+        retrieved=["The sky is blue."],
+        answer="The sky is blue.",
+    )
+
+    call_log = []
+    fake_embedder = MagicMock()
+
+    def tracking_embed(text):
+        call_log.append(text)
+        v = np.ones(384, dtype=np.float32) / np.sqrt(384)
+        return v.tolist()
+
+    fake_embedder.embed_query.side_effect = tracking_embed
+
+    fake_nli = MagicMock()
+    fake_nli.predict.return_value = [0.8]
+
+    with (
+        patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
+        patch("evaluation.metrics._get_nli_model", return_value=(fake_nli, 1)),
+    ):
+        compute_generation_metrics(result.sample, result.retrieval, result.generation)
+
+    assert "The sky is blue." in call_log
+    assert "What color is the sky?" not in call_log
+
+
+# --- compute_context_relevance parameter ---
+
+
+def test_retrieval_metrics_without_context_relevance():
+    """When compute_context_relevance=False, reranker should not be called."""
+    sample = EvalSample(
+        question="Q?",
+        ground_truth_answer="A",
+        ground_truth_contexts=["ctx"],
+    )
+    retrieval = RetrievalResult(
+        retrieved_contexts=["ctx"],
+        retrieved_scores=[0.9],
+    )
+
+    scores = compute_retrieval_metrics(
+        sample, retrieval, compute_context_relevance=False
+    )
+
+    assert scores["context_relevance"] == 0.0
+    assert "recall" in scores
+    assert "precision_at_k" in scores
+
+
+# --- nanmean aggregation ---
+
+
+def test_aggregate_handles_nan_scores():
+    """np.nanmean should exclude NaN values from averages."""
+    r1 = _make_result()
+    r2 = _make_result()
+    r1.metric_scores = {"answer_similarity": 0.9, "recall": 1.0}
+    r2.metric_scores = {"answer_similarity": float("nan"), "recall": 0.5}
+
+    agg = compute_all_metrics([r1, r2], use_ragas=False)
+
+    assert agg["answer_similarity"] == 0.9
+    assert agg["recall"] == 0.75

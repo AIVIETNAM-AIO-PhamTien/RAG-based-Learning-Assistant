@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import logging
 import re
 import time
@@ -76,10 +78,21 @@ class InMemoryRetriever:
 
 class EvalPipeline:
     def __init__(self, config: ExperimentConfig) -> None:
+        from app.config import get_settings
+
+        app_model = get_settings().embedding_model_name
+        if config.embedding_model != app_model:
+            raise ValueError(
+                f"ExperimentConfig.embedding_model={config.embedding_model!r} differs from "
+                f"app setting={app_model!r}. Custom embedding models per experiment are not "
+                f"yet supported. Update EMBEDDING_MODEL_NAME in .env or remove the override."
+            )
+
         self.config = config
         self.retriever = InMemoryRetriever()
         self._chunk_texts: list[str] = []
         self._chunk_to_context: dict[int, int] = {}
+        self._corpus_cache: dict[str, tuple[list[str], np.ndarray | None]] = {}
 
     def warmup(self) -> None:
         """Load models with a dummy call so first eval sample latency is clean."""
@@ -99,6 +112,15 @@ class EvalPipeline:
         contexts: list[str],
         distractors: list[str] | None = None,
     ) -> list[str]:
+        raw = json.dumps(contexts + (distractors or []), ensure_ascii=False)
+        cache_key = hashlib.sha256(raw.encode()).hexdigest()
+        if cache_key in self._corpus_cache:
+            cached_texts, cached_embeddings = self._corpus_cache[cache_key]
+            self._chunk_texts = cached_texts
+            self.retriever._texts = list(cached_texts)
+            self.retriever._embeddings = cached_embeddings
+            return self._chunk_texts
+
         all_texts = list(contexts)
         if distractors:
             all_texts.extend(distractors)
@@ -113,6 +135,7 @@ class EvalPipeline:
             self._chunk_to_context[chunk_idx] = chunk.page
 
         self.retriever.index(self._chunk_texts)
+        self._corpus_cache[cache_key] = (self._chunk_texts, self.retriever._embeddings)
         return self._chunk_texts
 
     def retrieve(self, query: str) -> RetrievalResult:
