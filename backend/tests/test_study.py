@@ -205,9 +205,10 @@ async def test_flashcards_ignore_topic_and_return_exact_requested_count(monkeypa
     ]
     captured: dict[str, object] = {}
 
-    async def fake_retrieve(session, chat_session_id):
+    async def fake_retrieve(session, chat_session_id, flashcard_count=None):
         captured["session"] = session
         captured["chat_session_id"] = chat_session_id
+        captured["retrieved_flashcard_count"] = flashcard_count
         return sources
 
     async def fake_generate_notes(received_sources):
@@ -237,6 +238,7 @@ async def test_flashcards_ignore_topic_and_return_exact_requested_count(monkeypa
     assert result.sources[0].text == result.sources[0].snippet
     assert captured["session"] is fake_session
     assert captured["chat_session_id"] == session_id
+    assert captured["retrieved_flashcard_count"] == 2
     assert captured["flashcard_count"] == 2
     assert "Document: networking.pdf" in captured["notes_context"]
     assert "networking.pdf: target 2 card(s)" in captured["coverage_hint"]

@@ -24,7 +24,7 @@ from app.schemas.study import Flashcard, FlashcardsResponse, StudyRequest, Summa
 router = APIRouter(prefix="/api/v1/sessions", tags=["study"])
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
 logger = logging.getLogger(__name__)
-DEFAULT_FLASHCARD_COUNT = 6
+DEFAULT_FLASHCARD_COUNT = 10
 FLASHCARD_BATCH_SIZE = 4
 FLASHCARD_NOTES_CONCURRENCY = 3
 MAX_FLASHCARD_NOTES_CONTEXT_CHARS = 9000
@@ -32,7 +32,7 @@ MAX_DOCUMENT_NOTES_CHARS = 1800
 FLASHCARD_FALLBACK_QUESTION = "What is the key idea from this excerpt?"
 STUDY_GENERATION_UNAVAILABLE_DETAIL = "Study generation is temporarily unavailable."
 FLASHCARD_SCOPE_UNSUPPORTED_DETAIL = (
-    "Flashcards always use all ready session chunks. Remove topic and top_k from the request."
+    "Flashcards use a representative subset of ready session chunks. Remove topic and top_k from the request."
 )
 
 
@@ -84,7 +84,11 @@ async def flashcards(
         )
 
     flashcard_count = payload.flashcard_count or DEFAULT_FLASHCARD_COUNT
-    sources = await retrieve_flashcard_sources(session, session_id)
+    sources = await retrieve_flashcard_sources(
+        session,
+        session_id,
+        flashcard_count=flashcard_count,
+    )
     if not sources:
         return FlashcardsResponse(flashcards=[], sources=[])
 
@@ -216,14 +220,33 @@ def _build_notes_context(document_notes: list[DocumentNotes]) -> str:
 
     sections: list[str] = []
     for document in document_notes:
-        start_page = document.sources[0].page
-        end_page = document.sources[-1].page
+        page_summary = _summarize_pages(document.sources)
         sections.append(
             f"Document: {document.doc_name}\n"
-            f"Pages: {start_page}-{end_page}\n"
+            f"Pages: {page_summary}\n"
             f"Notes:\n{_truncate_text(document.notes, per_document_budget)}"
         )
     return "\n\n".join(sections)
+
+
+def _summarize_pages(sources: list[Citation]) -> str:
+    ordered_pages = sorted({source.page for source in sources})
+    if not ordered_pages:
+        return "unknown"
+
+    ranges: list[str] = []
+    start = ordered_pages[0]
+    end = ordered_pages[0]
+    for page in ordered_pages[1:]:
+        if page == end + 1:
+            end = page
+            continue
+        ranges.append(str(start) if start == end else f"{start}-{end}")
+        start = end = page
+    ranges.append(str(start) if start == end else f"{start}-{end}")
+    return ", ".join(ranges)
+
+
 
 
 def _truncate_text(value: str, limit: int) -> str:
