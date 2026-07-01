@@ -1,9 +1,11 @@
 import asyncio
+import random
 import uuid
 
 import pytest
 
 from app.api.v1 import study
+from app.rag import retriever
 from app.schemas.chat import Citation
 from app.schemas.study import Flashcard
 
@@ -188,6 +190,86 @@ def test_build_notes_context_truncates_long_document_notes() -> None:
 
     assert len(notes_context) < 3000
     assert notes_context.endswith("…")
+
+
+def test_summarize_pages_formats_sparse_and_contiguous_ranges() -> None:
+    doc_id = uuid.uuid4()
+    sources = [
+        build_citation(index=1, doc_id=doc_id, doc_name="alpha.pdf", page=1, text="a"),
+        build_citation(index=2, doc_id=doc_id, doc_name="alpha.pdf", page=2, text="b"),
+        build_citation(index=3, doc_id=doc_id, doc_name="alpha.pdf", page=4, text="c"),
+        build_citation(index=4, doc_id=doc_id, doc_name="alpha.pdf", page=7, text="d"),
+        build_citation(index=5, doc_id=doc_id, doc_name="alpha.pdf", page=8, text="e"),
+    ]
+
+    assert study._summarize_pages(sources) == "1-2, 4, 7-8"
+
+
+def test_select_flashcard_rows_balances_documents_before_reuse() -> None:
+    first_doc_id = uuid.uuid4()
+    second_doc_id = uuid.uuid4()
+    rows = [
+        (
+            type("ChunkStub", (), {"id": uuid.uuid4(), "page": 1})(),
+            type("DocumentStub", (), {"id": first_doc_id, "name": "alpha.pdf"})(),
+        ),
+        (
+            type("ChunkStub", (), {"id": uuid.uuid4(), "page": 2})(),
+            type("DocumentStub", (), {"id": first_doc_id, "name": "alpha.pdf"})(),
+        ),
+        (
+            type("ChunkStub", (), {"id": uuid.uuid4(), "page": 3})(),
+            type("DocumentStub", (), {"id": second_doc_id, "name": "beta.pdf"})(),
+        ),
+        (
+            type("ChunkStub", (), {"id": uuid.uuid4(), "page": 4})(),
+            type("DocumentStub", (), {"id": second_doc_id, "name": "beta.pdf"})(),
+        ),
+    ]
+
+    selected_rows = retriever._select_flashcard_rows(rows, 2, random.Random(7))
+
+    assert len(selected_rows) == 2
+    assert {document.id for _chunk, document in selected_rows} == {first_doc_id, second_doc_id}
+
+
+def test_select_flashcard_rows_spreads_pages_within_document() -> None:
+    doc_id = uuid.uuid4()
+    rows = [
+        (
+            type("ChunkStub", (), {"id": uuid.uuid4(), "page": page})(),
+            type("DocumentStub", (), {"id": doc_id, "name": "alpha.pdf"})(),
+        )
+        for page in range(1, 13)
+    ]
+
+    selected_rows = retriever._select_flashcard_rows(rows, 8, random.Random(5))
+    selected_pages = sorted({chunk.page for chunk, _document in selected_rows})
+
+    assert len(selected_rows) == 8
+    assert selected_pages[0] <= 2
+    assert selected_pages[-1] >= 11
+    assert len(selected_pages) >= 6
+
+
+def test_select_flashcard_rows_can_vary_with_different_rng_seeds() -> None:
+    rows: list[tuple[object, object]] = []
+    for doc_offset in range(3):
+        doc_id = uuid.uuid4()
+        for page in range(1, 6):
+            rows.append(
+                (
+                    type("ChunkStub", (), {"id": uuid.uuid4(), "page": page})(),
+                    type("DocumentStub", (), {"id": doc_id, "name": f"doc-{doc_offset}.pdf"})(),
+                )
+            )
+
+    first_selection = retriever._select_flashcard_rows(rows, 6, random.Random(1))
+    second_selection = retriever._select_flashcard_rows(rows, 6, random.Random(9))
+
+    assert [chunk.id for chunk, _document in first_selection] != [
+        chunk.id for chunk, _document in second_selection
+    ]
 
 
 @pytest.mark.asyncio

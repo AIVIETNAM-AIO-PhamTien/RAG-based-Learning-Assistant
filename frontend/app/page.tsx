@@ -27,7 +27,6 @@ const SIDEBAR_EXPANDED_WIDTH_CLASS = "lg:grid-cols-[280px_minmax(0,1fr)]";
 const SIDEBAR_COLLAPSED_WIDTH_CLASS = "lg:grid-cols-[64px_minmax(0,1fr)]";
 const COMPOSER_SIDEBAR_EXPANDED_OFFSET_CLASS = "lg:left-[280px] xl:left-[600px]";
 const COMPOSER_SIDEBAR_COLLAPSED_OFFSET_CLASS = "lg:left-[64px] xl:left-[384px]";
-const DEFAULT_FLASHCARD_COUNT = 6;
 
 function nextMessageId() {
   return globalThis.crypto?.randomUUID?.() ?? String(Date.now());
@@ -303,9 +302,7 @@ export default function Home() {
     setFlashcardsError(null);
     setIsGeneratingFlashcards(true);
     try {
-      const response = await generateSessionFlashcards(session.id, {
-        flashcard_count: DEFAULT_FLASHCARD_COUNT,
-      });
+      const response = await generateSessionFlashcards(session.id);
       setFlashcards(response.flashcards);
       setFlashcardSourceCount(response.sources.length);
     } catch (caught) {
