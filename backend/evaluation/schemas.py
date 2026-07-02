@@ -44,6 +44,7 @@ class ExperimentConfig(BaseModel):
     embedding_model: str = "intfloat/e5-small-v2"
     gemini_model: str = "gemini-2.5-flash"
     compute_context_relevance: bool = True
+    batch_size: int = 1
 
 
 class RetrievalArtifact(BaseModel):

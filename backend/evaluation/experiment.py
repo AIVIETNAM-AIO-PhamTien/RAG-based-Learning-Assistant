@@ -26,11 +26,21 @@ logger = logging.getLogger(__name__)
 # Sync with keys from compute_retrieval_metrics() and _compute_ragas_aggregate() in metrics.py.
 # "mrr" only appears in the RAGAS aggregate path.
 _RET_PREFIXES = (
-    "recall", "rr", "mrr", "precision", "hit_rate", "ndcg", "context_relevance",
+    "recall",
+    "rr",
+    "mrr",
+    "precision",
+    "hit_rate",
+    "ndcg",
+    "context_relevance",
 )
 # Sync with keys from compute_generation_metrics() in metrics.py.
 _GEN_PREFIXES = (
-    "answer_similarity", "rouge_l", "token_f1", "citation_coverage", "faithfulness",
+    "answer_similarity",
+    "rouge_l",
+    "token_f1",
+    "citation_coverage",
+    "faithfulness",
 )
 _LAT_PREFIXES = ("retrieval_latency", "generation_latency")
 
@@ -70,10 +80,12 @@ class ExperimentRunner:
         *,
         use_ragas: bool = False,
         warmup: bool = True,
+        batch_size: int = 1,
     ) -> None:
         self.configs = configs
         self._use_ragas = use_ragas
         self._warmup = warmup
+        self._batch_size = batch_size
 
     def run_retrieval(self, config: ExperimentConfig) -> RetrievalArtifact:
         """Load dataset, run retrieval only, compute retrieval metrics."""
@@ -128,9 +140,16 @@ class ExperimentRunner:
         pipeline = EvalPipeline(config)
         if self._warmup:
             pipeline.warmup()
-        generation_results = pipeline.generate_batch(
-            retrieval_artifact.samples, retrieval_artifact.retrieval_results
-        )
+        if self._batch_size > 1:
+            generation_results = pipeline.generate_batch_grouped(
+                retrieval_artifact.samples,
+                retrieval_artifact.retrieval_results,
+                batch_size=self._batch_size,
+            )
+        else:
+            generation_results = pipeline.generate_batch(
+                retrieval_artifact.samples, retrieval_artifact.retrieval_results
+            )
 
         results: list[EvalResult] = []
         for sample, ret, gen in zip(
@@ -166,9 +185,7 @@ class ExperimentRunner:
             generation_metrics=gen_m,
             latency_metrics=lat_m,
             timestamp=datetime.now(UTC).isoformat(),
-            duration_seconds=round(
-                retrieval_artifact.duration_seconds + duration, 2
-            ),
+            duration_seconds=round(retrieval_artifact.duration_seconds + duration, 2),
             stages_completed=["retrieval", "generation"],
         )
         logger.info(

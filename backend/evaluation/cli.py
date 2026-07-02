@@ -35,7 +35,9 @@ def _add_common_run_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--rerank-candidate-k", type=int, default=20)
     parser.add_argument("--output-dir", default="evaluation/results")
     parser.add_argument(
-        "--no-warmup", action="store_true", default=False,
+        "--no-warmup",
+        action="store_true",
+        default=False,
         help="Skip model warmup (first sample includes model loading time)",
     )
 
@@ -93,18 +95,31 @@ def cmd_generation(args: argparse.Namespace) -> None:
     retrieval_path = resolve_retrieval_artifact(args.from_artifact)
     retrieval_artifact = load_retrieval_artifact(retrieval_path)
 
+    if args.limit is not None:
+        retrieval_artifact = retrieval_artifact.model_copy(
+            update={
+                "samples": retrieval_artifact.samples[: args.limit],
+                "retrieval_results": retrieval_artifact.retrieval_results[: args.limit],
+            }
+        )
+
     config = retrieval_artifact.config.model_copy()
     if args.gemini_model:
         config = config.model_copy(update={"gemini_model": args.gemini_model})
     if args.name:
         config = config.model_copy(update={"name": args.name})
+    if args.batch_size != 1:
+        config = config.model_copy(update={"batch_size": args.batch_size})
 
     warnings = validate_config_compatibility(retrieval_artifact.config, config)
     for w in warnings:
         print(f"WARNING: {w}", file=sys.stderr)
 
     runner = ExperimentRunner(
-        [config], use_ragas=args.ragas, warmup=not getattr(args, "no_warmup", False)
+        [config],
+        use_ragas=args.ragas,
+        warmup=not getattr(args, "no_warmup", False),
+        batch_size=args.batch_size,
     )
     report = runner.run_generation(config, retrieval_artifact)
 
@@ -221,12 +236,8 @@ def cmd_report(args: argparse.Namespace) -> None:
 
 
 def main(argv: list[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(
-        prog="evaluation", description="RAG Evaluation Pipeline"
-    )
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Enable verbose logging"
-    )
+    parser = argparse.ArgumentParser(prog="evaluation", description="RAG Evaluation Pipeline")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose logging")
     sub = parser.add_subparsers(dest="command", required=True)
 
     # generate-qa
@@ -240,36 +251,46 @@ def main(argv: list[str] | None = None) -> None:
     _add_common_run_args(ret)
 
     # generation
-    gencmd = sub.add_parser(
-        "generation", help="Run generation from retrieval artifact"
-    )
+    gencmd = sub.add_parser("generation", help="Run generation from retrieval artifact")
     gencmd.add_argument(
-        "--from", dest="from_artifact", required=True,
+        "--from",
+        dest="from_artifact",
+        required=True,
         help="Path to retrieval artifact or experiment directory",
     )
     gencmd.add_argument("--name", help="Override experiment name")
     gencmd.add_argument("--gemini-model", help="Override Gemini model")
+    gencmd.add_argument("--ragas", action="store_true", help="Use RAGAS metrics (requires API)")
     gencmd.add_argument(
-        "--ragas", action="store_true", help="Use RAGAS metrics (requires API)"
+        "--no-warmup",
+        action="store_true",
+        default=False,
+        help="Skip model warmup",
     )
     gencmd.add_argument(
-        "--no-warmup", action="store_true", default=False,
-        help="Skip model warmup",
+        "--batch-size",
+        type=int,
+        default=1,
+        help="Number of questions grouped into a single API call (>1 saves "
+        "quota but doesn't reflect the app's real single-query latency)",
+    )
+    gencmd.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Only generate for the first N samples in the retrieval artifact "
+        "(for a quick test run before spending full quota)",
     )
 
     # full
     full = sub.add_parser("full", help="Run full pipeline (retrieval + generation)")
     _add_common_run_args(full)
-    full.add_argument(
-        "--ragas", action="store_true", help="Use RAGAS metrics (requires API)"
-    )
+    full.add_argument("--ragas", action="store_true", help="Use RAGAS metrics (requires API)")
 
     # run (alias for full, backward compat)
     run = sub.add_parser("run", help="Run a single evaluation experiment (alias for full)")
     _add_common_run_args(run)
-    run.add_argument(
-        "--ragas", action="store_true", help="Use RAGAS metrics (requires API)"
-    )
+    run.add_argument("--ragas", action="store_true", help="Use RAGAS metrics (requires API)")
 
     # compare
     cmp = sub.add_parser("compare", help="Run comparison across multiple configs")

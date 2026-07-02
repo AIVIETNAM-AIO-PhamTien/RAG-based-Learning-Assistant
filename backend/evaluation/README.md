@@ -2,23 +2,6 @@
 
 Evaluation pipeline cho RAG-based Learning Assistant. Chạy hoàn toàn offline (local metrics), chỉ cần Gemini API cho bước sinh answer.
 
-## Quick Start (TL;DR)
-
-```bash
-cd backend
-uv sync --group eval
-
-# Option A: Benchmark retrieval nhanh (không cần API key)
-uv run python -m evaluation.cli retrieval --dataset hotpotqa --num-samples 10
-
-# Option B: Full pipeline với PDF của bạn
-uv run python -m evaluation.cli generate-qa --pdf-path evaluation/data/doc.pdf --num-questions 3 --output evaluation/data/qa.json
-uv run python -m evaluation.cli full --dataset pdf_qa --dataset-path evaluation/data/qa.json --num-samples 10
-
-# Option C: So sánh nhiều configs
-uv run python -m evaluation.cli compare --config-file evaluation/configs/default_comparison.yaml --dataset-path evaluation/data/qa.json --num-samples 20
-```
-
 ## Cài đặt
 
 ```bash
@@ -95,9 +78,7 @@ Các dataset có sẵn (tự tải từ HuggingFace):
 | Dataset | Flag | Mô tả |
 |---------|------|--------|
 | `hotpotqa` | `--dataset hotpotqa` | Multi-hop reasoning (có distractor contexts) |
-| `popqa` | `--dataset popqa` | Factual retrieval |
 | `asqa` | `--dataset asqa` | Long-form ambiguous QA |
-| `pubhealth` | `--dataset pubhealth` | Fact verification |
 | `nq` | `--dataset nq` | Real search queries (Google) |
 
 Dùng được với mọi command — không cần `--dataset-path`:
@@ -110,8 +91,8 @@ uv run python -m evaluation.cli retrieval --dataset hotpotqa --num-samples 15
 uv run python -m evaluation.cli full --dataset hotpotqa --num-samples 15
 
 # Retrieval trước, generation sau
-uv run python -m evaluation.cli retrieval --dataset popqa --num-samples 20
-uv run python -m evaluation.cli generation --from evaluation/results/popqa_5k_rerankTrue/
+uv run python -m evaluation.cli retrieval --dataset asqa --num-samples 20
+uv run python -m evaluation.cli generation --from evaluation/results/asqa_5k_rerankTrue/
 ```
 
 ## 2. Chạy evaluation

@@ -15,7 +15,9 @@ class EvalSettings(BaseSettings):
     rerank_model_name: str = "BAAI/bge-reranker-base"
     output_dir: Path = Path("evaluation/results")
     default_num_samples: int = 100
-    api_delay_seconds: float = 1.0
+    # Minimum interval between Gemini API call starts. Default assumes a 5
+    # requests/minute quota (60/5=12s); override via .env if your quota differs.
+    api_delay_seconds: float = 12.0
     api_max_retries: int = 5
     nli_model_name: str = "cross-encoder/nli-deberta-v3-small"
 

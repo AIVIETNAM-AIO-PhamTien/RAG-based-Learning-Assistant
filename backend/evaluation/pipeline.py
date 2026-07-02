@@ -12,6 +12,7 @@ from google.genai import types
 
 from app.rag.chunker import PageText, chunk_pages
 from app.rag.embedder import get_embedder
+from app.rag.metrics import CITATION_PATTERN
 from app.rag.prompts import SYSTEM_PROMPT, build_prompt
 from app.rag.reranker import get_reranker
 from app.schemas.chat import Citation
@@ -24,6 +25,18 @@ from evaluation.schemas import (
     GenerationResult,
     RetrievalResult,
 )
+
+
+def _extract_citations_used(answer: str) -> list[int]:
+    """Parse citation indexes out of a generated answer.
+
+    Tolerates the model combining citations into one bracket like [1, 2]
+    even though the prompt asks for separate [1][2] markers.
+    """
+    used: list[int] = []
+    for group in CITATION_PATTERN.findall(answer):
+        used.extend(int(n) for n in re.findall(r"\d+", group))
+    return used
 
 
 class InMemoryRetriever:
@@ -55,9 +68,7 @@ class InMemoryRetriever:
         scores = self._embeddings @ query_vec
         top_indices = np.argsort(scores)[::-1][:top_k]
 
-        return [
-            (int(idx), float(scores[idx]), self._texts[idx]) for idx in top_indices
-        ]
+        return [(int(idx), float(scores[idx]), self._texts[idx]) for idx in top_indices]
 
     def retrieve_with_rerank(
         self, query: str, top_k: int, candidate_k: int
@@ -71,8 +82,7 @@ class InMemoryRetriever:
         ranking = reranker.rerank(query, candidate_texts, top_k)
 
         return [
-            (candidates[orig_idx][0], score, candidates[orig_idx][2])
-            for orig_idx, score in ranking
+            (candidates[orig_idx][0], score, candidates[orig_idx][2]) for orig_idx, score in ranking
         ]
 
 
@@ -158,12 +168,8 @@ class EvalPipeline:
             effective_k=len(results),
         )
 
-    def generate(self, query: str, retrieved_contexts: list[str]) -> GenerationResult:
-        settings = get_eval_settings()
-        if not settings.gemini_api_key:
-            return GenerationResult(generated_answer="[SKIPPED: no API key]")
-
-        citations = [
+    def _build_citations(self, retrieved_contexts: list[str]) -> list[Citation]:
+        return [
             Citation(
                 index=i + 1,
                 chunk_id="00000000-0000-0000-0000-000000000000",
@@ -175,6 +181,29 @@ class EvalPipeline:
             )
             for i, ctx in enumerate(retrieved_contexts)
         ]
+
+    def _build_batch_prompt(self, items: list[tuple[str, list[Citation]]]) -> str:
+        """Build a single prompt covering N independent questions.
+
+        Each question's context/citation numbering restarts at 1, matching
+        the single-query prompt shape so citation_coverage() (which checks
+        indices against range(1, len(retrieved)+1) per sample) still works.
+        """
+        blocks = []
+        for i, (query, citations) in enumerate(items, start=1):
+            blocks.append(f"=== Question {i} of {len(items)} ===\n{build_prompt(query, citations)}")
+        return (
+            "Answer each of the following independent questions separately. "
+            "Return your answers as a JSON array of strings, in the same order "
+            "as the questions, with one string per question.\n\n" + "\n\n".join(blocks)
+        )
+
+    def generate(self, query: str, retrieved_contexts: list[str]) -> GenerationResult:
+        settings = get_eval_settings()
+        if not settings.gemini_api_key:
+            return GenerationResult(generated_answer="[SKIPPED: no API key]")
+
+        citations = self._build_citations(retrieved_contexts)
 
         prompt = build_prompt(query, citations)
         client = get_rate_limited_client()
@@ -191,14 +220,12 @@ class EvalPipeline:
                 config=config,
             )
         except RateLimitExhausted:
-            logging.getLogger(__name__).warning(
-                "Rate limit exhausted for query: %.50s...", query
-            )
+            logging.getLogger(__name__).warning("Rate limit exhausted for query: %.50s...", query)
             return GenerationResult(generated_answer="[ERROR: rate limited]")
         latency = (time.perf_counter() - start) * 1000
 
         answer = response.text or ""
-        used = [int(m) for m in re.findall(r"\[(\d+)]", answer)]
+        used = _extract_citations_used(answer)
 
         return GenerationResult(
             generated_answer=answer,
@@ -212,9 +239,7 @@ class EvalPipeline:
         self.prepare_corpus(sample.ground_truth_contexts, distractors)
         return self.retrieve(sample.question)
 
-    def generate_sample(
-        self, query: str, retrieval: RetrievalResult
-    ) -> GenerationResult:
+    def generate_sample(self, query: str, retrieval: RetrievalResult) -> GenerationResult:
         """Run generation for a single sample given retrieval results."""
         return self.generate(query, retrieval.retrieved_contexts)
 
@@ -263,15 +288,100 @@ class EvalPipeline:
             try:
                 from tqdm import tqdm
 
-                pairs = tqdm(
-                    list(pairs), desc="Generating", unit="sample"
-                )
+                pairs = tqdm(list(pairs), desc="Generating", unit="sample")
             except ImportError:
                 pass
 
         for sample, retrieval in pairs:
             result = self.generate_sample(sample.question, retrieval)
             results.append(result)
+
+        return results
+
+    def generate_batch_grouped(
+        self,
+        samples: list[EvalSample],
+        retrieval_results: list[RetrievalResult],
+        batch_size: int,
+        show_progress: bool = True,
+    ) -> list[GenerationResult]:
+        """Run generation grouping `batch_size` samples into a single API call.
+
+        Trades per-sample latency accuracy and independence for far fewer API
+        requests — useful under tight daily quota. Not representative of the
+        real app's single-query behavior; use only for evaluation.
+        """
+        settings = get_eval_settings()
+        if not settings.gemini_api_key:
+            return [GenerationResult(generated_answer="[SKIPPED: no API key]") for _ in samples]
+
+        logger = logging.getLogger(__name__)
+        client = get_rate_limited_client()
+        config = types.GenerateContentConfig(
+            system_instruction=SYSTEM_PROMPT,
+            automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
+            response_mime_type="application/json",
+            response_schema=list[str],
+        )
+
+        pairs = list(zip(samples, retrieval_results, strict=True))
+        groups = [pairs[i : i + batch_size] for i in range(0, len(pairs), batch_size)]
+
+        if show_progress:
+            try:
+                from tqdm import tqdm
+
+                groups = tqdm(groups, desc="Generating (batched)", unit="batch")
+            except ImportError:
+                pass
+
+        results: list[GenerationResult] = []
+        for group in groups:
+            n = len(group)
+            items = [
+                (sample.question, self._build_citations(retrieval.retrieved_contexts))
+                for sample, retrieval in group
+            ]
+            prompt = self._build_batch_prompt(items)
+
+            start = time.perf_counter()
+            try:
+                response = client.generate_content(
+                    model=self.config.gemini_model,
+                    contents=prompt,
+                    config=config,
+                )
+            except RateLimitExhausted:
+                logger.warning("Rate limit exhausted for a batch of %d samples", n)
+                results.extend(
+                    GenerationResult(generated_answer="[ERROR: rate limited]") for _ in group
+                )
+                continue
+            latency = (time.perf_counter() - start) * 1000
+
+            try:
+                answers = json.loads(response.text or "[]")
+                if not isinstance(answers, list):
+                    raise ValueError("response is not a JSON array")
+            except (json.JSONDecodeError, ValueError) as exc:
+                logger.warning("Batch parse failed (%s): %.200s", exc, response.text or "")
+                answers = []
+
+            for i in range(n):
+                if i < len(answers) and isinstance(answers[i], str):
+                    answer = answers[i]
+                    used = _extract_citations_used(answer)
+                    results.append(
+                        GenerationResult(
+                            generated_answer=answer,
+                            latency_ms=latency / n,
+                            citations_used=used,
+                        )
+                    )
+                else:
+                    results.append(
+                        GenerationResult(generated_answer="[ERROR: batch parse mismatch]")
+                    )
 
         return results
 

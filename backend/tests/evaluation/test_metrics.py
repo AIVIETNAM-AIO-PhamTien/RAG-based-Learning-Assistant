@@ -51,9 +51,7 @@ def _make_result(
 
 
 def test_recall_perfect():
-    recall, _ = _context_overlap(
-        ["the answer is here", "other stuff"], ["the answer is here"]
-    )
+    recall, _ = _context_overlap(["the answer is here", "other stuff"], ["the answer is here"])
     assert recall == 1.0
 
 
@@ -90,6 +88,18 @@ def test_context_overlap_empty_gt():
     recall, rr = _context_overlap(["some text"], [])
     assert recall == 0.0
     assert rr == 0.0
+
+
+def test_recall_ignores_whitespace_differences():
+    """Ground-truth contexts keep raw dataset formatting (e.g. HotpotQA's
+    double-spaced sentences) while retrieved_contexts pass through the
+    chunker, which collapses whitespace — recall must not be sensitive to
+    this difference."""
+    ground_truth = ["Scott Derrickson is an American director,  screenwriter and producer."]
+    retrieved = ["Scott Derrickson is an American director, screenwriter and producer."]
+    recall, rr = _context_overlap(retrieved, ground_truth)
+    assert recall == 1.0
+    assert rr == 1.0
 
 
 # --- Token F1 ---
@@ -172,9 +182,17 @@ def test_compute_sample_metrics_returns_all_keys():
         scores = compute_sample_metrics(result)
 
     expected_keys = {
-        "recall", "rr", "precision_at_k", "hit_rate_at_k", "ndcg_at_k",
-        "answer_similarity", "rouge_l", "token_f1",
-        "citation_coverage", "faithfulness_nli", "context_relevance",
+        "recall",
+        "rr",
+        "precision_at_k",
+        "hit_rate_at_k",
+        "ndcg_at_k",
+        "answer_similarity",
+        "rouge_l",
+        "token_f1",
+        "citation_coverage",
+        "faithfulness_nli",
+        "context_relevance",
     }
     assert set(scores.keys()) == expected_keys
     for val in scores.values():
@@ -252,16 +270,12 @@ def test_compute_sample_metrics_no_citations():
 
 
 def test_precision_at_k_all_relevant():
-    relevances = _compute_relevance_vector(
-        ["the answer is here"], ["the answer is here"]
-    )
+    relevances = _compute_relevance_vector(["the answer is here"], ["the answer is here"])
     assert sum(relevances) / len(relevances) == 1.0
 
 
 def test_precision_at_k_none_relevant():
-    relevances = _compute_relevance_vector(
-        ["completely unrelated"], ["the answer is here"]
-    )
+    relevances = _compute_relevance_vector(["completely unrelated"], ["the answer is here"])
     assert sum(relevances) / len(relevances) == 0.0
 
 
@@ -272,10 +286,15 @@ def test_precision_at_k_partial():
     assert sum(relevances) / len(relevances) == 0.5
 
 
+def test_relevance_vector_ignores_whitespace_differences():
+    ground_truth = ["director,  screenwriter and  producer"]
+    retrieved = ["director, screenwriter and producer"]
+    relevances = _compute_relevance_vector(retrieved, ground_truth)
+    assert relevances == [True]
+
+
 def test_hit_rate_found():
-    relevances = _compute_relevance_vector(
-        ["unrelated", "target text is here"], ["target text"]
-    )
+    relevances = _compute_relevance_vector(["unrelated", "target text is here"], ["target text"])
     assert any(relevances)
 
 
@@ -388,6 +407,39 @@ def test_faithfulness_high_contradiction():
     assert scores["faithfulness_nli"] == 0.0
 
 
+def test_faithfulness_scored_per_chunk_not_joined():
+    """A sentence supported by only one of several chunks should still count
+    as faithful — entailment must be checked per-chunk, not against all
+    retrieved chunks concatenated into one string (which could truncate away
+    the supporting chunk)."""
+    result = _make_result(
+        retrieved=["Irrelevant chunk about cooking.", "The sky is blue."],
+        answer="The sky is blue.",
+    )
+
+    fake_embedder = MagicMock()
+    v = np.ones(384, dtype=np.float32) / np.sqrt(384)
+    fake_embedder.embed_query.return_value = v.tolist()
+
+    fake_nli = MagicMock()
+    # 1 sentence x 2 chunks = 2 pairs: first chunk doesn't entail, second does.
+    fake_nli.predict.return_value = [
+        np.array([0.1, 0.05, 0.85]),
+        np.array([0.05, 0.9, 0.05]),
+    ]
+
+    with (
+        patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
+        patch("evaluation.metrics._get_nli_model", return_value=(fake_nli, 1)),
+    ):
+        scores = compute_generation_metrics(result.sample, result.retrieval, result.generation)
+
+    assert scores["faithfulness_nli"] == 1.0
+    # Verifies both chunks were checked individually (2 pairs, not 1 joined).
+    call_args = fake_nli.predict.call_args[0][0]
+    assert len(call_args) == 2
+
+
 # --- answer_similarity with empty ground truth ---
 
 
@@ -462,9 +514,7 @@ def test_retrieval_metrics_without_context_relevance():
         retrieved_scores=[0.9],
     )
 
-    scores = compute_retrieval_metrics(
-        sample, retrieval, compute_context_relevance=False
-    )
+    scores = compute_retrieval_metrics(sample, retrieval, compute_context_relevance=False)
 
     assert scores["context_relevance"] == 0.0
     assert "recall" in scores

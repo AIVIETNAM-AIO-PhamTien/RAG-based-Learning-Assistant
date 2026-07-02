@@ -3,6 +3,8 @@ from app.schemas.chat import Citation
 
 SYSTEM_PROMPT = """You answer questions using only the provided document chunks.
 Cite every factual claim that uses a chunk with its citation index like [1].
+When a claim draws on multiple chunks, cite each index separately right after
+another, like [1][2] — never combine them into one bracket like [1, 2].
 Only use citation indexes that appear in the context.
 If the answer is not in the chunks, say you could not find it in the uploaded documents.
 """
@@ -55,6 +57,8 @@ def build_prompt(
 
 Question: {question}
 
+Answer with inline citations like [1] or, when citing multiple sources for one
+claim, [1][2] (never [1, 2])."""
 Answer with inline citations like [1], [2]."""
 
 
