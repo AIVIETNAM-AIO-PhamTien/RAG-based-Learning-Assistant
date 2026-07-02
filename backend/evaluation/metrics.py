@@ -77,22 +77,30 @@ def _token_f1(reference: str, hypothesis: str) -> float:
     return 2 * precision * recall / (precision + recall)
 
 
+def _normalize_for_match(text: str) -> str:
+    """Collapse whitespace runs to a single space, matching chunker.py's
+    `" ".join(text.split())` — ground_truth_contexts from dataset loaders keep
+    raw formatting (e.g. HotpotQA's double-spaced sentences) while
+    retrieved_contexts always pass through the chunker, so comparing them
+    without this normalization causes false-negative substring matches."""
+    return " ".join(text.lower().split())
+
+
 def _context_overlap(retrieved: list[str], ground_truth: list[str]) -> tuple[float, float]:
     if not ground_truth:
         return 0.0, 0.0
+    retrieved_norm = [_normalize_for_match(r) for r in retrieved]
     hits = []
     for gt in ground_truth:
-        gt_lower = gt.lower().strip()
-        found = any(gt_lower in r.lower() or r.lower() in gt_lower for r in retrieved)
+        gt_norm = _normalize_for_match(gt)
+        found = any(gt_norm in r or r in gt_norm for r in retrieved_norm)
         hits.append(found)
     recall = sum(hits) / len(ground_truth)
 
+    gt_norms = [_normalize_for_match(g) for g in ground_truth]
     rr = 0.0
-    for rank, ret_ctx in enumerate(retrieved, start=1):
-        ret_lower = ret_ctx.lower()
-        matched = any(
-            g.lower().strip() in ret_lower or ret_lower in g.lower().strip() for g in ground_truth
-        )
+    for rank, ret_norm in enumerate(retrieved_norm, start=1):
+        matched = any(g in ret_norm or ret_norm in g for g in gt_norms)
         if matched:
             rr = 1.0 / rank
             break
@@ -101,12 +109,11 @@ def _context_overlap(retrieved: list[str], ground_truth: list[str]) -> tuple[flo
 
 def _compute_relevance_vector(retrieved: list[str], ground_truth: list[str]) -> list[bool]:
     """Binary relevance for each retrieved doc. Single O(n*m) pass."""
+    gt_norms = [_normalize_for_match(g) for g in ground_truth]
     relevances = []
     for ret_ctx in retrieved:
-        ret_lower = ret_ctx.lower()
-        matched = any(
-            g.lower().strip() in ret_lower or ret_lower in g.lower().strip() for g in ground_truth
-        )
+        ret_norm = _normalize_for_match(ret_ctx)
+        matched = any(g in ret_norm or ret_norm in g for g in gt_norms)
         relevances.append(matched)
     return relevances
 

@@ -90,6 +90,18 @@ def test_context_overlap_empty_gt():
     assert rr == 0.0
 
 
+def test_recall_ignores_whitespace_differences():
+    """Ground-truth contexts keep raw dataset formatting (e.g. HotpotQA's
+    double-spaced sentences) while retrieved_contexts pass through the
+    chunker, which collapses whitespace — recall must not be sensitive to
+    this difference."""
+    ground_truth = ["Scott Derrickson is an American director,  screenwriter and producer."]
+    retrieved = ["Scott Derrickson is an American director, screenwriter and producer."]
+    recall, rr = _context_overlap(retrieved, ground_truth)
+    assert recall == 1.0
+    assert rr == 1.0
+
+
 # --- Token F1 ---
 
 
@@ -272,6 +284,13 @@ def test_precision_at_k_partial():
         ["target text is here", "unrelated stuff"], ["target text"]
     )
     assert sum(relevances) / len(relevances) == 0.5
+
+
+def test_relevance_vector_ignores_whitespace_differences():
+    ground_truth = ["director,  screenwriter and  producer"]
+    retrieved = ["director, screenwriter and producer"]
+    relevances = _compute_relevance_vector(retrieved, ground_truth)
+    assert relevances == [True]
 
 
 def test_hit_rate_found():
