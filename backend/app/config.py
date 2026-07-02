@@ -28,6 +28,12 @@ class Settings(BaseSettings):
     qdrant_api_key: str | None = None
     qdrant_collection: str = "chunks"
     embedding_dim: int = 384
+    storage_backend: str = "local"  # "local" | "r2"
+    r2_account_id: str | None = None
+    r2_access_key_id: str | None = None
+    r2_secret_access_key: str | None = None
+    r2_bucket: str | None = None
+    r2_endpoint: str | None = None  # optional override; else derived from account id
 
 
 @lru_cache

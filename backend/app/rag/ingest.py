@@ -1,4 +1,3 @@
-from pathlib import Path
 from uuid import UUID, uuid4
 
 from sqlalchemy import delete, select
@@ -16,7 +15,7 @@ from app.rag.vector_store import (
 )
 
 
-async def ingest_document(session: AsyncSession, document_id: UUID, path: Path) -> None:
+async def ingest_document(session: AsyncSession, document_id: UUID, data: bytes) -> None:
     document = await session.scalar(select(Document).where(Document.id == document_id))
     if document is None:
         raise ValueError("Document not found")
@@ -27,7 +26,7 @@ async def ingest_document(session: AsyncSession, document_id: UUID, path: Path) 
 
     try:
         settings = get_settings()
-        pages, page_count = parse_pdf_text(path)
+        pages, page_count = parse_pdf_text(data)
         chunks = chunk_pages(pages, settings.chunk_size, settings.chunk_overlap)
         if not chunks:
             raise PdfParseError("No chunks produced from PDF text")

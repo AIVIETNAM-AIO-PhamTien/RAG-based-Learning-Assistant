@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import fitz
 
 from app.rag.chunker import PageText
@@ -9,9 +7,9 @@ class PdfParseError(ValueError):
     pass
 
 
-def parse_pdf_text(path: Path) -> tuple[list[PageText], int]:
+def parse_pdf_text(data: bytes) -> tuple[list[PageText], int]:
     try:
-        document = fitz.open(path)
+        document = fitz.open(stream=data, filetype="pdf")
     except Exception as exc:
         raise PdfParseError(f"Could not open PDF: {exc}") from exc
 

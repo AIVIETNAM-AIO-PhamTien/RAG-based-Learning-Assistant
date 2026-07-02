@@ -1,6 +1,5 @@
 import uuid
-from pathlib import Path
-from unittest.mock import Mock
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 from fastapi import HTTPException
@@ -45,29 +44,33 @@ def test_safe_pdf_name_rejects_non_pdf() -> None:
         documents._safe_pdf_name("notes.txt")
 
 
+class FakeStorage:
+    def __init__(self) -> None:
+        self.saved: list[tuple[str, bytes]] = []
+
+    def save(self, key: str, data: bytes, content_type: str = "application/pdf") -> None:
+        self.saved.append((key, data))
+
+
 @pytest.mark.asyncio
-async def test_upload_document_rolls_back_failed_ingest(monkeypatch, tmp_path: Path) -> None:
+async def test_upload_document_rolls_back_failed_ingest(monkeypatch) -> None:
     fake_session = FakeSession()
-    source_path = tmp_path / "source.pdf"
-    source_path.write_bytes(b"%PDF-1.4")
+    fake_storage = FakeStorage()
     upload_file = Mock()
     upload_file.filename = "upload.pdf"
     upload_file.content_type = "application/pdf"
-    upload_file.file = source_path.open("rb")
+    upload_file.read = AsyncMock(return_value=b"%PDF-1.4")
 
     async def fail_ingest(*_args) -> None:
         raise RuntimeError("ingest failed")
 
-    settings = Mock()
-    settings.upload_dir = tmp_path
-    monkeypatch.setattr(documents, "get_settings", lambda: settings)
+    monkeypatch.setattr(documents, "get_storage", lambda: fake_storage)
     monkeypatch.setattr(documents, "ingest_document", fail_ingest)
 
-    try:
-        result = await documents.upload_document(uuid.uuid4(), fake_session, upload_file)
-    finally:
-        upload_file.file.close()
+    result = await documents.upload_document(uuid.uuid4(), fake_session, upload_file)
 
     assert result is fake_session.document
     assert fake_session.rollback_called is True
     assert fake_session.refresh_called is True
+    # PDF was persisted to storage before ingest ran.
+    assert fake_storage.saved and fake_storage.saved[0][1] == b"%PDF-1.4"
