@@ -41,6 +41,7 @@ backend\.ruff_cache
 backend/evaluation/results/*
 !backend/evaluation/results/.gitkeep
 *.tmp
+report.md
 
 # tools
 .claude

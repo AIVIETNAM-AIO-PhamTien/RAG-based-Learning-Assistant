@@ -1,3 +1,4 @@
+import json
 from unittest.mock import MagicMock, patch
 
 import numpy as np
@@ -5,7 +6,7 @@ import pytest
 
 from evaluation.pipeline import EvalPipeline, InMemoryRetriever
 from evaluation.rate_limiter import RateLimitExhausted
-from evaluation.schemas import ExperimentConfig
+from evaluation.schemas import EvalSample, ExperimentConfig, RetrievalResult
 
 
 class FakeEmbedder:
@@ -87,9 +88,7 @@ def test_generate_fallback_on_rate_limit():
         patch("evaluation.pipeline.get_rate_limited_client") as mock_client,
     ):
         mock_settings.return_value = MagicMock(gemini_api_key="fake-key")
-        mock_client.return_value.generate_content.side_effect = RateLimitExhausted(
-            "rate limit"
-        )
+        mock_client.return_value.generate_content.side_effect = RateLimitExhausted("rate limit")
         result = pipeline.generate("What is AI?", ["some context"])
 
     assert result.generated_answer == "[ERROR: rate limited]"
@@ -175,3 +174,161 @@ def test_prepare_corpus_caching():
         result3 = pipeline.prepare_corpus(["context C"])
         assert result3 != result1
         assert embed_call_count == 2
+
+
+# ── batch generation ──────────────────────────────────────────────────
+
+
+def _samples_and_retrievals(n: int) -> tuple[list[EvalSample], list[RetrievalResult]]:
+    samples = [
+        EvalSample(question=f"Question {i}?", ground_truth_answer=f"Answer {i}") for i in range(n)
+    ]
+    retrievals = [
+        RetrievalResult(retrieved_contexts=[f"context {i}a", f"context {i}b"]) for i in range(n)
+    ]
+    return samples, retrievals
+
+
+def test_build_batch_prompt_resets_citation_index_per_question():
+    config = ExperimentConfig(name="test")
+    pipeline = EvalPipeline(config)
+
+    citations_q1 = pipeline._build_citations(["ctx 1a", "ctx 1b"])
+    citations_q2 = pipeline._build_citations(["ctx 2a"])
+    prompt = pipeline._build_batch_prompt(
+        [("Question one?", citations_q1), ("Question two?", citations_q2)]
+    )
+
+    assert "Question one?" in prompt
+    assert "Question two?" in prompt
+    # Each question's own citation block starts at [1] again.
+    assert prompt.count("[1] eval_doc") == 2
+
+
+def test_generate_batch_grouped_parses_json_array():
+    config = ExperimentConfig(name="test")
+    pipeline = EvalPipeline(config)
+    samples, retrievals = _samples_and_retrievals(3)
+
+    fake_response = MagicMock()
+    fake_response.text = json.dumps(["answer 0 [1]", "answer 1 [1][2]", "answer 2"])
+
+    with (
+        patch("evaluation.pipeline.get_eval_settings") as mock_settings,
+        patch("evaluation.pipeline.get_rate_limited_client") as mock_client,
+    ):
+        mock_settings.return_value = MagicMock(gemini_api_key="fake-key")
+        mock_client.return_value.generate_content.return_value = fake_response
+        results = pipeline.generate_batch_grouped(samples, retrievals, batch_size=3)
+
+    assert mock_client.return_value.generate_content.call_count == 1
+    assert [r.generated_answer for r in results] == [
+        "answer 0 [1]",
+        "answer 1 [1][2]",
+        "answer 2",
+    ]
+    assert results[0].citations_used == [1]
+    assert results[1].citations_used == [1, 2]
+    assert results[2].citations_used == []
+
+
+def test_generate_batch_grouped_parses_combined_citation_bracket():
+    # Model sometimes writes [1, 2] instead of [1][2] despite the prompt
+    # asking for separate brackets — must still be counted correctly.
+    config = ExperimentConfig(name="test")
+    pipeline = EvalPipeline(config)
+    samples, retrievals = _samples_and_retrievals(1)
+
+    fake_response = MagicMock()
+    fake_response.text = json.dumps(["answer 0 [1, 2]"])
+
+    with (
+        patch("evaluation.pipeline.get_eval_settings") as mock_settings,
+        patch("evaluation.pipeline.get_rate_limited_client") as mock_client,
+    ):
+        mock_settings.return_value = MagicMock(gemini_api_key="fake-key")
+        mock_client.return_value.generate_content.return_value = fake_response
+        results = pipeline.generate_batch_grouped(samples, retrievals, batch_size=1)
+
+    assert results[0].citations_used == [1, 2]
+
+
+def test_generate_batch_grouped_splits_into_multiple_calls():
+    config = ExperimentConfig(name="test")
+    pipeline = EvalPipeline(config)
+    samples, retrievals = _samples_and_retrievals(5)
+
+    def fake_generate_content(**kwargs):
+        response = MagicMock()
+        # Echo back a plausible-sized array regardless of batch content.
+        response.text = json.dumps(["ok"] * 2)
+        return response
+
+    with (
+        patch("evaluation.pipeline.get_eval_settings") as mock_settings,
+        patch("evaluation.pipeline.get_rate_limited_client") as mock_client,
+    ):
+        mock_settings.return_value = MagicMock(gemini_api_key="fake-key")
+        mock_client.return_value.generate_content.side_effect = fake_generate_content
+        results = pipeline.generate_batch_grouped(samples, retrievals, batch_size=2)
+
+    # 5 samples / batch_size 2 -> groups of 2, 2, 1 -> 3 calls total.
+    assert mock_client.return_value.generate_content.call_count == 3
+    assert len(results) == 5
+
+
+def test_generate_batch_grouped_marks_mismatched_answers_as_error():
+    config = ExperimentConfig(name="test")
+    pipeline = EvalPipeline(config)
+    samples, retrievals = _samples_and_retrievals(3)
+
+    fake_response = MagicMock()
+    # Model only returned 2 answers for 3 questions.
+    fake_response.text = json.dumps(["answer 0", "answer 1"])
+
+    with (
+        patch("evaluation.pipeline.get_eval_settings") as mock_settings,
+        patch("evaluation.pipeline.get_rate_limited_client") as mock_client,
+    ):
+        mock_settings.return_value = MagicMock(gemini_api_key="fake-key")
+        mock_client.return_value.generate_content.return_value = fake_response
+        results = pipeline.generate_batch_grouped(samples, retrievals, batch_size=3)
+
+    assert results[0].generated_answer == "answer 0"
+    assert results[1].generated_answer == "answer 1"
+    assert results[2].generated_answer == "[ERROR: batch parse mismatch]"
+
+
+def test_generate_batch_grouped_handles_malformed_json():
+    config = ExperimentConfig(name="test")
+    pipeline = EvalPipeline(config)
+    samples, retrievals = _samples_and_retrievals(2)
+
+    fake_response = MagicMock()
+    fake_response.text = "not valid json"
+
+    with (
+        patch("evaluation.pipeline.get_eval_settings") as mock_settings,
+        patch("evaluation.pipeline.get_rate_limited_client") as mock_client,
+    ):
+        mock_settings.return_value = MagicMock(gemini_api_key="fake-key")
+        mock_client.return_value.generate_content.return_value = fake_response
+        results = pipeline.generate_batch_grouped(samples, retrievals, batch_size=2)
+
+    assert all(r.generated_answer == "[ERROR: batch parse mismatch]" for r in results)
+
+
+def test_generate_batch_grouped_rate_limit_marks_whole_group():
+    config = ExperimentConfig(name="test")
+    pipeline = EvalPipeline(config)
+    samples, retrievals = _samples_and_retrievals(2)
+
+    with (
+        patch("evaluation.pipeline.get_eval_settings") as mock_settings,
+        patch("evaluation.pipeline.get_rate_limited_client") as mock_client,
+    ):
+        mock_settings.return_value = MagicMock(gemini_api_key="fake-key")
+        mock_client.return_value.generate_content.side_effect = RateLimitExhausted("rate limit")
+        results = pipeline.generate_batch_grouped(samples, retrievals, batch_size=2)
+
+    assert all(r.generated_answer == "[ERROR: rate limited]" for r in results)

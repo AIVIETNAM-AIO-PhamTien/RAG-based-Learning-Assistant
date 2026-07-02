@@ -36,6 +36,7 @@ class RateLimitedClient:
         http_options = types.HttpOptions(retry_options=retry)
         self._client = genai.Client(api_key=api_key, http_options=http_options)
         self._delay = delay_between_calls
+        self._last_call_start = 0.0
 
     def generate_content(
         self,
@@ -45,12 +46,18 @@ class RateLimitedClient:
     ):
         from google.genai.errors import APIError
 
+        # Enforce a minimum interval between call *starts* (not a fixed sleep
+        # after each call) — otherwise a fast response leaves the actual
+        # request rate far above what `delay_between_calls` was meant to cap.
+        elapsed = time.monotonic() - self._last_call_start
+        if elapsed < self._delay:
+            time.sleep(self._delay - elapsed)
+        self._last_call_start = time.monotonic()
+
         try:
-            response = self._client.models.generate_content(
+            return self._client.models.generate_content(
                 model=model, contents=contents, config=config
             )
-            time.sleep(self._delay)
-            return response
         except APIError as exc:
             if exc.code in _RETRYABLE_CODES:
                 raise RateLimitExhausted(
