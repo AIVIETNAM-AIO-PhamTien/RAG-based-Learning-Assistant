@@ -5,7 +5,12 @@ import pytest
 
 from app.api.v1.chat import _build_session_title, _recent_messages
 from app.db.models import ChatMessage
-from app.rag.prompts import build_prompt
+from app.rag.prompts import (
+    build_flashcard_notes_prompt,
+    build_flashcards_from_notes_prompt,
+    build_prompt,
+    build_summary_prompt,
+)
 from app.schemas.chat import Citation
 
 
@@ -142,6 +147,62 @@ def test_build_prompt_omits_recent_conversation_when_history_is_empty() -> None:
     assert "Recent conversation:" not in prompt
     assert "Context chunks:" in prompt
     assert "Question: What is a socket?" in prompt
+
+
+def test_build_summary_prompt_includes_context_and_summary_instruction() -> None:
+    citations = [
+        Citation(
+            index=1,
+            chunk_id=uuid.uuid4(),
+            doc_id=uuid.uuid4(),
+            doc_name="notes.pdf",
+            page=6,
+            text="Congestion avoidance grows the congestion window linearly.",
+            snippet="Congestion avoidance grows...",
+        )
+    ]
+
+    prompt = build_summary_prompt(citations)
+
+    assert "Context chunks:" in prompt
+    assert "[1] notes.pdf, page 6" in prompt
+    assert "Summarize the material into concise study notes." in prompt
+
+
+def test_build_flashcard_notes_prompt_includes_batch_context() -> None:
+    citations = [
+        Citation(
+            index=1,
+            chunk_id=uuid.uuid4(),
+            doc_id=uuid.uuid4(),
+            doc_name="notes.pdf",
+            page=8,
+            text="A router forwards packets between networks.",
+            snippet="A router forwards packets...",
+        )
+    ]
+
+    prompt = build_flashcard_notes_prompt(citations)
+
+    assert "Context chunks:" in prompt
+    assert "[1] notes.pdf, page 8" in prompt
+    assert "Write short study notes for this ordered batch." in prompt
+    assert "Return only the notes." in prompt
+
+
+def test_build_flashcards_from_notes_prompt_includes_exact_count_and_coverage() -> None:
+    prompt = build_flashcards_from_notes_prompt(
+        "Document: notes.pdf\nPages: 1-2\nNotes:\n- Router basics",
+        3,
+        "- notes.pdf: target 3 card(s)",
+    )
+
+    assert "Document study notes:" in prompt
+    assert "Coverage targets:" in prompt
+    assert "Create exactly 3 study flashcards from the material." in prompt
+    assert "- notes.pdf: target 3 card(s)" in prompt
+    assert "Q: ..." in prompt
+    assert "A: ..." in prompt
 
 
 @pytest.mark.parametrize(

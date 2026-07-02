@@ -1,4 +1,11 @@
-import type { ChatMessage, ChatSession, ChatStreamEvent, DocumentRead } from "./types";
+import type {
+  ChatMessage,
+  ChatSession,
+  ChatStreamEvent,
+  DocumentRead,
+  FlashcardsResponse,
+  StudyRequest,
+} from "./types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
@@ -61,6 +68,18 @@ export async function getSessionDocuments(sessionId: string): Promise<DocumentRe
 export async function getSessionMessages(sessionId: string): Promise<ChatMessage[]> {
   const response = await fetch(`${API_BASE_URL}/api/v1/sessions/${sessionId}/messages`);
   return parseResponse<ChatMessage[]>(response);
+}
+
+export async function generateSessionFlashcards(
+  sessionId: string,
+  payload: StudyRequest = {},
+): Promise<FlashcardsResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/sessions/${sessionId}/flashcards`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return parseResponse<FlashcardsResponse>(response);
 }
 
 export async function streamChat(
