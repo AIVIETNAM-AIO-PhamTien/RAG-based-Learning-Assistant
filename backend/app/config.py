@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     rerank_enabled: bool = True
     rerank_model_name: str = "BAAI/bge-reranker-base"
     rerank_candidate_k: int = 20
+    qdrant_url: str | None = None
+    qdrant_api_key: str | None = None
+    qdrant_collection: str = "chunks"
+    embedding_dim: int = 384
 
 
 @lru_cache

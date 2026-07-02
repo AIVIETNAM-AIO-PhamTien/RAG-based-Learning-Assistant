@@ -9,6 +9,7 @@ from app.config import get_settings
 from app.db.models import ChatSessionDocument, Chunk, Document
 from app.rag.embedder import get_embedder
 from app.rag.reranker import get_reranker
+from app.rag.vector_store import search_chunk_ids
 from app.schemas.chat import Citation
 
 FLASHCARD_DEFAULT_COUNT = 10
@@ -40,22 +41,44 @@ async def retrieve_top_k(
 ) -> list[Citation]:
     settings = get_settings()
     resolved_top_k = top_k or settings.retrieval_top_k
-    query_embedding = get_embedder().embed_query(query)
-    distance = Chunk.embedding.cosine_distance(query_embedding).label("distance")
     candidate_limit = settings.rerank_candidate_k if settings.rerank_enabled else resolved_top_k
-    statement = (
-        select(Chunk, Document, distance)
-        .join(Document, Document.id == Chunk.doc_id)
-        .join(ChatSessionDocument, ChatSessionDocument.document_id == Document.id)
-        .where(ChatSessionDocument.session_id == chat_session_id)
-        .order_by(distance)
-        .limit(candidate_limit)
+
+    # The session -> documents relationship stays in Postgres; use it to scope
+    # the vector search to this session's documents.
+    doc_ids = list(
+        (
+            await session.execute(
+                select(ChatSessionDocument.document_id).where(
+                    ChatSessionDocument.session_id == chat_session_id
+                )
+            )
+        ).scalars()
     )
-    rows = (await session.execute(statement)).all()
+    if not doc_ids:
+        return []
+
+    query_embedding = get_embedder().embed_query(query)
+    hits = search_chunk_ids(query_embedding, doc_ids, candidate_limit)
+    if not hits:
+        return []
+
+    ordered_chunk_ids = [chunk_id for chunk_id, _score in hits]
+    rows_by_id = {
+        chunk.id: (chunk, document)
+        for chunk, document in (
+            await session.execute(
+                select(Chunk, Document)
+                .join(Document, Document.id == Chunk.doc_id)
+                .where(Chunk.id.in_(ordered_chunk_ids))
+            )
+        ).all()
+    }
+    # Preserve Qdrant's similarity order; drop any hit whose Postgres row is gone.
+    rows = [rows_by_id[chunk_id] for chunk_id in ordered_chunk_ids if chunk_id in rows_by_id]
 
     if settings.rerank_enabled and rows:
         ranking = get_reranker().rerank(
-            query, [chunk.text for chunk, _document, _distance in rows], resolved_top_k
+            query, [chunk.text for chunk, _document in rows], resolved_top_k
         )
         rows = [rows[original_index] for original_index, _score in ranking]
     else:
@@ -63,7 +86,7 @@ async def retrieve_top_k(
 
     return [
         _build_citation(index, chunk, document)
-        for index, (chunk, document, _distance) in enumerate(rows, start=1)
+        for index, (chunk, document) in enumerate(rows, start=1)
     ]
 
 

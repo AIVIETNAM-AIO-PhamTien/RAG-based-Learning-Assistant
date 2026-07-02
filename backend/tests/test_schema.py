@@ -17,4 +17,5 @@ def test_phase_1_tables_are_registered() -> None:
         "chat_session_documents",
         "chat_messages",
     }
-    assert Chunk.__table__.c.embedding.type.dim == 384
+    # Embeddings now live in Qdrant, not on the chunks table.
+    assert "embedding" not in Chunk.__table__.c
