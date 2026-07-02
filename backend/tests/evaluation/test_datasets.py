@@ -213,61 +213,30 @@ def test_asqa_loader_columnar_format():
     assert len(samples) == 1
     assert samples[0].question == "When did the US join WW2?"
     assert "December 1941" in samples[0].ground_truth_answer
-    assert len(samples[0].ground_truth_contexts) == 2
+    # 2 real qa_pairs contexts + 1 real knowledge-content context, deduped.
+    assert len(samples[0].ground_truth_contexts) == 3
+    assert samples[0].metadata["id"] == "asqa_001"
+    assert "December 1941" in samples[0].metadata["all_short_answers"]
 
 
-# ── PopQA loader with JSON string answers ────────────────────────────
+def test_asqa_loader_filters_no_context_placeholder():
+    rows = _mock_asqa_rows()
+    rows[0]["qa_pairs"]["context"] = ["No context provided", "A real passage."]
+    with patch("datasets.load_dataset", return_value=rows):
+        from evaluation.datasets.asqa import ASQALoader
 
-
-def _mock_popqa_rows():
-    return [
-        {
-            "question": "What is the capital of France?",
-            "possible_answers": '["Paris", "paris"]',
-            "subj": "France",
-            "prop": "capital",
-            "obj": "Paris",
-            "s_pop": 1000,
-            "o_pop": 500,
-        },
-    ]
-
-
-def test_popqa_loader_json_string_answers():
-    with patch("datasets.load_dataset", return_value=_mock_popqa_rows()):
-        from evaluation.datasets.popqa import PopQALoader
-
-        loader = PopQALoader()
+        loader = ASQALoader()
         samples = loader.load()
 
-    assert len(samples) == 1
-    assert samples[0].ground_truth_answer == "Paris"
+    assert "No context provided" not in samples[0].ground_truth_contexts
+    assert "A real passage." in samples[0].ground_truth_contexts
 
 
-# ── PubHealth loader with string label ───────────────────────────────
+def test_get_dataset_loader_popqa_removed():
+    with pytest.raises(ValueError, match="Unknown dataset"):
+        get_dataset_loader("popqa")
 
 
-def _mock_pubhealth_rows():
-    return [
-        {
-            "claim": "Vitamin C cures cancer",
-            "explanation": "No scientific evidence supports this claim.",
-            "label": "false",
-            "main_text": "Studies show no significant effect...",
-            "subjects": "health",
-        },
-    ]
-
-
-def test_pubhealth_loader_string_label():
-    with patch(
-        "datasets.load_dataset", return_value=_mock_pubhealth_rows()
-    ):
-        from evaluation.datasets.pubhealth import PubHealthLoader
-
-        loader = PubHealthLoader()
-        samples = loader.load()
-
-    assert len(samples) == 1
-    assert "false" in samples[0].ground_truth_answer
-    assert "unknown" not in samples[0].ground_truth_answer
+def test_get_dataset_loader_pubhealth_removed():
+    with pytest.raises(ValueError, match="Unknown dataset"):
+        get_dataset_loader("pubhealth")

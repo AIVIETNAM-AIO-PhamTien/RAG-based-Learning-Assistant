@@ -155,6 +155,17 @@ def _is_valid_answer(answer: str) -> bool:
     return bool(answer) and not answer.startswith(("[ERROR", "[SKIPPED"))
 
 
+def _reference_answers(sample: EvalSample) -> list[str]:
+    """All acceptable reference answers for a sample, deduped, non-empty.
+
+    Datasets with multiple valid phrasings (e.g. natural_questions, asqa) store
+    them in metadata["all_short_answers"]; others fall back to the single
+    ground_truth_answer, matching the previous single-reference behavior.
+    """
+    refs = sample.metadata.get("all_short_answers") or [sample.ground_truth_answer]
+    return list(dict.fromkeys(r for r in refs if r))
+
+
 # ---------------------------------------------------------------------------
 # Per-sample metrics
 # ---------------------------------------------------------------------------
@@ -213,14 +224,22 @@ def compute_generation_metrics(
         return scores
 
     embedder = get_embedder()
-    if not sample.ground_truth_answer:
+    references = _reference_answers(sample)
+    if not references:
         scores["answer_similarity"] = float("nan")
     else:
-        ref_emb = np.array(embedder.embed_query(sample.ground_truth_answer))
         a_emb = np.array(embedder.embed_query(answer))
-        scores["answer_similarity"] = max(0.0, min(1.0, float(ref_emb @ a_emb)))
-    scores["rouge_l"] = _rouge_l_f1(sample.ground_truth_answer, answer)
-    scores["token_f1"] = _token_f1(sample.ground_truth_answer, answer)
+        sims = [
+            max(0.0, min(1.0, float(np.array(embedder.embed_query(ref)) @ a_emb)))
+            for ref in references
+        ]
+        scores["answer_similarity"] = max(sims)
+    scores["rouge_l"] = (
+        max(_rouge_l_f1(ref, answer) for ref in references) if references else 0.0
+    )
+    scores["token_f1"] = (
+        max(_token_f1(ref, answer) for ref in references) if references else 0.0
+    )
 
     available = set(range(1, len(retrieved) + 1))
     scores["citation_coverage"] = citation_coverage(answer, available)
