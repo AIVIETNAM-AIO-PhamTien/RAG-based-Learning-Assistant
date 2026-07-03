@@ -88,7 +88,7 @@ http://localhost:3000
 
 Thử theo thứ tự:
 
-1. Upload một file PDF trong thư mục `sample/`.
+1. Upload một file PDF bất kỳ có sẵn.
 2. Đợi backend ingest tài liệu.
 3. Hỏi một câu liên quan nội dung PDF.
 4. Kiểm tra câu trả lời streaming.
@@ -97,7 +97,7 @@ Thử theo thứ tự:
 Có thể test upload nhanh bằng API:
 
 ```bash
-curl -F file=@sample/linear-algebra-ch3.pdf http://localhost:8000/api/v1/documents
+curl -F file=@/path/to/your-file.pdf http://localhost:8000/api/v1/documents
 ```
 
 ## 7. Dừng hệ thống

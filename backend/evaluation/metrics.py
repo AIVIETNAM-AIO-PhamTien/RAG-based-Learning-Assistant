@@ -146,6 +146,23 @@ def _get_nli_model() -> tuple:
     return model, entailment_idx
 
 
+def _entailment_probs(preds, entailment_idx: int) -> list[float]:
+    """Convert CrossEncoder.predict() output to entailment probabilities.
+
+    `cross-encoder/nli-deberta-v3-small` uses an Identity activation, so
+    predict() returns raw (unbounded) logits, not probabilities — comparing
+    a raw logit to a 0.5 threshold has no principled meaning. Softmax the
+    3-way logits first so the 0.5 threshold actually means "more likely
+    entailment than not".
+    """
+    arr = np.asarray(preds, dtype=np.float64)
+    if arr.ndim == 1:
+        return arr.tolist()
+    exp = np.exp(arr - arr.max(axis=1, keepdims=True))
+    probs = exp / exp.sum(axis=1, keepdims=True)
+    return probs[:, entailment_idx].tolist()
+
+
 def _is_valid_answer(answer: str) -> bool:
     return bool(answer) and not answer.startswith(("[ERROR", "[SKIPPED"))
 
@@ -242,13 +259,26 @@ def compute_generation_metrics(
             # chunks joined into one string) — the NLI model's 512-token
             # limit would otherwise silently truncate away whichever chunks
             # don't fit, discarding evidence that supports the answer.
+            #
+            # Tried joining all retrieved chunks per sentence (when it fits
+            # the token budget) to also catch claims that combine facts from
+            # multiple chunks — e.g. HotpotQA comparisons like "X and Y were
+            # both American", not entailed by either chunk alone. Verified
+            # empirically (60-sample HotpotQA check) this makes things
+            # *worse*: irrelevant "distractor" chunks — common in real
+            # top-k retrieval, where only 1-2 of 5 chunks are actually
+            # relevant — confuse the NLI model into "neutral" even though
+            # the supporting chunks are still present in the text (mean
+            # faithfulness dropped 0.10 -> 0.04). A singles-plus-pairs
+            # variant did improve it (0.10 -> 0.175) but only catches 2-hop
+            # claims and roughly triples the NLI calls per sentence — not
+            # worth the complexity here. Known limitation: multi-chunk
+            # compound claims are undercounted by this per-chunk approach;
+            # documented as a caveat in report.md instead of "fixed".
             n_chunks = len(retrieved)
             pairs = [(chunk, s) for s in sentences for chunk in retrieved]
             preds = nli_model.predict(pairs)
-            if hasattr(preds[0], "__len__"):
-                ent = [float(p[entailment_idx]) for p in preds]
-            else:
-                ent = [float(p) for p in preds]
+            ent = _entailment_probs(preds, entailment_idx)
             per_sentence_max = [
                 max(ent[i * n_chunks : (i + 1) * n_chunks]) for i in range(len(sentences))
             ]
