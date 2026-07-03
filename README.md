@@ -1,36 +1,3 @@
-Bạn có thể demo bằng:
-
-
-docker compose up -d
-
-`cd backend`
-
-`uv run alembic upgrade head`
-
-``uv run uvicorn app.main:app --reload --port 8000``
----
-``uv --directory backend run uvicorn app.main:app --reload --port 8000``
-
-`pnpm --dir frontend dev`
----
-``cd frontend``
-
-``pnpm dev``
-
-Rồi mở:
-
-
-http://localhost:3000
-
-Flow demo:
-
-- Upload PDF
-- Đợi ingest xong
-- Hỏi câu về PDF
-- Nhận answer streaming
-- Hover [1] để xem đoạn nguồn + page
----
-
 # AIO — Educational RAG Chatbot
 
 A NotebookLM-style RAG chatbot for studying PDFs. Upload tài liệu (VN/EN), hỏi đáp có **citation hover-able** chỉ tới đúng đoạn, đúng trang, đúng document.
@@ -92,10 +59,10 @@ pnpm install
 pnpm dev                   # http://localhost:3000
 ```
 
-Sample PDF để thử nằm trong `sample/`. Upload qua UI hoặc:
+Upload thử bằng bất kỳ PDF nào có sẵn, qua UI hoặc:
 
 ```bash
-curl -F file=@sample/linear-algebra-ch3.pdf http://localhost:8000/api/v1/documents
+curl -F file=@/path/to/your-file.pdf http://localhost:8000/api/v1/documents
 ```
 
 ---
@@ -125,6 +92,4 @@ Mỗi citation BẮT BUỘC được **validate** trước khi return (chống h
 
 ## License
 
-MIT (sẽ thêm khi public).
-
-# RAG-based-Learning-Assistant
+[MIT](LICENSE)
