@@ -53,3 +53,7 @@ CLAUDE.md
 # Build/dev-tool artifacts
 *.tsbuildinfo
 .playwright-mcp/
+
+.codex
+.agents
+AGENTS.md
