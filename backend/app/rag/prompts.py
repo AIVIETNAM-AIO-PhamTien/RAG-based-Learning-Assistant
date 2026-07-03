@@ -59,8 +59,6 @@ Question: {question}
 
 Answer with inline citations like [1] or, when citing multiple sources for one
 claim, [1][2] (never [1, 2])."""
-Answer with inline citations like [1], [2]."""
-
 
 def build_summary_prompt(citations: list[Citation]) -> str:
     context = build_context(citations)
