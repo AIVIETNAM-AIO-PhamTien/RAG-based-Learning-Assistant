@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { ChatComposer } from "@/components/chat/ChatComposer";
 import { ChatFlashcardsPanel } from "@/components/chat/ChatFlashcardsPanel";
@@ -11,6 +11,7 @@ import { MessageList } from "@/components/chat/MessageList";
 import {
   createSession,
   deleteSession,
+  generateSessionFlashcards,
   getSessionDocuments,
   getSessionMessages,
   getSessions,
@@ -18,7 +19,7 @@ import {
   streamChat,
   uploadDocument,
 } from "@/lib/api";
-import type { ChatMessage, ChatSession, DocumentRead } from "@/lib/types";
+import type { ChatMessage, ChatSession, DocumentRead, Flashcard } from "@/lib/types";
 
 const SESSION_STORAGE_KEY = "aio-chat-session";
 const SIDEBAR_COLLAPSED_STORAGE_KEY = "aio-sidebar-collapsed";
@@ -82,10 +83,14 @@ export default function Home() {
   const [sessionHistory, setSessionHistory] = useState<ChatSession[]>([]);
   const [documents, setDocuments] = useState<DocumentRead[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
+  const [flashcardSourceCount, setFlashcardSourceCount] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const [isCreatingSession, setIsCreatingSession] = useState(false);
+  const [isGeneratingFlashcards, setIsGeneratingFlashcards] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [flashcardsError, setFlashcardsError] = useState<string | null>(null);
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
@@ -94,7 +99,14 @@ export default function Home() {
     [documents],
   );
 
-  async function activateSession(nextSession: ChatSession) {
+  const resetFlashcardsState = useCallback((): void => {
+    setFlashcards([]);
+    setFlashcardSourceCount(0);
+    setFlashcardsError(null);
+    setIsGeneratingFlashcards(false);
+  }, []);
+
+  const activateSession = useCallback(async (nextSession: ChatSession) => {
     const [nextDocuments, nextMessages] = await Promise.all([
       getSessionDocuments(nextSession.id),
       getSessionMessages(nextSession.id),
@@ -103,8 +115,9 @@ export default function Home() {
     setSession(nextSession);
     setDocuments(nextDocuments);
     setMessages(nextMessages);
+    resetFlashcardsState();
     setError(null);
-  }
+  }, [resetFlashcardsState]);
 
   useEffect(() => {
     let isMounted = true;
@@ -125,6 +138,7 @@ export default function Home() {
         setSession(createdSession);
         setDocuments([]);
         setMessages([]);
+        resetFlashcardsState();
         setError(null);
         await loadSessionHistory();
       } catch (caught: unknown) {
@@ -150,6 +164,7 @@ export default function Home() {
           setSession(matchedSession);
           setDocuments([]);
           setMessages([]);
+          resetFlashcardsState();
           setError(caught instanceof Error ? caught.message : String(caught));
           return;
         }
@@ -162,7 +177,7 @@ export default function Home() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [activateSession, resetFlashcardsState]);
 
   useEffect(() => {
     storeSidebarCollapsed(isSidebarCollapsed);
@@ -173,7 +188,7 @@ export default function Home() {
   }
 
   async function onNewSession() {
-    if (!session || isCreatingSession || isStreaming || isUploading) return;
+    if (!session || isCreatingSession || isStreaming || isUploading || isGeneratingFlashcards) return;
 
     setIsCreatingSession(true);
     setError(null);
@@ -183,6 +198,7 @@ export default function Home() {
       setSession(createdSession);
       setDocuments([]);
       setMessages([]);
+      resetFlashcardsState();
       setError(null);
       setSessionHistory(await getSessions());
     } catch (caught) {
@@ -193,7 +209,16 @@ export default function Home() {
   }
 
   async function onSelectSession(sessionId: string) {
-    if (!session || isCreatingSession || isStreaming || isUploading || session.id === sessionId) return;
+    if (
+      !session ||
+      isCreatingSession ||
+      isStreaming ||
+      isUploading ||
+      isGeneratingFlashcards ||
+      session.id === sessionId
+    ) {
+      return;
+    }
 
     const nextSession = sessionHistory.find((item) => item.id === sessionId);
     if (!nextSession) return;
@@ -207,7 +232,7 @@ export default function Home() {
   }
 
   async function onRenameSession(sessionId: string, title: string) {
-    if (!session || isCreatingSession || isStreaming || isUploading) return;
+    if (!session || isCreatingSession || isStreaming || isUploading || isGeneratingFlashcards) return;
 
     setError(null);
     try {
@@ -225,7 +250,7 @@ export default function Home() {
   }
 
   async function onDeleteSession(sessionId: string) {
-    if (!session || isCreatingSession || isStreaming || isUploading) return;
+    if (!session || isCreatingSession || isStreaming || isUploading || isGeneratingFlashcards) return;
 
     setError(null);
     try {
@@ -248,6 +273,7 @@ export default function Home() {
       setSession(createdSession);
       setDocuments([]);
       setMessages([]);
+      resetFlashcardsState();
       setSessionHistory([createdSession]);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : String(caught));
@@ -255,17 +281,34 @@ export default function Home() {
   }
 
   async function onUpload(file: File) {
-    if (!session) return;
+    if (!session || isGeneratingFlashcards) return;
     setIsUploading(true);
     setError(null);
     try {
       const uploaded = await uploadDocument(session.id, file);
       setDocuments((current) => [uploaded, ...current.filter((item) => item.id !== uploaded.id)]);
+      resetFlashcardsState();
       await refreshDocuments(session.id);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : String(caught));
     } finally {
       setIsUploading(false);
+    }
+  }
+
+  async function onGenerateFlashcards() {
+    if (!session || !hasReadyDocument || isGeneratingFlashcards) return;
+
+    setFlashcardsError(null);
+    setIsGeneratingFlashcards(true);
+    try {
+      const response = await generateSessionFlashcards(session.id);
+      setFlashcards(response.flashcards);
+      setFlashcardSourceCount(response.sources.length);
+    } catch (caught) {
+      setFlashcardsError(caught instanceof Error ? caught.message : String(caught));
+    } finally {
+      setIsGeneratingFlashcards(false);
     }
   }
 
@@ -334,7 +377,8 @@ export default function Home() {
   }
 
   const sessionIdLabel = session ? session.id.slice(0, 8) : "starting";
-  const isSessionActionDisabled = !session || isCreatingSession || isStreaming || isUploading;
+  const isSessionActionDisabled =
+    !session || isCreatingSession || isStreaming || isUploading || isGeneratingFlashcards;
   const sidebarWidthClass = isSidebarCollapsed ? SIDEBAR_COLLAPSED_WIDTH_CLASS : SIDEBAR_EXPANDED_WIDTH_CLASS;
   const composerSidebarOffsetClass = isSidebarCollapsed
     ? COMPOSER_SIDEBAR_COLLAPSED_OFFSET_CLASS
@@ -375,7 +419,7 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={() => setIsFlashcardsOpen((current) => !current)}
-                  className="inline-flex items-center gap-2 rounded-full border border-accent/45 bg-accent/12 px-4 py-2 text-xs font-semibold text-accent transition hover:bg-accent/20"
+                  className="hidden items-center gap-2 rounded-full border border-accent/45 bg-accent/12 px-4 py-2 text-xs font-semibold text-accent transition hover:bg-accent/20 xl:inline-flex"
                   aria-pressed={isFlashcardsOpen}
                 >
                   <svg
@@ -410,7 +454,7 @@ export default function Home() {
             <div className="grid min-h-0 flex-1 grid-cols-1 xl:grid-cols-[320px_minmax(0,1fr)]">
               <aside className="border-b border-border/70 bg-background/30 p-4 xl:border-r xl:border-b-0">
                 <div className="space-y-5 xl:sticky xl:top-[5rem]">
-                  <DocumentUploader disabled={!session || isUploading} onUpload={onUpload} />
+                  <DocumentUploader disabled={!session || isUploading || isGeneratingFlashcards} onUpload={onUpload} />
                   <section className="space-y-3">
                     <div className="flex items-center justify-between">
                       <h2 className="text-xs font-semibold tracking-[0.18em] text-muted-foreground uppercase">
@@ -435,7 +479,13 @@ export default function Home() {
 
           <ChatFlashcardsPanel
             isOpen={isFlashcardsOpen}
+            cards={flashcards}
+            isLoading={isGeneratingFlashcards}
+            error={flashcardsError}
+            canGenerate={Boolean(session) && hasReadyDocument && !isGeneratingFlashcards}
+            sourceCount={flashcardSourceCount}
             onClose={() => setIsFlashcardsOpen(false)}
+            onGenerate={onGenerateFlashcards}
           />
         </section>
 

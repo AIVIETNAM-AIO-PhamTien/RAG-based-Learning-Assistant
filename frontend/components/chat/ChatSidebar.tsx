@@ -126,7 +126,7 @@ export function ChatSidebar({
               {sessions.map((chatSession) => (
                 <ChatHistoryCard
                   key={chatSession.id}
-                  sessionTitle={chatSession.title ?? "Current study session"}
+                  sessionTitle={chatSession.title ?? "(untitled)"}
                   sessionIdLabel={chatSession.id.slice(0, 8)}
                   isActive={chatSession.id === activeSessionId}
                   onClick={() => onSelectSession(chatSession.id)}
@@ -155,7 +155,7 @@ export function ChatSidebar({
                       ? "border-accent/60 bg-accent/15 text-accent hover:bg-accent/20"
                       : "border-border/70 bg-background text-muted-foreground hover:border-accent/40 hover:bg-accent/10 hover:text-foreground"
                   }`}
-                  aria-label={chatSession.title ?? "Current study session"}
+                  aria-label={chatSession.title ?? "(untitle)"}
                   title={chatSession.title ?? chatSession.id.slice(0, 8)}
                 >
                   {chatSession.id.slice(0, 2)}
