@@ -17,6 +17,19 @@ from evaluation.metrics import (
 from evaluation.schemas import EvalResult, EvalSample, GenerationResult, RetrievalResult
 
 
+def _make_fake_nli(predict_return_value) -> MagicMock:
+    """Fake CrossEncoder for faithfulness tests. `max_seq_length`/`tokenizer`
+    are set so the joined-context path (see compute_generation_metrics) is
+    always taken unless a test overrides them to force the fallback path."""
+    fake_nli = MagicMock()
+    fake_nli.predict.return_value = predict_return_value
+    fake_nli.max_seq_length = 512
+    fake_nli.tokenizer.side_effect = lambda premise, hypothesis, truncation: {
+        "input_ids": [0] * 10
+    }
+    return fake_nli
+
+
 def _make_result(
     question: str = "Q?",
     ground_truth: str = "A",
@@ -171,8 +184,7 @@ def test_compute_sample_metrics_returns_all_keys():
     fake_reranker = MagicMock()
     fake_reranker.rerank.return_value = [(0, 0.9)]
 
-    fake_nli = MagicMock()
-    fake_nli.predict.return_value = [0.8]
+    fake_nli = _make_fake_nli([0.8])
 
     with (
         patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
@@ -227,8 +239,7 @@ def test_compute_sample_metrics_citation_coverage():
     fake_reranker = MagicMock()
     fake_reranker.rerank.return_value = [(0, 0.8), (1, 0.6)]
 
-    fake_nli = MagicMock()
-    fake_nli.predict.return_value = [0.9]
+    fake_nli = _make_fake_nli([0.9])
 
     with (
         patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
@@ -253,8 +264,7 @@ def test_compute_sample_metrics_no_citations():
     fake_reranker = MagicMock()
     fake_reranker.rerank.return_value = [(0, 0.5)]
 
-    fake_nli = MagicMock()
-    fake_nli.predict.return_value = [0.3]
+    fake_nli = _make_fake_nli([0.3])
 
     with (
         patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
@@ -338,8 +348,7 @@ def test_latency_percentiles_without_ragas():
     v = np.ones(384, dtype=np.float32) / np.sqrt(384)
     fake_embedder.embed_query.return_value = v.tolist()
 
-    fake_nli = MagicMock()
-    fake_nli.predict.return_value = [0.8]
+    fake_nli = _make_fake_nli([0.8])
 
     with (
         patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
@@ -372,8 +381,7 @@ def test_faithfulness_high_entailment():
     v = np.ones(384, dtype=np.float32) / np.sqrt(384)
     fake_embedder.embed_query.return_value = v.tolist()
 
-    fake_nli = MagicMock()
-    fake_nli.predict.return_value = [np.array([0.05, 0.9, 0.05])]
+    fake_nli = _make_fake_nli([np.array([0.05, 0.9, 0.05])])
 
     with (
         patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
@@ -395,8 +403,7 @@ def test_faithfulness_high_contradiction():
     v = np.ones(384, dtype=np.float32) / np.sqrt(384)
     fake_embedder.embed_query.return_value = v.tolist()
 
-    fake_nli = MagicMock()
-    fake_nli.predict.return_value = [np.array([0.9, 0.05, 0.05])]
+    fake_nli = _make_fake_nli([np.array([0.9, 0.05, 0.05])])
 
     with (
         patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
@@ -411,7 +418,7 @@ def test_faithfulness_scored_per_chunk_not_joined():
     """A sentence supported by only one of several chunks should still count
     as faithful — entailment must be checked per-chunk, not against all
     retrieved chunks concatenated into one string (which could truncate away
-    the supporting chunk)."""
+    the supporting chunk, or dilute the signal with irrelevant chunks)."""
     result = _make_result(
         retrieved=["Irrelevant chunk about cooking.", "The sky is blue."],
         answer="The sky is blue.",
@@ -421,12 +428,13 @@ def test_faithfulness_scored_per_chunk_not_joined():
     v = np.ones(384, dtype=np.float32) / np.sqrt(384)
     fake_embedder.embed_query.return_value = v.tolist()
 
-    fake_nli = MagicMock()
     # 1 sentence x 2 chunks = 2 pairs: first chunk doesn't entail, second does.
-    fake_nli.predict.return_value = [
-        np.array([0.1, 0.05, 0.85]),
-        np.array([0.05, 0.9, 0.05]),
-    ]
+    fake_nli = _make_fake_nli(
+        [
+            np.array([0.1, 0.05, 0.85]),
+            np.array([0.05, 0.9, 0.05]),
+        ]
+    )
 
     with (
         patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
@@ -455,8 +463,7 @@ def test_answer_similarity_empty_ground_truth():
     v = np.ones(384, dtype=np.float32) / np.sqrt(384)
     fake_embedder.embed_query.return_value = v.tolist()
 
-    fake_nli = MagicMock()
-    fake_nli.predict.return_value = [0.5]
+    fake_nli = _make_fake_nli([0.5])
 
     with (
         patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
@@ -486,8 +493,7 @@ def test_answer_similarity_uses_ground_truth():
 
     fake_embedder.embed_query.side_effect = tracking_embed
 
-    fake_nli = MagicMock()
-    fake_nli.predict.return_value = [0.8]
+    fake_nli = _make_fake_nli([0.8])
 
     with (
         patch("evaluation.metrics.get_embedder", return_value=fake_embedder),

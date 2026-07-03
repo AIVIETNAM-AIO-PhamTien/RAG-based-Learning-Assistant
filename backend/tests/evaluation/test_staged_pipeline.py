@@ -170,6 +170,10 @@ def test_compute_generation_metrics():
 
     fake_nli = MagicMock()
     fake_nli.predict.return_value = [0.9]
+    fake_nli.max_seq_length = 512
+    fake_nli.tokenizer.side_effect = lambda premise, hypothesis, truncation: {
+        "input_ids": [0] * 10
+    }
 
     with (
         patch("evaluation.metrics.get_embedder", return_value=fake_embedder),
