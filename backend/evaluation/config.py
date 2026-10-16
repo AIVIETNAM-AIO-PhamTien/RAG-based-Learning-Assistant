@@ -10,7 +10,7 @@ class EvalSettings(BaseSettings):
     )
 
     gemini_api_key: str | None = None
-    gemini_model: str = "gemini-2.5-flash"
+    gemini_model: str = "gemini-3.8-flash"
     embedding_model_name: str = "intfloat/e5-small-v2"
     rerank_model_name: str = "BAAI/bge-reranker-base"
     output_dir: Path = Path("evaluation/results")
